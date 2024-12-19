@@ -51,14 +51,14 @@ public:
         }
         else if (state[SDL_SCANCODE_D] && lastButton != SDL_SCANCODE_D) {
             lastButton = SDL_SCANCODE_D;
-            playerSpeed += playerSpeedScale;
+            playerSpeed += 1;
         }
 
         if (playerSpeed >= playerNormalSpeed)
             isMoving = true;
 
         if (isMoving) {
-            playerY += playerSpeed;
+            playerY += 1;
             if (playerMinSpeed > playerSpeed || playerSpeed > playerMaxSpeed) {
                 reset();
                 std::cout << "You die!" << std::endl;
@@ -67,8 +67,6 @@ public:
 
         if (playerSpeed >= playerSpeedDecrease)
             playerSpeed -= playerSpeedDecrease;
-
-        std::cout << "Player Y: " << playerY << "\tPlayer speed: " << playerSpeed << std::endl;
     }
 
     void reset() {
@@ -82,9 +80,10 @@ public:
         if (!texture) { return; }
 
         // Using a function to calculate texture size relative to the window
-        SDL_Rect dstRect = getScaledRect(texture, window.window, 0.2, playerY);
+        SDL_Rect dstRect = getScaledRect(texture, window.window, 0.2, 0);
 
         // Rendering texture
         SDL_RenderCopy(window.renderer, texture, nullptr, &dstRect);
     }
+    int getPlayerY() { return playerY; }
 };

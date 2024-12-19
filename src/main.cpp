@@ -6,12 +6,13 @@
 #include "Events/keydownEvent.h"
 #include "objects/player.h"
 #include "objects/road.h"
+#include "utils/camera.h"
 
 int main(int argc, char* argv[]) {
     keydownEvent keyEvent;  // Object for handling key presses
     Player player;          // Creating the player object
     RoadGenerator road;
-
+    Camera camera;
     // Main game loop
     while (window.running) {
         // Event handling
@@ -29,10 +30,12 @@ int main(int argc, char* argv[]) {
         player.moving();
 
         // Render the road
-        road.render();
+        road.render(player.getPlayerY());
         // Render the player
         player.render();
 
+        camera.move();
+        
         // Present the rendered frame
         SDL_RenderPresent(window.renderer);
         SDL_Delay(16);

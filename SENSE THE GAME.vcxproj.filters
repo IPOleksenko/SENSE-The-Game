@@ -11,5 +11,7 @@
     <ClInclude Include="src\Events\keydownEvent.h" />
     <ClInclude Include="src\window\window.h" />
     <ClInclude Include="src\objects\player.h" />
+    <ClInclude Include="src\utils\camera.h" />
+    <ClInclude Include="src\utils\renderTilingTexture.h" />
   </ItemGroup>
 </Project>

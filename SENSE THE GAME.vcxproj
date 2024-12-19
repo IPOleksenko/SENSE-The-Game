@@ -136,6 +136,8 @@
   <ItemGroup>
     <ClInclude Include="src\Events\keydownEvent.h" />
     <ClInclude Include="src\objects\player.h" />
+    <ClInclude Include="src\utils\camera.h" />
+    <ClInclude Include="src\utils\renderTilingTexture.h" />
     <ClInclude Include="src\window\window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
