@@ -4,24 +4,38 @@
 
 #include "window/window.h"
 #include "Events/keydownEvent.h"
+#include "objects/player.h"
+#include "objects/road.h"
 
 int main(int argc, char* argv[]) {
-    keydownEvent keyEvent; // Create an object to handle keyboard events
+    keydownEvent keyEvent;  // Object for handling key presses
+    Player player;          // Creating the player object
+    RoadGenerator road;
 
+    // Main game loop
     while (window.running) {
-        if (window.event.type == SDL_QUIT) {
-                window.running = false; // Close the application when the window is closed
-            }
+        // Event handling
         while (SDL_PollEvent(&window.event)) {
-            keyEvent.keydown(); // Handle key presses
+            if (window.event.type == SDL_QUIT) {
+                window.running = false;  // Exit application when the window is closed
+            }
+
+            keyEvent.keydown();  // Handle key press events
         }
 
         // Clear the screen
-        SDL_SetRenderDrawColor(window.renderer, 0, 0, 0, 255); // Black color
+        SDL_SetRenderDrawColor(window.renderer, 0, 0, 0, 255);  // Set color to black
         SDL_RenderClear(window.renderer);
+        player.moving();
 
-        // Display the frame on the screen
+        // Render the road
+        road.render();
+        // Render the player
+        player.render();
+
+        // Present the rendered frame
         SDL_RenderPresent(window.renderer);
+        SDL_Delay(16);
     }
 
     return 0;
