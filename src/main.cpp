@@ -4,15 +4,19 @@
 
 #include "window/window.h"
 #include "Events/keydownEvent.h"
+#include "objects/scale.h"
 #include "objects/player.h"
 #include "objects/road.h"
+#include "objects/background.h"
 #include "utils/camera.h"
 
 int main(int argc, char* argv[]) {
     keydownEvent keyEvent;  // Object for handling key presses
     Player player;          // Creating the player object
     RoadGenerator road;
+    backgroundGenerator background;
     Camera camera;
+    ScaleGenerator scale;
     // Main game loop
     while (window.running) {
         // Event handling
@@ -29,10 +33,12 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(window.renderer);
         player.moving();
 
-        // Render the road
+        
+        background.render(player.getPlayerY());
         road.render(player.getPlayerY());
-        // Render the player
         player.render();
+
+        scale.render(player.getPlayerSpeed(), player.getPlayerMinSpeed(), player.getPlayerMaxSpeed());
 
         camera.move();
         

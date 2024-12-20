@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <algorithm>
 
+
 // Function to scale a texture while maintaining its aspect ratio and applying vertical offset
 inline SDL_Rect getScaledRect(SDL_Texture* texture, SDL_Window* window, float scale = 0, float y = 0) {
     if (!texture || !window) {

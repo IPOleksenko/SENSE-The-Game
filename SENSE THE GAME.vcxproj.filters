@@ -13,5 +13,6 @@
     <ClInclude Include="src\objects\player.h" />
     <ClInclude Include="src\utils\camera.h" />
     <ClInclude Include="src\utils\renderTilingTexture.h" />
+    <ClInclude Include="src\objects\background.h" />
   </ItemGroup>
 </Project>

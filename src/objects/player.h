@@ -86,4 +86,7 @@ public:
         SDL_RenderCopy(window.renderer, texture, nullptr, &dstRect);
     }
     int getPlayerY() { return playerY; }
+    int getPlayerMinSpeed() { return playerMinSpeed; }
+    int getPlayerMaxSpeed() { return playerMaxSpeed; }
+    int getPlayerSpeed() { return playerSpeed; }
 };
