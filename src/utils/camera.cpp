@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SDL.h>
 
-#include "window/window.h" 
+#include "window/window.cpp" 
 
 class Camera {
 private:

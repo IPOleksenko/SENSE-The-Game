@@ -1,6 +1,5 @@
 #pragma once
 
-
 #ifndef finalCheckpoint_H
 #define finalCheckpoint_H
 extern int finalCheckpoint;

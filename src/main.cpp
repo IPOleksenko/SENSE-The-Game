@@ -4,17 +4,17 @@
 
 const int finalCheckpoint = 25000;
 
-#include "window/window.h"
-#include "events/keydownEvent.h"
-#include "events/playerKeydownEvent.h"
-#include "objects/scale.h"
-#include "objects/player.h"
-#include "objects/road.h"
-#include "objects/background.h"
-#include "objects/text.h"
-#include "objects/endRender.h"
-#include "utils/camera.h"
-#include "utils/updatePlayerText.h"
+#include "window/window.cpp"
+#include "events/keydownEvent.cpp"
+#include "events/playerKeydownEvent.cpp"
+#include "objects/scale.cpp"
+#include "objects/player.cpp"
+#include "objects/road.cpp"
+#include "objects/background.cpp"
+#include "objects/text.cpp"
+#include "objects/endRender.cpp"
+#include "utils/camera.cpp"
+#include "utils/updatePlayerText.cpp"
 
 int main(int argc, char* argv[]) {
     keydownEvent keyEvent;  // Object for handling key presses

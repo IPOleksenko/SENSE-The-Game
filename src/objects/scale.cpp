@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
-#include "window/window.h"
+#include "window/window.cpp"
 
 class ScaleGenerator {
 private:
