@@ -5,14 +5,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\utils\scaledTextureSize.h" />
+    <ClCompile Include="src\objects\text.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Events\keydownEvent.h" />
+    <ClInclude Include="src\events\keydownEvent.h" />
     <ClInclude Include="src\window\window.h" />
     <ClInclude Include="src\objects\player.h" />
     <ClInclude Include="src\utils\camera.h" />
     <ClInclude Include="src\utils\renderTilingTexture.h" />
     <ClInclude Include="src\objects\background.h" />
+    <ClInclude Include="src\events\playerKeydownEvent.h" />
+    <ClInclude Include="src\objects\endRender.h" />
+    <ClInclude Include="src\utils\updatePlayerText.h" />
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@ private:
 
 public:
     RoadGenerator() {
+        // Load the road texture
         texture = IMG_LoadTexture(window.renderer, "assets/sprite/road/road.png");
         if (!texture) {
             SDL_Log("Failed to load texture: %s", SDL_GetError());
@@ -19,15 +20,21 @@ public:
     }
 
     ~RoadGenerator() {
+        // Clean up the texture
         if (texture) {
             SDL_DestroyTexture(texture);
         }
     }
 
-    // Render the road
+    /**
+     * Render the road.
+     *
+     * @param Y Vertical offset for the road texture.
+     */
     void render(int Y) {
         if (!texture) { return; }
 
+        // Render the road texture with tiling
         renderTilingTexture(texture, -Y, 0.2);
     }
 };
