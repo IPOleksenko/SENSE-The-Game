@@ -54,6 +54,9 @@ target_include_directories(${PROJECT_NAME}
 
 # Configure settings for MSVC
 if(MSVC)
+    # Set the runtime library to Multi-threaded DLL (/MD)
+    target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Release>:/MD> $<$<CONFIG:Debug>:/MDd>)
+
     target_link_options(${PROJECT_NAME} PRIVATE
         $<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>
         $<$<CONFIG:Debug>:/SUBSYSTEM:CONSOLE>
