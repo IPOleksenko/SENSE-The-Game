@@ -8,10 +8,14 @@ extern const int finalCheckpoint;
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
+
+#include "objects/reload.cpp"
 #include "window/window.cpp"
 
 class Player {
 private:
+    Reload reload;
+
     SDL_Texture* texture = nullptr;
 
     // Player parameters
@@ -32,8 +36,8 @@ private:
     int frameWidth = 0;
     int frameHeight = 0;
     int currentFrame = 0;
-    int totalFrames = 1; // Total number of frames in the animation
-    int framesPerRow = 1; // Number of frames per row
+    int totalFrames = 120; // Total number of frames in the animation
+    int framesPerRow = 20; // Number of frames per row
     int animationSpeed = 100; // Animation speed in milliseconds
     Uint32 lastFrameTime = 0; // Time of the last frame switch
 
@@ -81,6 +85,7 @@ public:
     }
 
     void reset() {
+        reload.render();
         playerY = 0.0f;
         playerSpeed = 0.0f;
         lastButton = NULL;

@@ -14,7 +14,8 @@ Each step on the mountain is not just a challenge in the game, but a challenge t
 
 ## 🧑‍💻 Authors
 
-- [IPOleksenko](https://github.com/IPOleksenko) — Developer and creator of the idea.
+- [IPOleksenko](https://github.com/IPOleksenko) (owner) — Developer and creator of the idea.
+- makarenk0_vlad (collaborator) - 2D artist
 
 ## 📜 License
 

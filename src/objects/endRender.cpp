@@ -13,7 +13,7 @@ private:
 
 public:
     EndRender() {
-        texture = IMG_LoadTexture(window.renderer, "assets/sprite/ending/end.png");
+        texture = IMG_LoadTexture(window.renderer, "assets/sprite/color_screen/black.png");
         if (!texture) {
             SDL_Log("Failed to load texture: %s", SDL_GetError());
         }

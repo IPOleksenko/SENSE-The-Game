@@ -1,10 +1,13 @@
 ﻿#define DEFINE_WINDOW
+#define DEFINE_SOUNDTRACK
+
 #include <SDL.h>
 #include <iostream>
 
 const int finalCheckpoint = 25000;
 
 #include "window/window.cpp"
+#include "utils/SoundTrack.cpp"
 #include "events/keydownEvent.cpp"
 #include "events/playerKeydownEvent.cpp"
 #include "objects/scale.cpp"
@@ -15,6 +18,9 @@ const int finalCheckpoint = 25000;
 #include "objects/endRender.cpp"
 #include "utils/camera.cpp"
 #include "utils/updatePlayerText.cpp"
+#include "objects/flora.cpp"
+
+
 
 int main(int argc, char* argv[]) {
     keydownEvent keyEvent;  // Object for handling key presses
@@ -26,6 +32,10 @@ int main(int argc, char* argv[]) {
     ScaleGenerator scale;
     TextRenderer text(0, 0, 24);
     EndRender end;
+    Flora flora;
+
+    soundtrack.play();
+
     // Main game loop
     while (window.running) {
         // Event handling
@@ -37,6 +47,7 @@ int main(int argc, char* argv[]) {
             keyEvent.keydown();  // Handle key press events
             playerkeyEvent.keydown(player);
         }
+
         SDL_RenderSetLogicalSize(window.renderer, window.BASE_WIDTH, window.BASE_HEIGHT);
 
         // Clear the screen
@@ -45,6 +56,7 @@ int main(int argc, char* argv[]) {
         player.moving();
 
         background.render(player.getPlayerY()); // Render the background based on the player's position
+        flora.render(player.getPlayerY());
         road.render(player.getPlayerY());      // Render the road based on the player's position
         player.updateAnimation();             // Update player animation
         player.render();                      // Render the player
