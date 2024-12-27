@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef finalCheckpoint_H
 #define finalCheckpoint_H
@@ -9,8 +9,15 @@ void updatePlayerText(Player& player, TextRenderer& text) {
     switch (player.getPlayerY()) {
     case 0:
         // Initial message
-        text.setText("Text instructions");
-        text.restoreOriginalPosition(); // Reset text position to its original location
+        text.setText(R"(
+Instructions:
+    *Press A and D (or LEFT and RIGHT) alternately to move.
+    *Pass the middle mark to start moving.
+    *Keep your balance—don't let the pointer hit the red zone, or you'll lose!
+
+Fullscreen: Press F to toggle fullscreen mode.)");
+
+        text.restoreOriginalPosition();
         text.setAnimated(false);       // Disable animation
         break;
     case 1:

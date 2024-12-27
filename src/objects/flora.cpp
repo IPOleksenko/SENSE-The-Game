@@ -68,7 +68,7 @@ private:
 
     int lastPlayerY = 0; // Last value of playerY
     int nextGenerationY = 0; // Coordinate for the next generation
-    int generationDistance = 150; // Distance between textures
+    int generationDistance = 15; // Distance between textures
 
     void loadTextures() {
         for (const auto& entry : std::filesystem::directory_iterator(assetsPath)) {

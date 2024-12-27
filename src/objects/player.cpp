@@ -132,10 +132,11 @@ public:
         SDL_RenderCopy(window.renderer, texture, &srcRect, &dstRect);
     }
 
-    void addPlayerSpeed() { playerSpeed += playerSpeedScale; }
+    void addPlayerSpeed(int button) { lastButton = button; playerSpeed += playerSpeedScale; }
 
     int getPlayerY() { return playerY; }
     int getPlayerMinSpeed() { return playerMinSpeed; }
     int getPlayerMaxSpeed() { return playerMaxSpeed; }
     int getPlayerSpeed() { return playerSpeed; }
+    int getPlayerLastButton() { return lastButton; }
 };
