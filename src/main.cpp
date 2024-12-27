@@ -20,9 +20,24 @@ const int finalCheckpoint = 25000;
 #include "utils/updatePlayerText.cpp"
 #include "objects/flora.cpp"
 
+void showLoadingScreen() {
+    // Set background color to black
+    SDL_SetRenderDrawColor(window.renderer, 0, 0, 0, 255);
+    SDL_RenderClear(window.renderer);
 
+    // Create loading text
+    TextRenderer loadingText(0, 0, 48);
+    loadingText.setText("Loading...");
+    loadingText.centerTextOnScreen();
+
+    // Render the loading text
+    loadingText.render();
+    SDL_RenderPresent(window.renderer);
+}
 
 int main(int argc, char* argv[]) {
+    showLoadingScreen();
+
     keydownEvent keyEvent;  // Object for handling key presses
     PlayerKeydownEvent playerkeyEvent;
     Player player;          // Creating the player object
