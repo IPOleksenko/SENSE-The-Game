@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef finalCheckpoint_H
-#define finalCheckpoint_H
+#ifndef FinalCheckpoint
+#define FinalCheckpoint
 extern const int finalCheckpoint; // Declares an external constant representing the final checkpoint
 #endif 
 

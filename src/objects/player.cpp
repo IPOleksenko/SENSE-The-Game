@@ -1,13 +1,14 @@
 #pragma once
 
-#ifndef finalCheckpoint_H
-#define finalCheckpoint_H
+#ifndef FinalCheckpoint
+#define FinalCheckpoint
 extern const int finalCheckpoint;
 #endif 
 
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
+#include <iomanip> // For std::fixed and std::setprecision
 
 #include "objects/reload.cpp"
 #include "window/window.cpp"
@@ -74,11 +75,20 @@ public:
 
         if (isMoving) {
             playerY += 1;
+
+            // Adjust speed scale and decrease based on progress
+            float progress = playerY / finalCheckpoint;
+            playerSpeedScale = 5.0f + 10 * progress; // Increase scale more aggressively
+            playerSpeedDecrease = 0.5f + progress; // Increase decrease rate more aggressively
+
             if (playerMinSpeed > playerSpeed || playerSpeed > playerMaxSpeed) {
                 reset();
                 std::cout << "You lost!" << std::endl;
             }
         }
+
+        std::cout << std::fixed << std::setprecision(4);
+        std::cout << "Player Y: " << playerY << "\tplayerSpeedScale: " << playerSpeedScale << "\tplayerSpeedDecrease: " << playerSpeedDecrease << std::endl;
 
         if (playerSpeed >= playerSpeedDecrease && playerY <= finalCheckpoint)
             playerSpeed -= playerSpeedDecrease;
@@ -91,6 +101,8 @@ public:
         lastButton = NULL;
         isMoving = false;
         currentFrame = 0;
+        playerSpeedScale = 5.0f; // Reset to initial values
+        playerSpeedDecrease = 0.5f;
     }
 
     void updateAnimation() {

@@ -86,8 +86,6 @@ int main(int argc, char* argv[]) {
         updatePlayerText(player, text);
         text.render();
 
-        std::cout << "Player Y: " << player.getPlayerY() << std::endl; // Print the player's Y-coordinate
-
         camera.move();  // Move the camera
 
         // Present the rendered frame

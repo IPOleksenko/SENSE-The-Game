@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef finalCheckpoint_H
-#define finalCheckpoint_H
+#ifndef FinalCheckpoint
+#define FinalCheckpoint
 extern int finalCheckpoint;
 #endif 
 
@@ -11,7 +11,7 @@ void updatePlayerText(Player& player, TextRenderer& text) {
         // Initial message
         text.setText(R"(
 Instructions:
-    *Press A and D (or LEFT and RIGHT) alternately to move.
+    *Press A (or LEFT) and D (or RIGHT) alternately to move.
     *Pass the middle mark to start moving.
     *Keep your balance—don't let the pointer hit the red zone, or you'll lose!
 

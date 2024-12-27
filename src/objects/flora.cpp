@@ -30,19 +30,22 @@ public:
 
         // Generate new textures at fixed distances
         while (playerY + window.BASE_HEIGHT >= nextGenerationY) {
-            SDL_Texture* texture = textures[std::rand() % textures.size()]; // Random texture
+            // Generate several textures at the current Y level
+            for (int i = 0; i < 5; ++i) { // Increase the number of textures
+                SDL_Texture* texture = textures[std::rand() % textures.size()]; // Random texture
 
-            int textureWidth, textureHeight;
-            SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
+                int textureWidth, textureHeight;
+                SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
 
-            SDL_Rect destRect;
-            destRect.x = getRandomXPosition(window.BASE_WIDTH, textureWidth); // Random x-position within allowed sections
-            destRect.y = nextGenerationY; // Fixed y-position
-            destRect.w = textureWidth;
-            destRect.h = textureHeight;
+                SDL_Rect destRect;
+                destRect.x = getRandomXPosition(window.BASE_WIDTH, textureWidth); // Random x-position within allowed sections
+                destRect.y = nextGenerationY; // Fixed y-position
+                destRect.w = textureWidth;
+                destRect.h = textureHeight;
 
-            // Save texture and its position
-            renderedTextures.push_back({ texture, destRect });
+                // Save texture and its position
+                renderedTextures.push_back({ texture, destRect });
+            }
 
             nextGenerationY += generationDistance; // Update coordinate for the next generation
         }
@@ -68,7 +71,7 @@ private:
 
     int lastPlayerY = 0; // Last value of playerY
     int nextGenerationY = 0; // Coordinate for the next generation
-    int generationDistance = 15; // Distance between textures
+    int generationDistance = 3.5; // Distance between textures
 
     void loadTextures() {
         for (const auto& entry : std::filesystem::directory_iterator(assetsPath)) {
