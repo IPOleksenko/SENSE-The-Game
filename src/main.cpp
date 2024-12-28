@@ -4,21 +4,20 @@
 #include <SDL.h>
 #include <iostream>
 
-const int finalCheckpoint = 25000;
 
-#include "window/window.cpp"
-#include "utils/soundTrack.cpp"
-#include "events/keydownEvent.cpp"
-#include "events/playerKeydownEvent.cpp"
-#include "objects/scale.cpp"
-#include "objects/player.cpp"
-#include "objects/road.cpp"
-#include "objects/background.cpp"
-#include "objects/text.cpp"
-#include "objects/endRender.cpp"
-#include "utils/camera.cpp"
-#include "utils/updatePlayerText.cpp"
-#include "objects/flora.cpp"
+#include <window/window.hpp>
+
+#include <utils/soundtrack.hpp>
+#include <events/keydownEvent.hpp>
+#include <events/playerKeydownEvent.hpp>
+#include <objects/scale.hpp>
+#include <objects/player.hpp>
+#include <objects/road.hpp>
+#include <objects/background.hpp>
+#include <objects/text.hpp>
+#include <objects/endRender.hpp>
+#include <utils/camera.hpp>
+#include <objects/flora.hpp>
 
 void showLoadingScreen() {
     // Set background color to black
@@ -42,7 +41,7 @@ int main(int argc, char* argv[]) {
     PlayerKeydownEvent playerkeyEvent;
     Player player;          // Creating the player object
     RoadGenerator road;
-    backgroundGenerator background;
+    BackgroundGenerator background;
     Camera camera;
     ScaleGenerator scale;
     TextRenderer text(0, 0, 24);
@@ -78,12 +77,12 @@ int main(int argc, char* argv[]) {
 
         scale.render(player.getPlayerSpeed(), player.getPlayerMinSpeed(), player.getPlayerMaxSpeed()); // Render the speed scale
 
-        if (player.getPlayerY() >= finalCheckpoint) {
+        if (player.getPlayerY() >= WINDOW::finalCheckpoint) {
             end.render(player.getPlayerY());  // Render the end game screen if the player reaches the final checkpoint
         }
 
         // Render text
-        updatePlayerText(player, text);
+        text.update(player.getPlayerY());
         text.render();
 
         camera.move();  // Move the camera

@@ -1,19 +1,9 @@
-#pragma once
-
+#include <utils/renderTilingTexture.hpp>
 #include <SDL.h>
-#include <SDL_image.h>  // For image loading
-#include <iostream>     // For console output
-#include "../window/window.cpp"
+#include <iostream>
+#include <window/window.hpp>
 
-/**
- * Renders a tiling texture on the screen.
- *
- * @param texture The SDL_Texture to render.
- * @param startY The vertical starting position for the tiling.
- * @param scale Scaling factor for the texture.
- * @param fullscreen If true, the texture will cover the entire screen without maintaining aspect ratio.
- */
-void renderTilingTexture(SDL_Texture* texture, int startY, double scale, bool fullscreen = false) {
+void renderTilingTexture(SDL_Texture* texture, int startY, double scale, bool fullscreen) {
     if (!texture || !window.renderer) return;
 
     // Get the original texture dimensions

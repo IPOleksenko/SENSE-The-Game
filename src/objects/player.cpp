@@ -1,154 +1,112 @@
-#pragma once
-
-#ifndef FinalCheckpoint
-#define FinalCheckpoint
-extern const int finalCheckpoint;
-#endif 
-
-#include <SDL.h>
+#include <objects/player.hpp>
+#include <window/window.hpp>
 #include <SDL_image.h>
 #include <iostream>
-#include <iomanip> // For std::fixed and std::setprecision
+#include <iomanip>
 
-#include "../objects/reload.cpp"
-#include "../window/window.cpp"
 
-class Player {
-private:
-    Reload reload;
-
-    SDL_Texture* texture = nullptr;
-
-    // Player parameters
-    float playerY = 0.0f;
-    float playerSpeed = 0.0f;
-
-    int lastButton = NULL;
-    bool isMoving = false;
-
-    float playerSpeedScale = 5.0f;
-    float playerSpeedDecrease = 0.5f;
-
-    float playerMinSpeed = playerSpeedDecrease + 50.0f;
-    float playerMaxSpeed = 150.0f;
-    float playerNormalSpeed = (playerMaxSpeed + playerMinSpeed) / 2;
-
-    // Animation parameters
-    int frameWidth = 0;
-    int frameHeight = 0;
-    int currentFrame = 0;
-    int totalFrames = 120; // Total number of frames in the animation
-    int framesPerRow = 20; // Number of frames per row
-    int animationSpeed = 100; // Animation speed in milliseconds
-    Uint32 lastFrameTime = 0; // Time of the last frame switch
-
-public:
-    Player() {
-        // Initializing SDL_image
-        if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-            SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
-            return;
-        }
-
-        // Loading texture
-        texture = IMG_LoadTexture(window.renderer, "assets/sprite/player/player.png");
-        if (!texture) {
-            SDL_Log("Failed to load texture: %s", SDL_GetError());
-            return;
-        }
-
-        // Determining frame dimensions
-        int textureWidth, textureHeight;
-        SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
-        frameWidth = textureWidth / framesPerRow;
-        frameHeight = textureHeight / (totalFrames / framesPerRow);
+Player::Player() {
+    // Initializing SDL_image
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+        SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
+        return;
     }
 
-    ~Player() {
-        SDL_DestroyTexture(texture);
-        IMG_Quit(); // Terminating SDL_image
+    // Loading texture
+    texture = IMG_LoadTexture(window.renderer, "assets/sprite/player/player.png");
+    if (!texture) {
+        SDL_Log("Failed to load texture: %s", SDL_GetError());
+        return;
     }
 
-    void moving() {
-        if (playerSpeed >= playerNormalSpeed)
-            isMoving = true;
+    // Determining frame dimensions
+    int textureWidth, textureHeight;
+    SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
+    frameWidth = textureWidth / framesPerRow;
+    frameHeight = textureHeight / (totalFrames / framesPerRow);
+}
 
-        if (isMoving) {
-            playerY += 1;
+Player::~Player() {
+    SDL_DestroyTexture(texture);
+    IMG_Quit(); // Terminating SDL_image
+}
 
-            // Adjust speed scale and decrease based on progress
-            float progress = playerY / finalCheckpoint;
-            playerSpeedScale = 5.0f + 10 * progress; // Increase scale more aggressively
-            playerSpeedDecrease = 0.5f + progress; // Increase decrease rate more aggressively
+void Player::moving() {
+    if (playerSpeed >= playerNormalSpeed)
+        isMoving = true;
 
-            if (playerMinSpeed > playerSpeed || playerSpeed > playerMaxSpeed) {
-                reset();
-                std::cout << "You lost!" << std::endl;
-            }
-        }
+    if (isMoving) {
+        playerY += 1;
 
-        std::cout << std::fixed << std::setprecision(4);
-        std::cout << "Player Y: " << playerY << "\tplayerSpeedScale: " << playerSpeedScale << "\tplayerSpeedDecrease: " << playerSpeedDecrease << std::endl;
+        // Adjust speed scale and decrease based on progress
+        float progress = playerY / WINDOW::finalCheckpoint;
+        playerSpeedScale = 5.0f + 10 * progress; // Increase scale more aggressively
+        playerSpeedDecrease = 0.5f + progress; // Increase decrease rate more aggressively
 
-        if (playerSpeed >= playerSpeedDecrease && playerY <= finalCheckpoint)
-            playerSpeed -= playerSpeedDecrease;
-    }
-
-    void reset() {
-        reload.render();
-        playerY = 0.0f;
-        playerSpeed = 0.0f;
-        lastButton = NULL;
-        isMoving = false;
-        currentFrame = 0;
-        playerSpeedScale = 5.0f; // Reset to initial values
-        playerSpeedDecrease = 0.5f;
-    }
-
-    void updateAnimation() {
-        if (!isMoving) {
-            currentFrame = 0; // Reset to the first frame if the player is not moving
-            return;
-        }
-
-        Uint32 currentTime = SDL_GetTicks();
-        if (currentTime > lastFrameTime + animationSpeed) {
-            currentFrame = (currentFrame + 1) % totalFrames;
-            lastFrameTime = currentTime;
+        if (playerMinSpeed > playerSpeed || playerSpeed > playerMaxSpeed) {
+            reset();
+            std::cout << "You lost!" << std::endl;
         }
     }
 
-    void render() {
-        if (!texture) { return; }
+    std::cout << std::fixed << std::setprecision(4);
+    std::cout << "Player Y: " << playerY << "\tplayerSpeedScale: " << playerSpeedScale << "\tplayerSpeedDecrease: " << playerSpeedDecrease << std::endl;
 
-        // Calculate the coordinates of the frame in the sprite sheet
-        int row = currentFrame / framesPerRow;
-        int col = currentFrame % framesPerRow;
+    if (playerSpeed >= playerSpeedDecrease && playerY <= WINDOW::finalCheckpoint)
+        playerSpeed -= playerSpeedDecrease;
+}
 
-        SDL_Rect srcRect = {
-            col * frameWidth, // Start of the frame on X
-            row * frameHeight, // Start of the frame on Y
-            frameWidth, // Frame width
-            frameHeight // Frame height
-        };
+void Player::reset() {
+    reload.render();
+    playerY = 0.0f;
+    playerSpeed = 0.0f;
+    lastButton = 0;
+    isMoving = false;
+    currentFrame = 0;
+    playerSpeedScale = 5.0f; // Reset to initial values
+    playerSpeedDecrease = 0.5f;
+}
 
-        // Destination rectangle on the screen
-        SDL_Rect dstRect = {
-            (window.BASE_WIDTH - frameWidth) / 2, // Center on X
-            (window.BASE_HEIGHT - frameHeight) / 2 - 10, // Center on Y minus 10 pixels
-            frameWidth,
-            frameHeight
-        };
-
-        // Rendering the current frame
-        SDL_RenderCopy(window.renderer, texture, &srcRect, &dstRect);
+void Player::updateAnimation() {
+    if (!isMoving) {
+        currentFrame = 0; // Reset to the first frame if the player is not moving
+        return;
     }
 
-    void addPlayerSpeed(int button) { lastButton = button; playerSpeed += playerSpeedScale; }
+    Uint32 currentTime = SDL_GetTicks();
+    if (currentTime > lastFrameTime + animationSpeed) {
+        currentFrame = (currentFrame + 1) % totalFrames;
+        lastFrameTime = currentTime;
+    }
+}
 
-    int getPlayerY() { return playerY; }
-    int getPlayerMinSpeed() { return playerMinSpeed; }
-    int getPlayerMaxSpeed() { return playerMaxSpeed; }
-    int getPlayerSpeed() { return playerSpeed; }
-    int getPlayerLastButton() { return lastButton; }
-};
+void Player::render() {
+    if (!texture) { return; }
+
+    // Calculate the coordinates of the frame in the sprite sheet
+    int row = currentFrame / framesPerRow;
+    int col = currentFrame % framesPerRow;
+
+    SDL_Rect srcRect = {
+        col * frameWidth, // Start of the frame on X
+        row * frameHeight, // Start of the frame on Y
+        frameWidth, // Frame width
+        frameHeight // Frame height
+    };
+
+    // Destination rectangle on the screen
+    SDL_Rect dstRect = {
+        (window.BASE_WIDTH - frameWidth) / 2, // Center on X
+        (window.BASE_HEIGHT - frameHeight) / 2 - 10, // Center on Y minus 10 pixels
+        frameWidth,
+        frameHeight
+    };
+
+    // Rendering the current frame
+    SDL_RenderCopy(window.renderer, texture, &srcRect, &dstRect);
+}
+
+void Player::addPlayerSpeed(int button) { 
+    lastButton = button;
+    playerSpeed += playerSpeedScale;
+}
