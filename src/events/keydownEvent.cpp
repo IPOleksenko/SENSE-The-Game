@@ -1,7 +1,5 @@
-#pragma once
-
 #include <SDL.h>
-#include "window/window.cpp"
+#include "../window/window.cpp"
 
 class keydownEvent {
 private:

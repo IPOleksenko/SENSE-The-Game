@@ -1,9 +1,11 @@
+#pragma once
+
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
 #include <sstream>
 
-#include "window/window.cpp" // Include the file with renderer and window definitions
+#include "../window/window.cpp" // Include the file with renderer and window definitions
 
 class TextRenderer {
 private:

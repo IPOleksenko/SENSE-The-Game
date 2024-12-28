@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>  // For image loading
 #include <iostream>     // For console output
-#include "window/window.cpp"
+#include "../window/window.cpp"
 
 /**
  * Renders a tiling texture on the screen.

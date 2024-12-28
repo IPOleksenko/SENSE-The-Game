@@ -3,8 +3,8 @@
 #include <SDL.h>
 #include <SDL_image.h>  // For image loading
 #include <iostream>     // For console output
-#include "window/window.cpp"
-#include "utils/renderTilingTexture.cpp"
+#include "../window/window.cpp"
+#include "../utils/renderTilingTexture.cpp"
 
 class RoadGenerator {
 private:

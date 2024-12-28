@@ -10,8 +10,8 @@ extern const int finalCheckpoint;
 #include <iostream>
 #include <iomanip> // For std::fixed and std::setprecision
 
-#include "objects/reload.cpp"
-#include "window/window.cpp"
+#include "../objects/reload.cpp"
+#include "../window/window.cpp"
 
 class Player {
 private:

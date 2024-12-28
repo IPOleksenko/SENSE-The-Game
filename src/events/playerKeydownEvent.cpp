@@ -5,8 +5,8 @@
 extern const int finalCheckpoint; // Declares an external constant representing the final checkpoint
 #endif 
 
-#include "window/window.cpp"
-#include "objects/player.cpp"
+#include "../window/window.cpp"
+#include "../objects/player.cpp"
 
 class PlayerKeydownEvent {
 public:

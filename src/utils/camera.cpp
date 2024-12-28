@@ -1,7 +1,9 @@
+#pragma once
+
 #include <iostream>
 #include <SDL.h>
 
-#include "window/window.cpp" 
+#include "../window/window.cpp" 
 
 class Camera {
 private:

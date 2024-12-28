@@ -4,7 +4,7 @@
 #include <SDL_image.h>
 #include <iostream>
 #include <chrono>
-#include "window/window.cpp"
+#include "../window/window.cpp"
 
 class EndRender {
 private:

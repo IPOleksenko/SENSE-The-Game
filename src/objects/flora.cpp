@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
@@ -7,7 +9,7 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "window/window.cpp"
+#include "../window/window.cpp"
 
 class Flora {
 public:

@@ -7,7 +7,7 @@
 const int finalCheckpoint = 25000;
 
 #include "window/window.cpp"
-#include "utils/SoundTrack.cpp"
+#include "utils/soundTrack.cpp"
 #include "events/keydownEvent.cpp"
 #include "events/playerKeydownEvent.cpp"
 #include "objects/scale.cpp"

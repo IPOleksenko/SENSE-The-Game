@@ -5,8 +5,8 @@
 #include <iostream>
 #include <chrono>
 
-#include "window/window.cpp"
-#include "utils/SoundTrack.cpp"
+#include "../window/window.cpp"
+#include "../utils/soundTrack.cpp"
 
 class Reload {
 private:
