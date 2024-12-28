@@ -32,6 +32,12 @@ FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_ttf)
 # Collect source files
 file(GLOB SOURCES "src/main.cpp")
 
+# Specify custom output directories
+set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+
 # Create the main executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
@@ -70,7 +76,7 @@ add_custom_command(
     COMMENT "Copying the assets folder to the build directory"
 )
 
-# Copy DLL files to the build directory
+# Copy DLL files to the build directory (if applicable)
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2> $<TARGET_FILE_DIR:${PROJECT_NAME}>
