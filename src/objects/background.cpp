@@ -6,10 +6,10 @@
 
 BackgroundGenerator::BackgroundGenerator() {
     // Load the foreground background texture
-    frontTexture = IMG_LoadTexture(window.renderer, "assets/sprite/background/front_background.png");
+    frontTexture = IMG_LoadTexture(window.renderer, "assets/sprite/background/front.png");
 
     // Load the far background texture
-    backTexture = IMG_LoadTexture(window.renderer, "assets/sprite/background/back_background.png");
+    backTexture = IMG_LoadTexture(window.renderer, "assets/sprite/background/back.png");
 
     // Check if the foreground texture failed to load
     if (!frontTexture) {

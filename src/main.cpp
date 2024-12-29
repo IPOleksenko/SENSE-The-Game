@@ -1,23 +1,21 @@
 ﻿#define DEFINE_WINDOW
 #define DEFINE_SOUNDTRACK
 
-#include <SDL.h>
-#include <iostream>
-
-
 #include <window/window.hpp>
-
+#include <utils/camera.hpp>
 #include <utils/soundtrack.hpp>
-#include <events/keydownEvent.hpp>
-#include <events/playerKeydownEvent.hpp>
 #include <objects/scale.hpp>
 #include <objects/player.hpp>
 #include <objects/road.hpp>
 #include <objects/background.hpp>
 #include <objects/text.hpp>
 #include <objects/endRender.hpp>
-#include <utils/camera.hpp>
 #include <objects/flora.hpp>
+#include <events/keydownEvent.hpp>
+#include <events/playerKeydownEvent.hpp>
+#include <SDL.h>
+#include <iostream>
+
 
 void showLoadingScreen() {
     // Set background color to black

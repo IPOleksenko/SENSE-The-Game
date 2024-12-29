@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(sdl2_import.cmake)
+include(incbin_import.cmake)
 
 set(PROJECT_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set(ASSETS_DIR ${PROJECT_ROOT}/assets)
@@ -14,10 +15,10 @@ include(${SOURCE_DIR}/window/module.cmake)
 include(${SOURCE_DIR}/utils/module.cmake)
 include(${SOURCE_DIR}/objects/module.cmake)
 include(${SOURCE_DIR}/events/module.cmake)
+include(${SOURCE_DIR}/assets/module.cmake)
 
 set(SRC_FILES
-    src/events/keydownEvent.cpp
-    src/events/playerKeydownEvent.cpp
+    src/main.cpp
 )
 
 # Specify custom output directories
@@ -44,14 +45,8 @@ target_link_libraries(${PROJECT_NAME}
         ${PROJECT_NAME}_utils
         ${PROJECT_NAME}_objects
         ${PROJECT_NAME}_events
-)
-
-target_include_directories(${PROJECT_NAME}
-    PRIVATE
-        ${SDL2_SOURCE_DIR}/include
-        ${SDL2_image_SOURCE_DIR}/include
-        ${SDL2_ttf_SOURCE_DIR}/include
-)
+        ${PROJECT_NAME}_assets
+    )
 
 # Copy assets to binary dir
 add_custom_command(

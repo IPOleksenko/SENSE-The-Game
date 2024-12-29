@@ -1,18 +1,16 @@
-set(MODULE_NAME utils)
+set(MODULE_NAME assets)
 set(MODULE_DIR ${SOURCE_DIR}/${MODULE_NAME})
 set(INCLUDE_DIR ${MODULE_DIR}/${MODULE_NAME})
 set(MODULE_TARGET ${PROJECT_NAME}_${MODULE_NAME})
 
+include(${MODULE_DIR}/autogen.cmake)
+
 set(MODULE_SOURCES
-    ${MODULE_DIR}/camera.cpp
-    ${MODULE_DIR}/soundtrack.cpp
-    ${MODULE_DIR}/renderTilingTexture.cpp
+    ${MODULE_DIR}/assets.cpp
 )
 
 set(MODULE_HEADERS
-    ${INCLUDE_DIR}/camera.hpp
-    ${INCLUDE_DIR}/soundtrack.hpp
-    ${INCLUDE_DIR}/renderTilingTexture.hpp
+    ${INCLUDE_DIR}/assets.hpp
 )
 
 add_library(
@@ -26,9 +24,12 @@ target_include_directories(
         ${MODULE_DIR}
 )
 
+target_include_directories(
+    ${MODULE_TARGET} PRIVATE
+        ${ASSETS_DIR}
+)
+
 target_link_libraries(
     ${MODULE_TARGET} PUBLIC
-        SDL2::SDL2
-        SDL2_image::SDL2_image
-        ${PROJECT_NAME}_window
+        incbin::incbin_static
 )

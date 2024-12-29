@@ -56,7 +56,7 @@ void Soundtrack::reset() {
 
 
 void Soundtrack::loadWAV() {
-    if (SDL_LoadWAV("assets/sound/sound.wav", &audioSpec, &audioBuffer, &audioLength) == nullptr) {
+    if (SDL_LoadWAV("assets/sound/wind.wav", &audioSpec, &audioBuffer, &audioLength) == nullptr) {
         throw std::runtime_error("Failed to load WAV file: " + std::string(SDL_GetError()));
     }
 }
