@@ -43,4 +43,5 @@ target_link_libraries(
         SDL2_ttf::SDL2_ttf
         ${PROJECT_NAME}_window
         ${PROJECT_NAME}_utils
+        ${PROJECT_NAME}_assets
 )

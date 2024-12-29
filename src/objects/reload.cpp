@@ -1,12 +1,18 @@
 #include <objects/reload.hpp>
 #include <window/window.hpp>
 #include <utils/soundtrack.hpp>
+#include <assets/assets.hpp>
 #include <SDL_image.h>
 
 
 Reload::Reload() {
     // Load texture
-    texture = IMG_LoadTexture(window.renderer, "assets/sprite/color_screen/black.png");
+
+    texture = IMG_LoadTexture_RW(
+        window.renderer,
+        SDL_Incbin(SPRITE_COLOR_SCREEN_BLACK_PNG),
+        SDL_TRUE
+    );
     if (!texture) {
         SDL_Log("Failed to load texture: %s", SDL_GetError());
     }
@@ -32,7 +38,7 @@ Reload::Reload() {
     }
 
     // Load sound into memory (WAV file)
-    if (SDL_LoadWAV("assets/sound/reload.wav", &soundSpec, &soundBuffer, &soundLength) == nullptr) {
+    if (SDL_LoadWAV_RW(SDL_Incbin(SOUND_RELOAD_WAV), SDL_TRUE, &soundSpec, &soundBuffer, &soundLength) == nullptr) {
         SDL_Log("Failed to load WAV: %s", SDL_GetError());
     }
 }

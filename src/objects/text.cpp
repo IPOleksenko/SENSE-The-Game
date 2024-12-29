@@ -1,5 +1,6 @@
 #include <objects/text.hpp>
 #include <window/window.hpp>
+#include <assets/assets.hpp>
 #include <sstream>
 
 
@@ -19,7 +20,7 @@ TextRenderer::TextRenderer(int baseX, int baseY, int fontSize, Uint32 duration)
         exit(1);
     }
 
-    font = TTF_OpenFont("assets/font/font.ttf", fontSize);
+    font = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
     if (!font) {
         printf("TTF_OpenFont: %s\n", TTF_GetError());
         exit(1);

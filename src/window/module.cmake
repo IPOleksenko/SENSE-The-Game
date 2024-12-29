@@ -25,4 +25,5 @@ target_include_directories(
 target_link_libraries(
     ${MODULE_TARGET} PUBLIC
         SDL2::SDL2
+        ${PROJECT_NAME}_assets
 )

@@ -1,7 +1,8 @@
 #include <window/window.hpp>
+#include <assets/assets.hpp>
 
 WINDOW::WINDOW() {
-    SDL_Surface* icon = SDL_LoadBMP("assets/icon.bmp"); // Load BMP file
+    SDL_Surface* icon = SDL_LoadBMP_RW(SDL_Incbin(ICON_BMP), SDL_TRUE);
 
     if (icon) {
         SDL_SetWindowIcon(window, icon); // Set window icon

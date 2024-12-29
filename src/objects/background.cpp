@@ -1,15 +1,24 @@
 #include <objects/background.hpp>
 #include <window/window.hpp>
 #include <utils/renderTilingTexture.hpp>
+#include <assets/assets.hpp>
 #include <SDL_image.h>
 
 
 BackgroundGenerator::BackgroundGenerator() {
     // Load the foreground background texture
-    frontTexture = IMG_LoadTexture(window.renderer, "assets/sprite/background/front.png");
+    frontTexture = IMG_LoadTexture_RW(
+        window.renderer,
+        SDL_Incbin(SPRITE_BACKGROUND_FRONT_PNG),
+        SDL_TRUE
+    );
 
     // Load the far background texture
-    backTexture = IMG_LoadTexture(window.renderer, "assets/sprite/background/back.png");
+    backTexture = IMG_LoadTexture_RW(
+        window.renderer,
+        SDL_Incbin(SPRITE_BACKGROUND_BACK_PNG),
+        SDL_TRUE
+    );
 
     // Check if the foreground texture failed to load
     if (!frontTexture) {

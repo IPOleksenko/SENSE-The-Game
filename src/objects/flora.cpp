@@ -1,5 +1,6 @@
 #include <objects/flora.hpp>
 #include <window/window.hpp>
+#include <assets/assets.hpp>
 #include <SDL_image.h>
 #include <iostream>
 #include <filesystem>
@@ -57,15 +58,21 @@ void Flora::render(int playerY) {
 
 
 void Flora::loadTextures() {
-    for (const auto& entry : std::filesystem::directory_iterator(assetsPath)) {
-        if (entry.is_regular_file()) {
-            SDL_Texture* texture = IMG_LoadTexture(window.renderer, entry.path().string().c_str());
-            if (texture) {
-                textures.push_back(texture);
-            }
-            else {
-                std::cerr << "Failed to load texture: " << entry.path() << " SDL_Error: " << SDL_GetError() << std::endl;
-            }
+    textures = {
+        IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_FLOWER1_PNG), SDL_TRUE),
+        IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_FLOWER2_PNG), SDL_TRUE),
+        IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_FLOWER3_PNG), SDL_TRUE),
+        IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_FLOWER4_PNG), SDL_TRUE),
+        IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_GRASS_PNG), SDL_TRUE),
+        IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_SMALLROCK1_PNG), SDL_TRUE),
+        IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_SMALLROCK2_PNG), SDL_TRUE),
+        IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_SMALLROCK3_PNG), SDL_TRUE),
+    };
+
+    for (const auto& flora_texture : textures) {
+        if (!flora_texture) {
+            std::cerr << "Failed to load flora textures. " << "SDL_Error: " << SDL_GetError() << std::endl;
+            break;
         }
     }
 

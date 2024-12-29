@@ -48,13 +48,6 @@ target_link_libraries(${PROJECT_NAME}
         ${PROJECT_NAME}_assets
     )
 
-# Copy assets to binary dir
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_DIR} $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
-    COMMENT "Copying the assets folder to the build directory"
-)
-
 if(MSVC)
     include(msvc_config.cmake)
 endif()

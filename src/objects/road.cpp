@@ -1,12 +1,17 @@
 #include <objects/road.hpp>
 #include <window/window.hpp>
 #include <utils/renderTilingTexture.hpp>
+#include <assets/assets.hpp>
 #include <SDL_image.h>
 
 
 RoadGenerator::RoadGenerator() {
     // Load the road texture
-    texture = IMG_LoadTexture(window.renderer, "assets/sprite/road/road.png");
+    texture = IMG_LoadTexture_RW(
+        window.renderer,
+        SDL_Incbin(SPRITE_ROAD_ROAD_PNG),
+        SDL_TRUE
+    );    
     if (!texture) {
         SDL_Log("Failed to load texture: %s", SDL_GetError());
     }

@@ -1,4 +1,5 @@
 #include <utils/soundtrack.hpp>
+#include <assets/assets.hpp>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -56,7 +57,7 @@ void Soundtrack::reset() {
 
 
 void Soundtrack::loadWAV() {
-    if (SDL_LoadWAV("assets/sound/wind.wav", &audioSpec, &audioBuffer, &audioLength) == nullptr) {
+    if (SDL_LoadWAV_RW(SDL_Incbin(SOUND_WIND_WAV), SDL_TRUE, &audioSpec, &audioBuffer, &audioLength) == nullptr) {
         throw std::runtime_error("Failed to load WAV file: " + std::string(SDL_GetError()));
     }
 }

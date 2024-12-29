@@ -1,11 +1,16 @@
 #include <objects/endRender.hpp>
 #include <window/window.hpp>
+#include <assets/assets.hpp>
 #include <SDL_image.h>
 #include <chrono>
 
 
 EndRender::EndRender() {
-    texture = IMG_LoadTexture(window.renderer, "assets/sprite/color_screen/black.png");
+    texture = IMG_LoadTexture_RW(
+        window.renderer,
+        SDL_Incbin(SPRITE_COLOR_SCREEN_BLACK_PNG),
+        SDL_TRUE
+    );
     if (!texture) {
         SDL_Log("Failed to load texture: %s", SDL_GetError());
     }

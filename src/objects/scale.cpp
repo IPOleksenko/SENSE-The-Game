@@ -1,25 +1,33 @@
 #include <objects/scale.hpp>
 #include <SDL_image.h>
 #include <window/window.hpp>
+#include <assets/assets.hpp>
 
 
 ScaleGenerator::ScaleGenerator() {
-    arrowTexture = loadTexture("assets/sprite/scale/arrow.png");
-    scaleTexture = loadTexture("assets/sprite/scale/scale.png");
+    arrowTexture = IMG_LoadTexture_RW(
+        window.renderer,
+        SDL_Incbin(SPRITE_SCALE_ARROW_PNG),
+        SDL_TRUE
+    );
+    if (!arrowTexture) {
+        SDL_Log("Failed to load scale arrow texture: %s", SDL_GetError());
+    }
+
+    scaleTexture = IMG_LoadTexture_RW(
+        window.renderer,
+        SDL_Incbin(SPRITE_SCALE_SCALE_PNG),
+        SDL_TRUE
+    );
+    if (!scaleTexture) {
+        SDL_Log("Failed to load scale texture: %s", SDL_GetError());
+    }
 }
 
 ScaleGenerator::~ScaleGenerator() {
     // Cleanup textures
     if (arrowTexture) SDL_DestroyTexture(arrowTexture);
     if (scaleTexture) SDL_DestroyTexture(scaleTexture);
-}
-
-SDL_Texture* ScaleGenerator::loadTexture(const std::string& path) {
-    SDL_Texture* texture = IMG_LoadTexture(window.renderer, path.c_str());
-    if (!texture) {
-        SDL_Log("Failed to load texture '%s': %s", path.c_str(), SDL_GetError());
-    }
-    return texture;
 }
 
 int ScaleGenerator::interpolate(int start, int end, double t) {

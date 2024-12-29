@@ -1,5 +1,6 @@
 #include <objects/player.hpp>
 #include <window/window.hpp>
+#include <assets/assets.hpp>
 #include <SDL_image.h>
 #include <iostream>
 #include <iomanip>
@@ -13,7 +14,11 @@ Player::Player() {
     }
 
     // Loading texture
-    texture = IMG_LoadTexture(window.renderer, "assets/sprite/player/player.png");
+    texture = IMG_LoadTexture_RW(
+        window.renderer,
+        SDL_Incbin(SPRITE_PLAYER_PLAYER_PNG),
+        SDL_TRUE
+    );
     if (!texture) {
         SDL_Log("Failed to load texture: %s", SDL_GetError());
         return;
