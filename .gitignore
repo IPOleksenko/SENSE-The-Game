@@ -5,3 +5,5 @@ build/
 .idea/
 CMakeSettings.json
 Makefile
+.vscode
+SENSE_THE_GAME.sh

@@ -18,14 +18,8 @@ include(${SOURCE_DIR}/events/module.cmake)
 include(${SOURCE_DIR}/assets/module.cmake)
 
 set(SRC_FILES
-    src/main.cpp
+    ${SOURCE_DIR}/main.cpp
 )
-
-# Specify custom output directories
-set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR})
-
 
 # Create the main executable
 add_executable(${PROJECT_NAME}
@@ -46,8 +40,23 @@ target_link_libraries(${PROJECT_NAME}
         ${PROJECT_NAME}_objects
         ${PROJECT_NAME}_events
         ${PROJECT_NAME}_assets
-    )
+)
+
+install(
+    TARGETS
+        ${PROJECT_NAME}
+        SDL2
+        SDL2_image
+        SDL2_ttf
+
+    DESTINATION
+        ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}
+)
 
 if(MSVC)
     include(msvc_config.cmake)
+endif()
+
+if(UNIX)
+    include(install_launcher.cmake)
 endif()
