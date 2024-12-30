@@ -13,6 +13,10 @@ set(MODULE_HEADERS
     ${INCLUDE_DIR}/assets.hpp
 )
 
+if(MSVC)
+    include(${MODULE_DIR}/incbin_tool.cmake)
+endif()
+
 add_library(
     ${MODULE_TARGET} STATIC
         ${MODULE_SOURCES}
@@ -31,5 +35,12 @@ target_include_directories(
 
 target_link_libraries(
     ${MODULE_TARGET} PUBLIC
-        incbin::incbin_static
+        incbin
 )
+
+if(MSVC)
+    add_dependencies(
+        ${MODULE_TARGET} 
+        ${MODULE_TARGET}_incbin
+    )
+endif()
