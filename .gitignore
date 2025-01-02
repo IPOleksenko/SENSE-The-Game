@@ -3,7 +3,11 @@ bin/
 build/
 /.vs
 .idea/
+.gradle/
+.cxx/
 CMakeSettings.json
 Makefile
 .vscode
 SENSE_THE_GAME.sh
+external/
+libsdl/

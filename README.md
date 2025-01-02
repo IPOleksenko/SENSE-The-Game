@@ -1,4 +1,4 @@
-<img src="assets/icon.bmp" width="256" alt="logo">
+<img src="app/src/main/assets/icon.bmp" width="256" alt="logo">
 
 # 🎮 SENSE The Game
 
