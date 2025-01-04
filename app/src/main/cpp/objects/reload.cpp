@@ -6,8 +6,9 @@
 
 
 Reload::Reload() {
-    // Load texture
+    Window& window = Window::getInstance();
 
+    // Load texture
     texture = IMG_LoadTexture_RW(
         window.renderer,
         SDL_Incbin(SPRITE_COLOR_SCREEN_BLACK_PNG),
@@ -60,10 +61,12 @@ Reload::~Reload() {
 }
 
 void Reload::render() {
+    Window& window = Window::getInstance();
+
     soundtrack.stop();
 
     // Define the position and size for rendering
-    SDL_Rect dest_rect = { 0, 0, window.BASE_WIDTH, window.BASE_HEIGHT };
+    SDL_Rect dest_rect = { 0, 0, Window::baseWidth, window.baseHeight };
 
     // Render the texture
     SDL_RenderCopy(window.renderer, texture, nullptr, &dest_rect);

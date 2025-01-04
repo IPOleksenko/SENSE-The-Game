@@ -77,9 +77,11 @@ void TextRenderer::centerTextOnScreen() {
         SDL_FreeSurface(surface);
     }
 
+    Window& window = Window::getInstance();
+
     // Center the text relative to the screen
-    basePosition.x = (window.BASE_WIDTH - maxWidth) / 2;
-    basePosition.y = (window.BASE_HEIGHT - totalHeight) / 2;
+    basePosition.x = (Window::baseWidth - maxWidth) / 2;
+    basePosition.y = (window.baseHeight - totalHeight) / 2;
 }
 
 void TextRenderer::restoreOriginalPosition() {
@@ -115,6 +117,8 @@ void TextRenderer::render() {
             printf("TTF_RenderText_Blended: %s\n", TTF_GetError());
             continue;
         }
+
+        Window& window = Window::getInstance();
 
         SDL_Texture* texture = SDL_CreateTextureFromSurface(window.renderer, surface);
         if (!texture) {
@@ -344,13 +348,14 @@ Fullscreen: Press F to toggle fullscreen mode.)");
         startAnimation(false);
         break;
 
-    case WINDOW::finalCheckpoint:
+    case Window::finalCheckpoint:
         setText("THE UNIVERSE DOESN'T MAKE SENSE.");
         centerTextOnScreen();
         startAnimation(true);
         break;
-    case WINDOW::finalCheckpoint + 500:
+    case Window::finalCheckpoint + 500:
         // End the game
+        Window& window = Window::getInstance();
         window.running = false;
         break;
     }

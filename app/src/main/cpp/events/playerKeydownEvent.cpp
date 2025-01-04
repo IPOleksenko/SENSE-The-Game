@@ -4,8 +4,10 @@
 
 
 void PlayerKeydownEvent::keydown(Player& player) {
+    Window& window = Window::getInstance();
+
     // Check if a key was released and the player's Y-coordinate is within the final checkpoint
-    if (window.event.type == SDL_KEYUP && player.getPlayerY() <= WINDOW::finalCheckpoint) {
+    if (window.event.type == SDL_KEYUP && player.getPlayerY() <= Window::finalCheckpoint) {
         // If the 'A' or Left Arrow key is released, increase the player's speed
         if ((window.event.key.keysym.sym == SDLK_a || window.event.key.keysym.sym == SDLK_LEFT) && player.getPlayerLastButton() != SDL_SCANCODE_A) {
             player.addPlayerSpeed(SDL_SCANCODE_A);

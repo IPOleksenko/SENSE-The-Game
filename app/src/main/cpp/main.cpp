@@ -18,6 +18,8 @@
 
 
 void showLoadingScreen() {
+    Window& window = Window::getInstance();
+
     // Set background color to black
     SDL_SetRenderDrawColor(window.renderer, 0, 0, 0, 255);
     SDL_RenderClear(window.renderer);
@@ -49,6 +51,8 @@ int main(int argc, char* argv[]) {
     soundtrack.play();
 
     // Main game loop
+    Window& window = Window::getInstance();
+
     while (window.running) {
         // Event handling
         while (SDL_PollEvent(&window.event)) {
@@ -60,7 +64,7 @@ int main(int argc, char* argv[]) {
             playerkeyEvent.keydown(player);
         }
 
-        SDL_RenderSetLogicalSize(window.renderer, window.BASE_WIDTH, window.BASE_HEIGHT);
+        SDL_RenderSetLogicalSize(window.renderer, Window::baseWidth, window.baseHeight);
 
         // Clear the screen
         SDL_SetRenderDrawColor(window.renderer, 0, 0, 0, 255);  // Set color to black
@@ -75,7 +79,7 @@ int main(int argc, char* argv[]) {
 
         scale.render(player.getPlayerSpeed(), player.getPlayerMinSpeed(), player.getPlayerMaxSpeed()); // Render the speed scale
 
-        if (player.getPlayerY() >= WINDOW::finalCheckpoint) {
+        if (player.getPlayerY() >= Window::finalCheckpoint) {
             end.render(player.getPlayerY());  // Render the end game screen if the player reaches the final checkpoint
         }
 

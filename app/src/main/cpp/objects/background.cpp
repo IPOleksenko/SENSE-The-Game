@@ -6,6 +6,8 @@
 
 
 BackgroundGenerator::BackgroundGenerator() {
+    Window& window = Window::getInstance();
+
     // Load the foreground background texture
     frontTexture = IMG_LoadTexture_RW(
         window.renderer,

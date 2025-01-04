@@ -4,6 +4,8 @@
 #include <window/window.hpp>
 
 void renderTilingTexture(SDL_Texture* texture, int startY, double scale, bool fullscreen) {
+    Window& window = Window::getInstance();
+
     if (!texture || !window.renderer) return;
 
     // Get the original texture dimensions
@@ -11,8 +13,8 @@ void renderTilingTexture(SDL_Texture* texture, int startY, double scale, bool fu
     SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
 
     // Calculate scaling factors
-    float scaleX = static_cast<float>(window.BASE_WIDTH) / textureWidth;
-    float scaleY = static_cast<float>(window.BASE_HEIGHT) / textureHeight;
+    float scaleX = static_cast<float>(Window::baseWidth) / textureWidth;
+    float scaleY = static_cast<float>(window.baseHeight) / textureHeight;
     float uniformScale = std::min(scaleX, scaleY) * scale;
 
     // Calculate the scaled dimensions of the texture
@@ -20,14 +22,14 @@ void renderTilingTexture(SDL_Texture* texture, int startY, double scale, bool fu
     int scaledHeight = static_cast<int>(textureHeight * uniformScale);
 
     SDL_Rect dstRect;
-    for (int y = startY; y < window.BASE_HEIGHT; y += scaledHeight) {
+    for (int y = startY; y < window.baseHeight; y += scaledHeight) {
         if (fullscreen) {
             // Stretch the texture to fill the screen
-            dstRect = { 0, y, window.BASE_WIDTH, window.BASE_HEIGHT };
+            dstRect = { 0, y, Window::baseWidth, window.baseHeight };
         }
         else {
             // Center the texture horizontally and offset it vertically
-            dstRect.x = (window.BASE_WIDTH - scaledWidth) / 2;  // Horizontal centering
+            dstRect.x = (Window::baseWidth - scaledWidth) / 2;  // Horizontal centering
             dstRect.y = y;                                      // Vertical offset
             dstRect.w = scaledWidth;
             dstRect.h = scaledHeight;

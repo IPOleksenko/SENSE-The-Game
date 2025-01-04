@@ -6,6 +6,8 @@
 
 
 EndRender::EndRender() {
+    Window& window = Window::getInstance();
+
     texture = IMG_LoadTexture_RW(
         window.renderer,
         SDL_Incbin(SPRITE_COLOR_SCREEN_BLACK_PNG),
@@ -26,6 +28,8 @@ EndRender::~EndRender() {
 void EndRender::render(int Y) {
     if (!texture) { return; }
 
+    Window& window = Window::getInstance();
+
     // Start time of rendering
     static auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -44,7 +48,7 @@ void EndRender::render(int Y) {
     SDL_SetTextureAlphaMod(texture, alpha); // Set alpha value
 
     // Define the position and size for rendering
-    SDL_Rect dest_rect = { 0, 0, window.BASE_WIDTH, window.BASE_HEIGHT };
+    SDL_Rect dest_rect = { 0, 0, Window::baseWidth, window.baseHeight };
 
     // Render the texture
     SDL_RenderCopy(window.renderer, texture, nullptr, &dest_rect);

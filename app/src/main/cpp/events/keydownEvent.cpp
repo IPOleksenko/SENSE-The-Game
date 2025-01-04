@@ -4,6 +4,8 @@
 
 
 void keydownEvent::keydown() {
+    Window& window = Window::getInstance();
+
     if (window.event.type == SDL_KEYDOWN) {
         if (window.event.type == SDL_QUIT) {
             window.running = false; // Close the application when the window is closed

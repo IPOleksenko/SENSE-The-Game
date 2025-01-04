@@ -7,6 +7,8 @@
 
 
 Player::Player() {
+    Window& window = Window::getInstance();
+
     // Initializing SDL_image
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
@@ -44,7 +46,7 @@ void Player::moving() {
         playerY += 1;
 
         // Adjust speed scale and decrease based on progress
-        float progress = playerY / WINDOW::finalCheckpoint;
+        float progress = playerY / Window::finalCheckpoint;
         playerSpeedScale = 5.0f + 10 * progress; // Increase scale more aggressively
         playerSpeedDecrease = 0.5f + progress; // Increase decrease rate more aggressively
 
@@ -57,7 +59,7 @@ void Player::moving() {
     std::cout << std::fixed << std::setprecision(4);
     std::cout << "Player Y: " << playerY << "\tplayerSpeedScale: " << playerSpeedScale << "\tplayerSpeedDecrease: " << playerSpeedDecrease << std::endl;
 
-    if (playerSpeed >= playerSpeedDecrease && playerY <= WINDOW::finalCheckpoint)
+    if (playerSpeed >= playerSpeedDecrease && playerY <= Window::finalCheckpoint)
         playerSpeed -= playerSpeedDecrease;
 }
 
@@ -100,9 +102,11 @@ void Player::render() {
     };
 
     // Destination rectangle on the screen
+    Window& window = Window::getInstance();
+
     SDL_Rect dstRect = {
-        (window.BASE_WIDTH - frameWidth) / 2, // Center on X
-        (window.BASE_HEIGHT - frameHeight) / 2 - 10, // Center on Y minus 10 pixels
+        (Window::baseWidth - frameWidth) / 2, // Center on X
+        (window.baseHeight - frameHeight) / 2 - 10, // Center on Y minus 10 pixels
         frameWidth,
         frameHeight
     };

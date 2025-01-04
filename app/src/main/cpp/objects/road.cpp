@@ -6,6 +6,8 @@
 
 
 RoadGenerator::RoadGenerator() {
+    Window& window = Window::getInstance();
+
     // Load the road texture
     texture = IMG_LoadTexture_RW(
         window.renderer,

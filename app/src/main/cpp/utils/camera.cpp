@@ -9,11 +9,15 @@ Camera::Camera() {
     viewport.w = 1000; // Set width to 1000
     viewport.h = 600;  // Approximate height
 
+    Window& window = Window::getInstance();
+
     // Apply the viewport
     SDL_RenderSetViewport(window.renderer, &viewport);
 }
 
 void Camera::move() {
+    Window& window = Window::getInstance();
+
     int windowWidth, windowHeight;
     SDL_GetWindowSize(window.window, &windowWidth, &windowHeight);
 

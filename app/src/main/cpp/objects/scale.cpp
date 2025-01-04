@@ -5,6 +5,8 @@
 
 
 ScaleGenerator::ScaleGenerator() {
+    Window& window = Window::getInstance();
+
     arrowTexture = IMG_LoadTexture_RW(
         window.renderer,
         SDL_Incbin(SPRITE_SCALE_ARROW_PNG),
@@ -37,6 +39,8 @@ int ScaleGenerator::interpolate(int start, int end, double t) {
 void ScaleGenerator::render(int playerSpeed, int playerMinSpeed, int playerMaxSpeed) {
     if (!arrowTexture || !scaleTexture) return;
 
+    Window& window = Window::getInstance();
+
     // Ratios for scaling dimensions
     const double scaleWidthRatio = 0.8;  // 80% of screen width
     const double scaleHeightRatio = 0.06; // 6% of screen height
@@ -45,18 +49,18 @@ void ScaleGenerator::render(int playerSpeed, int playerMinSpeed, int playerMaxSp
 
     // Scale rectangle (background)
     SDL_Rect scaleRect;
-    scaleRect.w = static_cast<int>(window.BASE_WIDTH * scaleWidthRatio);
-    scaleRect.h = static_cast<int>(window.BASE_HEIGHT * scaleHeightRatio);
-    scaleRect.x = (window.BASE_WIDTH - scaleRect.w) / 2; // Center horizontally
-    scaleRect.y = static_cast<int>(window.BASE_HEIGHT * 0.95 - scaleRect.h); // Position 5% from bottom
+    scaleRect.w = static_cast<int>(Window::baseWidth * scaleWidthRatio);
+    scaleRect.h = static_cast<int>(window.baseHeight * scaleHeightRatio);
+    scaleRect.x = (Window::baseWidth - scaleRect.w) / 2; // Center horizontally
+    scaleRect.y = static_cast<int>(window.baseHeight * 0.95 - scaleRect.h); // Position 5% from bottom
 
     SDL_RenderCopy(window.renderer, scaleTexture, nullptr, &scaleRect);
 
     // Arrow rectangle
     SDL_Rect arrowRect;
-    arrowRect.w = static_cast<int>(window.BASE_WIDTH * arrowWidthRatio);
-    arrowRect.h = static_cast<int>(window.BASE_HEIGHT * arrowHeightRatio);
-    arrowRect.y = static_cast<int>(window.BASE_HEIGHT * 0.98 - arrowRect.h); // Position 2% from bottom
+    arrowRect.w = static_cast<int>(Window::baseWidth * arrowWidthRatio);
+    arrowRect.h = static_cast<int>(window.baseHeight * arrowHeightRatio);
+    arrowRect.y = static_cast<int>(window.baseHeight * 0.98 - arrowRect.h); // Position 2% from bottom
 
     // Define scale boundaries
     int scaleStartX = scaleRect.x;               // Left edge of the scale

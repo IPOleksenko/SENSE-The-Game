@@ -25,8 +25,10 @@ void Flora::render(int playerY) {
         return;
     }
 
+    Window& window = Window::getInstance();
+
     // Generate new textures at fixed distances
-    while (playerY + window.BASE_HEIGHT >= nextGenerationY) {
+    while (playerY + Window::baseHeight >= nextGenerationY) {
         // Generate several textures at the current Y level
         for (int i = 0; i < 5; ++i) { // Increase the number of textures
             SDL_Texture* texture = textures[std::rand() % textures.size()]; // Random texture
@@ -35,7 +37,7 @@ void Flora::render(int playerY) {
             SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
 
             SDL_Rect destRect;
-            destRect.x = getRandomXPosition(window.BASE_WIDTH, textureWidth); // Random x-position within allowed sections
+            destRect.x = getRandomXPosition(Window::baseWidth, textureWidth); // Random x-position within allowed sections
             destRect.y = nextGenerationY; // Fixed y-position
             destRect.w = textureWidth;
             destRect.h = textureHeight;
@@ -58,6 +60,8 @@ void Flora::render(int playerY) {
 
 
 void Flora::loadTextures() {
+    Window& window = Window::getInstance();
+
     textures = {
         IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_FLOWER1_PNG), SDL_TRUE),
         IMG_LoadTexture_RW(window.renderer, SDL_Incbin(SPRITE_FLORA_FLOWER2_PNG), SDL_TRUE),
