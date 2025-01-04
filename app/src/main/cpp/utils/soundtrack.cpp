@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-Soundtrack::Soundtrack() 
+Soundtrack::Soundtrack()
     : audioSpec{}
     , audioBuffer(nullptr)
     , audioLength(0)
@@ -26,6 +26,13 @@ Soundtrack::Soundtrack()
         throw std::runtime_error("Failed to open audio: " + std::string(SDL_GetError()));
     }
 }
+
+Soundtrack& Soundtrack::getInstance() {
+    static Soundtrack instance = Soundtrack();
+
+    return instance;
+}
+
 
 Soundtrack::~Soundtrack() {
     SDL_CloseAudio();

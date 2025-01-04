@@ -4,13 +4,14 @@
 
 class Soundtrack {
 public:
-    Soundtrack();
+    static Soundtrack& getInstance();
     ~Soundtrack();
     void play();
     void stop();
     void reset();
 
 private:
+    Soundtrack();
     SDL_AudioSpec audioSpec;
     Uint8* audioBuffer;
     Uint32 audioLength;
@@ -22,9 +23,3 @@ private:
 
     static void audioCallback(void* userdata, Uint8* stream, int len);
 };
-
-#ifdef DEFINE_SOUNDTRACK
-Soundtrack soundtrack;
-#else
-extern Soundtrack soundtrack;
-#endif

@@ -62,6 +62,7 @@ Reload::~Reload() {
 
 void Reload::render() {
     Window& window = Window::getInstance();
+    Soundtrack soundtrack = Soundtrack::getInstance();
 
     soundtrack.stop();
 

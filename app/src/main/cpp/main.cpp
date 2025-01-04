@@ -1,5 +1,4 @@
-﻿#define DEFINE_WINDOW
-#define DEFINE_SOUNDTRACK
+﻿#define DEFINE_SOUNDTRACK
 
 #include <window/window.hpp>
 #include <utils/camera.hpp>
@@ -48,10 +47,12 @@ int main(int argc, char* argv[]) {
     EndRender end;
     Flora flora;
 
-    soundtrack.play();
 
     // Main game loop
     Window& window = Window::getInstance();
+    Soundtrack& soundtrack = Soundtrack::getInstance();
+
+    soundtrack.play();
 
     while (window.running) {
         // Event handling
