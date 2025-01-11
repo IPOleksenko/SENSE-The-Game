@@ -4,15 +4,13 @@ set(INCLUDE_DIR ${MODULE_DIR}/${MODULE_NAME})
 set(MODULE_TARGET ${PROJECT_NAME}_${MODULE_NAME})
 
 set(MODULE_SOURCES
-    ${MODULE_DIR}/camera.cpp
-    ${MODULE_DIR}/soundtrack.cpp
-    ${MODULE_DIR}/renderTilingTexture.cpp
+    ${MODULE_DIR}/texture.cpp
+    ${MODULE_DIR}/waveform.cpp
 )
 
 set(MODULE_HEADERS
-    ${INCLUDE_DIR}/camera.hpp
-    ${INCLUDE_DIR}/soundtrack.hpp
-    ${INCLUDE_DIR}/renderTilingTexture.hpp
+    ${INCLUDE_DIR}/texture.hpp
+    ${INCLUDE_DIR}/waveform.hpp
 )
 
 add_library(
@@ -30,6 +28,7 @@ target_link_libraries(
     ${MODULE_TARGET} PUBLIC
         SDL2::SDL2
         SDL2_image::SDL2_image
-        ${PROJECT_NAME}_window
+        SDL2_mixer::SDL2_mixer
+        SDL2_ttf::SDL2_ttf
         ${PROJECT_NAME}_assets
 )

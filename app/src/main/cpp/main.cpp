@@ -1,4 +1,111 @@
-﻿#define DEFINE_SOUNDTRACK
+﻿#include <cstdlib>
+#include <application/game.hpp>
+
+
+int main(int, char*[]) {
+    Game game = Game();
+
+    if(game.isInit()) {
+        game.run();
+    }
+
+    return EXIT_SUCCESS;
+}
+
+/*
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <assets/assets.hpp>
+#include <cstdlib>
+
+
+namespace SdlConfig {
+    constexpr int rendererIndex = -1;
+    constexpr int rendererFlags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+    constexpr char orientation[] = "Landscape";
+}
+
+#define SDL_RENDERER_FLAGS ()
+
+int main(int, char*[]) {
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+
+    SDL_SetHint(SDL_HINT_ORIENTATIONS, SdlConfig::orientation);
+    TTF_Init();
+    IMG_Init(IMG_INIT_PNG);
+
+
+    SDL_Window *window = nullptr;
+    SDL_Renderer *renderer = nullptr;
+
+
+    window = SDL_CreateWindow(
+        "An SDL2 window",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        1280,
+        720,
+        SDL_WINDOW_OPENGL
+    );
+
+    renderer = SDL_CreateRenderer(
+        window,
+        SdlConfig::rendererIndex,
+        SdlConfig::rendererFlags
+    );
+
+    SDL_SetRenderDrawColor(renderer, 0, 255, 127, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+
+    SDL_AudioSpec wavSpec = {};
+    Uint32 wavLength = 0;
+    Uint8 *wavBuffer = nullptr;
+
+    SDL_LoadWAV_RW(
+        SDL_Incbin(SOUND_WIND_WAV),
+        SDL_TRUE,
+        &wavSpec,
+        &wavBuffer,
+        &wavLength
+    );
+
+    SDL_AudioDeviceID deviceId = 0;
+
+    deviceId = SDL_OpenAudioDevice(
+        nullptr, 0, &wavSpec, nullptr, 0
+    );
+
+    SDL_QueueAudio(deviceId, wavBuffer, wavLength);
+    SDL_PauseAudioDevice(deviceId, SDL_FALSE);
+
+
+
+//    SDL_Surface *loadedImage = IMG_Load_RW(SDL_Incbin(SPRITE_PLAYER_PLAYER_PNG), SDL_TRUE);
+//    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, loadedImage);
+//    SDL_FreeSurface(loadedImage);
+//
+//    SDL_RenderCopy(renderer, texture, NULL, &r);
+//    SDL_RenderPresent(renderer);
+
+
+    SDL_Delay(20000);
+
+
+    SDL_FreeWAV(wavBuffer);
+    SDL_CloseAudioDevice(deviceId);
+
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+
+
+    return EXIT_SUCCESS;
+}
+*/
+
+/*
 
 #include <window/window.hpp>
 #include <utils/camera.hpp>
@@ -12,7 +119,9 @@
 #include <objects/flora.hpp>
 #include <events/keydownEvent.hpp>
 #include <events/playerKeydownEvent.hpp>
+
 #include <SDL.h>
+#include <cstdlib>
 #include <iostream>
 
 
@@ -34,6 +143,9 @@ void showLoadingScreen() {
 }
 
 int main(int argc, char* argv[]) {
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft");
+
     showLoadingScreen();
 
     keydownEvent keyEvent;  // Object for handling key presses
@@ -50,9 +162,9 @@ int main(int argc, char* argv[]) {
 
     // Main game loop
     Window& window = Window::getInstance();
-    Soundtrack& soundtrack = Soundtrack::getInstance();
-
-    soundtrack.play();
+//    Soundtrack& soundtrack = Soundtrack::getInstance();
+//
+//    soundtrack.play();
 
     while (window.running) {
         // Event handling
@@ -65,7 +177,7 @@ int main(int argc, char* argv[]) {
             playerkeyEvent.keydown(player);
         }
 
-        SDL_RenderSetLogicalSize(window.renderer, Window::baseWidth, window.baseHeight);
+        SDL_RenderSetLogicalSize(window.renderer, Window::baseWidth, Window::baseHeight);
 
         // Clear the screen
         SDL_SetRenderDrawColor(window.renderer, 0, 0, 0, 255);  // Set color to black
@@ -95,5 +207,7 @@ int main(int argc, char* argv[]) {
         SDL_Delay(16);  // Delay for approximately 16 milliseconds
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
+
+*/

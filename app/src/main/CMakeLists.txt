@@ -12,11 +12,10 @@ include(sdl2_import.cmake)
 include(incbin_import.cmake)
 
 
-include(${SOURCE_DIR}/window/module.cmake)
+include(${SOURCE_DIR}/assets/module.cmake)
 include(${SOURCE_DIR}/utils/module.cmake)
 include(${SOURCE_DIR}/objects/module.cmake)
-include(${SOURCE_DIR}/events/module.cmake)
-include(${SOURCE_DIR}/assets/module.cmake)
+include(${SOURCE_DIR}/application/module.cmake)
 
 set(SRC_FILES
     ${SOURCE_DIR}/main.cpp
@@ -48,15 +47,7 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         SDL2::SDL2main
-        SDL2::SDL2
-        SDL2_image::SDL2_image
-        SDL2_ttf::SDL2_ttf
-
-        ${PROJECT_NAME}_window
-        ${PROJECT_NAME}_utils
-        ${PROJECT_NAME}_objects
-        ${PROJECT_NAME}_events
-        ${PROJECT_NAME}_assets
+        ${PROJECT_NAME}_application
 )
 
 if(MSVC)

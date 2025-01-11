@@ -1,20 +1,16 @@
 #pragma once
 
+#include <utils/texture.hpp>
 #include <SDL.h>
 
-
-class BackgroundGenerator {
-private:
-    SDL_Texture* frontTexture = nullptr; // Texture for the foreground background
-    SDL_Texture* backTexture = nullptr;  // Texture for the far background
-
+class Background {
 public:
-    // Constructor: loads textures for the background layers
-    BackgroundGenerator();
+    explicit Background(SDL_Renderer* renderer);
+    ~Background() = default;
 
-    // Destructor: cleans up the textures to free memory
-    ~BackgroundGenerator();
+    void render(const SDL_Point& areaSize, const int& posY);
 
-    // Renders the background layers based on the player's Y-coordinate
-    void render(int Y);
+private:
+    RawTexture back;
+    RawTexture front;
 };

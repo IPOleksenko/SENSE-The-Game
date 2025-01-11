@@ -1,20 +1,15 @@
 #pragma once
 
+#include <utils/texture.hpp>
 #include <SDL.h>
 
-
-class RoadGenerator {
-private:
-    SDL_Texture* texture = nullptr;
-
+class Road {
 public:
-    RoadGenerator();
-    ~RoadGenerator();
+    explicit Road(SDL_Renderer* renderer);
+    ~Road() = default;
 
-    /**
-     * Render the road.
-     *
-     * @param Y Vertical offset for the road texture.
-     */
-    void render(int Y);
+    void render(const SDL_Point& areaSize, const int& posY);
+
+private:
+    RawTexture m_texture;
 };

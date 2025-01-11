@@ -1,362 +1,137 @@
 #include <objects/text.hpp>
-#include <window/window.hpp>
-#include <assets/assets.hpp>
+#include "../utils/utils/texture.hpp"
+#include <SDL_ttf.h>
+#include <vector>
 #include <sstream>
 
 
-TextRenderer::TextRenderer(int baseX, int baseY, int fontSize, Uint32 duration)
-    : basePosition{ baseX, baseY, 0, 0 }
-    , originalPosition{ baseX, baseY, 0, 0 }
-    , alpha(0)
-    , animationStartTime(0)
-    , animationDuration(duration)
-    , fadeIn(true)
-    , currentText("")
-    , isAnimated(true)
-    , positionChanged(false)
+Text::Text(
+    SDL_Renderer* renderer,
+    const int& fontSize,
+    const SDL_Point& pos,
+    const int& animationDuration
+) :
+    m_sdlFont(TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize)),
+    m_sdlRenderer(renderer),
+    m_isInit(m_sdlFont != nullptr),
+    m_text(),
+    m_pos(pos),
+    m_alpha(SDL_ALPHA_OPAQUE),
+    m_isAnimated(),
+    m_fadeIn(),
+    m_isCentered(),
+    m_animationStart(),
+    m_animationDuration(animationDuration)
 {
-    if (TTF_Init() == -1) {
-        printf("TTF_Init: %s\n", TTF_GetError());
-        exit(1);
-    }
-
-    font = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
-    if (!font) {
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
-        exit(1);
+    if (!m_isInit) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
+            "TTF_OpenFontRW", SDL_GetError()
+        );
     }
 }
 
-TextRenderer::~TextRenderer() {
-    if (font) TTF_CloseFont(font);
-    TTF_Quit();
-}
-
-void TextRenderer::setText(const std::string& text) {
-    currentText = text;
-    alpha = 0; // Reset text transparency when the text changes
-}
-
-void TextRenderer::startAnimation(bool fadeInDirection) {
-    fadeIn = fadeInDirection;
-    animationStartTime = SDL_GetTicks();
-}
-
-void TextRenderer::setAnimated(bool animated) {
-    isAnimated = animated;
-    if (!animated) {
-        alpha = 255;
+Text::~Text() {
+    if(m_isInit) {
+        TTF_CloseFont(m_sdlFont);
+        m_sdlFont = nullptr;
+        m_isInit = false;
     }
 }
 
-void TextRenderer::centerTextOnScreen() {
-    if (currentText.empty()) return;
-
-    // Save the current position as the original
-    if (!positionChanged) {
-        originalPosition = basePosition;
-        positionChanged = true;
-    }
-
-    // Split the text into lines
-    std::istringstream stream(currentText);
-    std::string line;
-
-    int totalHeight = 0;
-    int maxWidth = 0;
-
-    // Calculate total text height and maximum line width
-    while (std::getline(stream, line)) {
-        SDL_Surface* surface = TTF_RenderText_Blended(font, line.c_str(), { 255, 255, 255, 255 });
-        if (!surface) {
-            printf("TTF_RenderText_Blended: %s\n", TTF_GetError());
-            continue;
-        }
-        totalHeight += surface->h;
-        maxWidth = std::max(maxWidth, surface->w);
-        SDL_FreeSurface(surface);
-    }
-
-    Window& window = Window::getInstance();
-
-    // Center the text relative to the screen
-    basePosition.x = (Window::baseWidth - maxWidth) / 2;
-    basePosition.y = (window.baseHeight - totalHeight) / 2;
+void Text::setText(const std::string& text) {
+    m_text = text;
 }
 
-void TextRenderer::restoreOriginalPosition() {
-    if (positionChanged) {
-        basePosition = originalPosition;
-        positionChanged = false;
-    }
+void Text::animationStart(const bool& fadeIn) {
+    m_isAnimated = true;
+    m_fadeIn = fadeIn;
+    m_animationStart = SDL_GetTicks();
 }
 
-void TextRenderer::render() {
-    if (currentText.empty()) return;
+void Text::animationStop() {
+    m_isAnimated = false;
+    m_alpha = SDL_ALPHA_OPAQUE;
+    m_animationStart = 0;
+}
 
-    if (isAnimated) {
-        Uint32 currentTime = SDL_GetTicks();
-        float progress = static_cast<float>(currentTime - animationStartTime) / animationDuration;
-        progress = std::min(1.0f, progress);
+void Text::positionReset() {
+    m_isCentered = false;
+}
 
-        alpha = static_cast<Uint8>((fadeIn ? progress : 1.0f - progress) * 255);
+void Text::positionCenter() {
+    m_isCentered = true;
+}
+
+void Text::render(const SDL_Point& areaSize) {
+    if(m_text.empty()) {
+        return;
+    }
+
+    if (m_isAnimated) {
+        const Uint32 currentTime = SDL_GetTicks();
+        const float progress = SDL_min(
+            static_cast<float>(currentTime - m_animationStart) /
+            static_cast<float>(m_animationDuration), 1.0f
+        );
+
+        m_alpha = static_cast<Uint8>(
+            (m_fadeIn ? progress : 1.0f - progress) *
+            SDL_ALPHA_OPAQUE
+        );
     }
     else {
-        alpha = 255;
+        m_alpha = SDL_ALPHA_OPAQUE;
     }
 
-    if (alpha == 0) return;
+    if (m_alpha == 0) {
+        return;
+    }
 
-    std::istringstream stream(currentText);
+    std::istringstream stream(m_text);
     std::string line;
+
+    std::vector<SurfaceTexture> textures = {};
     int offsetY = 0;
 
     while (std::getline(stream, line)) {
-        SDL_Surface* surface = TTF_RenderText_Blended(font, line.c_str(), { 255, 255, 255, 255 });
-        if (!surface) {
-            printf("TTF_RenderText_Blended: %s\n", TTF_GetError());
-            continue;
+        textures.emplace_back(
+            TTF_RenderText_Blended(
+                m_sdlFont,
+                line.c_str(),
+                { 0xFF, 0xFF, 0xFF, m_alpha }
+            ),
+            m_sdlRenderer
+        );
+
+        SDL_Point textureSize = {};
+        if(textures.back().querySize(textureSize)) {
+            offsetY += textureSize.y;
         }
-
-        Window& window = Window::getInstance();
-
-        SDL_Texture* texture = SDL_CreateTextureFromSurface(window.renderer, surface);
-        if (!texture) {
-            printf("SDL_CreateTextureFromSurface: %s\n", SDL_GetError());
-            SDL_FreeSurface(surface);
-            continue;
-        }
-
-        SDL_SetTextureAlphaMod(texture, alpha);
-
-        SDL_Rect destRect = {
-            basePosition.x,
-            basePosition.y + offsetY,
-            surface->w,
-            surface->h
-        };
-
-        SDL_RenderCopy(window.renderer, texture, nullptr, &destRect);
-
-        offsetY += surface->h;
-
-        SDL_FreeSurface(surface);
-        SDL_DestroyTexture(texture);
     }
-}
 
-void TextRenderer::update(const int playerY) {
-    switch (playerY) {
-    case 0:
-        // Initial message
-        setText(R"(
-Instructions:
-    *Press A (or LEFT) and D (or RIGHT) alternately to move.
-    *Pass the middle mark to start moving.
-    *Keep your balance—don't let the pointer hit the red zone, or you'll lose!
+    int posY = m_pos.y;
+    if(m_isCentered) {
+        posY = (areaSize.y - offsetY) / 2;
+    }
 
-Fullscreen: Press F to toggle fullscreen mode.)");
+    for(const auto& tex: textures) {
+        SDL_Point textureSize = {};
 
-        restoreOriginalPosition();
-        setAnimated(false);       // Disable animation
-        break;
-    case 1:
-        // Start fading out animation
-        setAnimated(true);
-        startAnimation(false);
-        break;
+        if(tex.querySize(textureSize)) {
+            int posX = m_pos.x;
+            if(m_isCentered) {
+                posX = (areaSize.x - textureSize.x) / 2;
+            }
 
-    case 1000:
-        // Display a philosophical message
-        setText("You opened your eyes, but did you see anything new?");
-        centerTextOnScreen();     // Center the text on the screen
-        startAnimation(true);     // Start fading in animation
-        break;
-    case 1500:
-        // Stop animation
-        startAnimation(false);
-        break;
+            const SDL_Rect destRect = {
+                posX, posY,
+                textureSize.x, textureSize.y
+            };
 
-    case 2000:
-        setText("Every day is like the one before, yet you search for differences");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 2500:
-        startAnimation(false);
-        break;
+            tex.render(&destRect, nullptr);
+        }
 
-    case 3000:
-        setText("People chase dreams, but who said dreams hold value?");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 3500:
-        startAnimation(false);
-        break;
-
-    case 4000:
-        setText("How many questions have you asked, and how many answers have you received?");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 4500:
-        startAnimation(false);
-        break;
-
-    case 5000:
-        setText("The world moves in circles, but where is its beginning and where is its end?");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 5500:
-        startAnimation(false);
-        break;
-
-    case 6000:
-        setText("You strive to find a purpose, but what is it even for?");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 6500:
-        startAnimation(false);
-        break;
-
-    case 7000:
-        setText("Stones lie on the ground for millennia, yet you live for only a moment.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 7500:
-        startAnimation(false);
-        break;
-
-    case 8000:
-        setText("What matters more: your thoughts or the sound of the wind?");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 8500:
-        startAnimation(false);
-        break;
-
-    case 9000:
-        setText("The history of the world is full of heroes, but no one remembers them.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 9500:
-        startAnimation(false);
-        break;
-
-    case 10000:
-        setText("If something disappears tomorrow, what changes today?");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 10500:
-        startAnimation(false);
-        break;
-
-    case 11000:
-        setText("The sun rises every day, but not for you.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 11500:
-        startAnimation(false);
-        break;
-
-    case 12000:
-        setText("Your heart beats, but who cares?");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 12500:
-        startAnimation(false);
-        break;
-
-    case 13000:
-        setText("Everything you build will one day turn to dust.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 13500:
-        startAnimation(false);
-        break;
-
-    case 14000:
-        setText("You search for truth, but in this world, there is no law of truth.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 14500:
-        startAnimation(false);
-        break;
-
-    case 15000:
-        setText("Who created this world if even they had no plan?");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 15500:
-        startAnimation(false);
-        break;
-
-    case 16000:
-        setText("Joy and pain alternate, but both eventually fade.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 16500:
-        startAnimation(false);
-        break;
-
-    case 17000:
-        setText("You want to be needed, but by whom?");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 17500:
-        startAnimation(false);
-        break;
-
-    case 18000:
-        setText("The stars shine, but not to show you the way.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 18500:
-        startAnimation(false);
-        break;
-
-    case 19000:
-        setText("Eternity is a word that both frightens and frees.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 19500:
-        startAnimation(false);
-        break;
-
-    case 20000:
-        setText("In this chaos, you seek meaning, but chaos demands no explanation.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case 20500:
-        startAnimation(false);
-        break;
-
-    case Window::finalCheckpoint:
-        setText("THE UNIVERSE DOESN'T MAKE SENSE.");
-        centerTextOnScreen();
-        startAnimation(true);
-        break;
-    case Window::finalCheckpoint + 500:
-        // End the game
-        Window& window = Window::getInstance();
-        window.running = false;
-        break;
+        posY += textureSize.y;
     }
 }

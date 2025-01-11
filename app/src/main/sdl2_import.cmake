@@ -18,9 +18,17 @@ FetchContent_Declare(
     GIT_TAG release-2.22.0
     SOURCE_DIR ${PROJECT_ROOT}/external/SDL2_ttf
 )
+FetchContent_Declare(
+    SDL2_mixer
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+    GIT_TAG release-2.8.0
+    SOURCE_DIR ${PROJECT_ROOT}/external/SDL2_mixer
+)
+
 
 FetchContent_MakeAvailable(
     SDL2
     SDL2_image
     SDL2_ttf
+    SDL2_mixer
 )

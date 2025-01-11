@@ -1,98 +1,93 @@
 #include <objects/scale.hpp>
-#include <SDL_image.h>
-#include <window/window.hpp>
+#include "../utils/utils/texture.hpp"
 #include <assets/assets.hpp>
+#include <SDL_image.h>
 
+Scale::Scale(SDL_Renderer *renderer) :
+    bar(SDL_Incbin(SPRITE_SCALE_SCALE_PNG), renderer),
+    arrow(SDL_Incbin(SPRITE_SCALE_ARROW_PNG), renderer)
+{}
 
-ScaleGenerator::ScaleGenerator() {
-    Window& window = Window::getInstance();
-
-    arrowTexture = IMG_LoadTexture_RW(
-        window.renderer,
-        SDL_Incbin(SPRITE_SCALE_ARROW_PNG),
-        SDL_TRUE
-    );
-    if (!arrowTexture) {
-        SDL_Log("Failed to load scale arrow texture: %s", SDL_GetError());
-    }
-
-    scaleTexture = IMG_LoadTexture_RW(
-        window.renderer,
-        SDL_Incbin(SPRITE_SCALE_SCALE_PNG),
-        SDL_TRUE
-    );
-    if (!scaleTexture) {
-        SDL_Log("Failed to load scale texture: %s", SDL_GetError());
-    }
-}
-
-ScaleGenerator::~ScaleGenerator() {
-    // Cleanup textures
-    if (arrowTexture) SDL_DestroyTexture(arrowTexture);
-    if (scaleTexture) SDL_DestroyTexture(scaleTexture);
-}
-
-int ScaleGenerator::interpolate(int start, int end, double t) {
+int Scale::interpolate(
+    const int& start,
+    const int& end,
+    const double& t
+) {
     return static_cast<int>(start + t * (end - start));
 }
 
-void ScaleGenerator::render(int playerSpeed, int playerMinSpeed, int playerMaxSpeed) {
-    if (!arrowTexture || !scaleTexture) return;
+void Scale::render(
+    const SDL_Point& areaSize,
+    const float& playerSpeed,
+    const float& playerSpeedMin,
+    const float& playerSpeedMax
+) {
+    if (!bar.isInit() && !arrow.isInit()) {
+        return;
+    }
 
-    Window& window = Window::getInstance();
+    const SDL_FPoint barScale {
+        0.8f, 0.06f
+    };
+    const SDL_Point barSize {
+        static_cast<int>(static_cast<float>(areaSize.x) * barScale.x),
+        static_cast<int>(static_cast<float>(areaSize.y) * barScale.y),
+    };
+    const SDL_Point barPos {
+        (areaSize.x - barSize.x) / 2,
+        static_cast<int>(areaSize.y * 0.95 - barSize.y)
+    };
+    const SDL_Rect barRect {
+        barPos.x, barPos.y,
+        barSize.x, barSize.y,
+    };
+    bar.render(&barRect, nullptr);
 
-    // Ratios for scaling dimensions
-    const double scaleWidthRatio = 0.8;  // 80% of screen width
-    const double scaleHeightRatio = 0.06; // 6% of screen height
-    const double arrowWidthRatio = 0.05;  // 5% of screen width
-    const double arrowHeightRatio = 0.05; // Maintain aspect ratio for arrow
+    const SDL_FPoint arrowScale {
+        0.05f, 0.05f
+    };
+    const SDL_Point arrowSize {
+        static_cast<int>(static_cast<float>(areaSize.x) * arrowScale.x),
+        static_cast<int>(static_cast<float>(areaSize.y) * arrowScale.y),
+    };
+    SDL_Point arrowPos {
+        0,
+        static_cast<int>(areaSize.y * 0.98 - arrowSize.y)
+    };
 
-    // Scale rectangle (background)
-    SDL_Rect scaleRect;
-    scaleRect.w = static_cast<int>(Window::baseWidth * scaleWidthRatio);
-    scaleRect.h = static_cast<int>(window.baseHeight * scaleHeightRatio);
-    scaleRect.x = (Window::baseWidth - scaleRect.w) / 2; // Center horizontally
-    scaleRect.y = static_cast<int>(window.baseHeight * 0.95 - scaleRect.h); // Position 5% from bottom
-
-    SDL_RenderCopy(window.renderer, scaleTexture, nullptr, &scaleRect);
-
-    // Arrow rectangle
-    SDL_Rect arrowRect;
-    arrowRect.w = static_cast<int>(Window::baseWidth * arrowWidthRatio);
-    arrowRect.h = static_cast<int>(window.baseHeight * arrowHeightRatio);
-    arrowRect.y = static_cast<int>(window.baseHeight * 0.98 - arrowRect.h); // Position 2% from bottom
-
-    // Define scale boundaries
-    int scaleStartX = scaleRect.x;               // Left edge of the scale
-    int scaleEndX = scaleRect.x + scaleRect.w;   // Right edge of the scale
-    int scaleWidth = scaleEndX - scaleStartX;
+    const int scaleStartX = barRect.x;              // Left edge of the scale
+    const int scaleEndX = barRect.x + barRect.w;    // Right edge of the scale
+    const int scaleWidth = scaleEndX - scaleStartX;
 
     // Define key positions on the scale
-    int minPosition = scaleStartX + scaleWidth / 3;  // 1/3 of the scale
-    int maxPosition = scaleStartX + 2 * scaleWidth / 3; // 2/3 of the scale
-    int midPosition = scaleStartX + scaleWidth / 2;    // Center of the scale
+    const int minPos = scaleStartX + scaleWidth / 3;      // 1/3 of the scale
+    const int maxPos = scaleStartX + 2 * scaleWidth / 3;  // 2/3 of the scale
+    const int midPos = scaleStartX + scaleWidth / 2;      // Center of the scale
 
     // Calculate arrow position based on playerSpeed
     int arrowCenterX;
-    if (playerSpeed <= playerMinSpeed) {
-        // Map [0, playerMinSpeed] to [scaleStartX, minPosition]
-        double t = static_cast<double>(playerSpeed) / playerMinSpeed;
-        arrowCenterX = interpolate(scaleStartX, minPosition, t);
+    if (playerSpeed <= playerSpeedMin) {
+        // Map [0, playerSpeedMin] to [scaleStartX, minPos]
+        float t = playerSpeed / playerSpeedMin;
+        arrowCenterX = interpolate(scaleStartX, minPos, t);
     }
-    else if (playerSpeed >= playerMaxSpeed) {
-        // Map [playerMaxSpeed, ...] to [maxPosition, scaleEndX]
-        double t = static_cast<double>(playerSpeed - playerMaxSpeed) / playerMaxSpeed;
-        arrowCenterX = interpolate(maxPosition, scaleEndX, t);
+    else if (playerSpeed >= playerSpeedMax) {
+        // Map [playerSpeedMax, ...] to [maxPos, scaleEndX]
+        float t = (playerSpeed - playerSpeedMax) / playerSpeedMax;
+        arrowCenterX = interpolate(maxPos, scaleEndX, t);
     }
     else {
-        // Map [playerMinSpeed, playerMaxSpeed] to [minPosition, maxPosition]
-        double t = static_cast<double>(playerSpeed - playerMinSpeed) / (playerMaxSpeed - playerMinSpeed);
-        arrowCenterX = interpolate(minPosition, maxPosition, t);
+        // Map [playerSpeedMin, playerSpeedMax] to [minPos, maxPos]
+        float t = (playerSpeed - playerSpeedMin) / (playerSpeedMax - playerSpeedMin);
+        arrowCenterX = interpolate(minPos, maxPos, t);
     }
-
     // Center the arrow horizontally on the calculated position
-    arrowRect.x = arrowCenterX - arrowRect.w / 2;
+    arrowPos.x = arrowCenterX  - arrowSize.x / 2;
 
+    const SDL_Rect arrowRect {
+        arrowPos.x, arrowPos.y,
+        arrowSize.x, arrowSize.y,
+    };
     // Render the arrow
-    SDL_RenderCopy(window.renderer, arrowTexture, nullptr, &arrowRect);
+    arrow.render(&arrowRect, nullptr);
 }

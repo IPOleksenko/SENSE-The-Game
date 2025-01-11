@@ -4,25 +4,23 @@ set(INCLUDE_DIR ${MODULE_DIR}/${MODULE_NAME})
 set(MODULE_TARGET ${PROJECT_NAME}_${MODULE_NAME})
 
 set(MODULE_SOURCES
-    ${MODULE_DIR}/text.cpp
-    ${MODULE_DIR}/flora.cpp
-    ${MODULE_DIR}/road.cpp
-    ${MODULE_DIR}/background.cpp
     ${MODULE_DIR}/player.cpp
+    ${MODULE_DIR}/road.cpp
     ${MODULE_DIR}/scale.cpp
-    ${MODULE_DIR}/reload.cpp
-    ${MODULE_DIR}/endRender.cpp
+    ${MODULE_DIR}/flora.cpp
+    ${MODULE_DIR}/background.cpp
+    ${MODULE_DIR}/text.cpp
+    ${MODULE_DIR}/end.cpp
 )
 
 set(MODULE_HEADERS
-    ${INCLUDE_DIR}/text.hpp
-    ${INCLUDE_DIR}/flora.hpp
-    ${INCLUDE_DIR}/road.hpp
-    ${INCLUDE_DIR}/background.hpp
     ${INCLUDE_DIR}/player.hpp
+    ${INCLUDE_DIR}/road.hpp
     ${INCLUDE_DIR}/scale.hpp
-    ${INCLUDE_DIR}/reload.hpp
-    ${INCLUDE_DIR}/endRender.hpp
+    ${INCLUDE_DIR}/flora.hpp
+    ${INCLUDE_DIR}/background.hpp
+    ${INCLUDE_DIR}/text.hpp
+    ${INCLUDE_DIR}/end.hpp
 )
 
 add_library(
@@ -38,10 +36,6 @@ target_include_directories(
 
 target_link_libraries(
     ${MODULE_TARGET} PUBLIC
-        SDL2::SDL2
-        SDL2_image::SDL2_image
-        SDL2_ttf::SDL2_ttf
-        ${PROJECT_NAME}_window
-        ${PROJECT_NAME}_utils
         ${PROJECT_NAME}_assets
+        ${PROJECT_NAME}_utils
 )

@@ -1,121 +1,131 @@
 #include <objects/player.hpp>
-#include <window/window.hpp>
-#include <assets/assets.hpp>
-#include <SDL_image.h>
 #include <iostream>
 #include <iomanip>
 
+#define FINAL_CHECKPOINT  25000
 
-Player::Player() {
-    Window& window = Window::getInstance();
+Player::Player(SDL_Renderer *renderer)
+    : m_texture(SDL_Incbin(SPRITE_PLAYER_PLAYER_PNG), renderer)
+{
+    SDL_Point textureSize = {};
 
-    // Initializing SDL_image
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-        SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
-        return;
+    if(m_texture.querySize(textureSize)) {
+        m_frameSize = {
+            textureSize.x / m_framesPerRow,
+            textureSize.y / (m_framesTotal / m_framesPerRow)
+        };
     }
-
-    // Loading texture
-    texture = IMG_LoadTexture_RW(
-        window.renderer,
-        SDL_Incbin(SPRITE_PLAYER_PLAYER_PNG),
-        SDL_TRUE
-    );
-    if (!texture) {
-        SDL_Log("Failed to load texture: %s", SDL_GetError());
-        return;
-    }
-
-    // Determining frame dimensions
-    int textureWidth, textureHeight;
-    SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
-    frameWidth = textureWidth / framesPerRow;
-    frameHeight = textureHeight / (totalFrames / framesPerRow);
 }
 
-Player::~Player() {
-    SDL_DestroyTexture(texture);
-    IMG_Quit(); // Terminating SDL_image
+int Player::getPosY() const {
+    return m_posY;
 }
 
-void Player::moving() {
-    if (playerSpeed >= playerNormalSpeed)
-        isMoving = true;
+float Player::getSpeed() const {
+    return m_speed;
+}
 
-    if (isMoving) {
-        playerY += 1;
+float Player::getSpeedMin() const {
+    return m_speedMin;
+}
+
+float Player::getSpeedMax() const {
+    return m_speedMax;
+}
+
+Player::Move Player::getLastMove() const {
+    return m_lastMove;
+}
+
+bool Player::hasLost() const {
+    return m_hasLost;
+}
+
+void Player::move() {
+    if (m_speed >= m_speedNormal) {
+        m_isMoving = true;
+    }
+
+    if (m_isMoving) {
+        m_posY += 1;
 
         // Adjust speed scale and decrease based on progress
-        float progress = playerY / Window::finalCheckpoint;
-        playerSpeedScale = 5.0f + 10 * progress; // Increase scale more aggressively
-        playerSpeedDecrease = 0.5f + progress; // Increase decrease rate more aggressively
+        float progress = static_cast<float>(m_posY) / 25000;
+        m_speedScale = 5.0f + 10 * progress; // Increase scale more aggressively
+        m_speedDecrease = 0.5f + progress; // Increase decrease rate more aggressively
 
-        if (playerMinSpeed > playerSpeed || playerSpeed > playerMaxSpeed) {
-            reset();
-            std::cout << "You lost!" << std::endl;
+        if (m_speed < m_speedMin || m_speedMax < m_speed) {
+            m_hasLost = true;
         }
     }
 
-    std::cout << std::fixed << std::setprecision(4);
-    std::cout << "Player Y: " << playerY << "\tplayerSpeedScale: " << playerSpeedScale << "\tplayerSpeedDecrease: " << playerSpeedDecrease << std::endl;
+    SDL_LogDebug(
+        SDL_LOG_CATEGORY_APPLICATION,
+        "Player "
+            "pos y: %d\t"
+            "speed scale: %.4f\t"
+            "speed decrease: %.4f",
+        m_posY,
+        m_speedScale,
+        m_speedDecrease
+    );
 
-    if (playerSpeed >= playerSpeedDecrease && playerY <= Window::finalCheckpoint)
-        playerSpeed -= playerSpeedDecrease;
+    if (m_speed >= m_speedDecrease && m_posY <= FINAL_CHECKPOINT) {
+        m_speed -= m_speedDecrease;
+    }
 }
 
 void Player::reset() {
-    reload.render();
-    playerY = 0.0f;
-    playerSpeed = 0.0f;
-    lastButton = 0;
-    isMoving = false;
-    currentFrame = 0;
-    playerSpeedScale = 5.0f; // Reset to initial values
-    playerSpeedDecrease = 0.5f;
+    m_posY = 0;
+    m_speed = 0;
+    m_frameCurrent = 0;
+    m_lastMove = Move::Undefined;
+
+    m_speedScale = 5.0f;
+    m_speedDecrease = 0.5f;
+
+    m_isMoving = false;
+    m_hasLost = false;
+}
+
+void Player::render(const SDL_Point& windowSize) {
+    const int row = m_frameCurrent / m_framesPerRow;
+    const int col = m_frameCurrent % m_framesPerRow;
+
+    SDL_Rect srcRect = {
+        col * m_frameSize.x,    // Start of the frame on X
+        row * m_frameSize.y,    // Start of the frame on Y
+        m_frameSize.x,          // Frame width
+        m_frameSize.y           // Frame height
+    };
+
+    SDL_Rect destRect = {
+        (windowSize.x - m_frameSize.x) / 2,        // Center on X
+        (windowSize.y - m_frameSize.y) / 2 - 10,   // Center on Y minus 10 pixels
+        m_frameSize.x,
+        m_frameSize.y
+    };
+
+    // Rendering the current frame
+    m_texture.render(&destRect, &srcRect);
+}
+
+void Player::increaseSpeed(const Player::Move& move) {
+    if(m_lastMove != move && move != Move::Undefined) {
+        m_lastMove = move;
+        m_speed += m_speedScale;
+    }
 }
 
 void Player::updateAnimation() {
-    if (!isMoving) {
-        currentFrame = 0; // Reset to the first frame if the player is not moving
+    if (!m_isMoving) {
+        m_frameCurrent = 0; // Reset to the first frame if the player is not moving
         return;
     }
 
     Uint32 currentTime = SDL_GetTicks();
-    if (currentTime > lastFrameTime + animationSpeed) {
-        currentFrame = (currentFrame + 1) % totalFrames;
-        lastFrameTime = currentTime;
+    if (currentTime > m_lastFrameTime + m_animationSpeed) {
+        m_frameCurrent = (m_frameCurrent + 1) % m_framesTotal;
+        m_lastFrameTime = currentTime;
     }
-}
-
-void Player::render() {
-    if (!texture) { return; }
-
-    // Calculate the coordinates of the frame in the sprite sheet
-    int row = currentFrame / framesPerRow;
-    int col = currentFrame % framesPerRow;
-
-    SDL_Rect srcRect = {
-        col * frameWidth, // Start of the frame on X
-        row * frameHeight, // Start of the frame on Y
-        frameWidth, // Frame width
-        frameHeight // Frame height
-    };
-
-    // Destination rectangle on the screen
-    Window& window = Window::getInstance();
-
-    SDL_Rect dstRect = {
-        (Window::baseWidth - frameWidth) / 2, // Center on X
-        (window.baseHeight - frameHeight) / 2 - 10, // Center on Y minus 10 pixels
-        frameWidth,
-        frameHeight
-    };
-
-    // Rendering the current frame
-    SDL_RenderCopy(window.renderer, texture, &srcRect, &dstRect);
-}
-
-void Player::addPlayerSpeed(int button) { 
-    lastButton = button;
-    playerSpeed += playerSpeedScale;
 }

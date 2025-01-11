@@ -7,10 +7,12 @@ include(${MODULE_DIR}/autogen.cmake)
 
 set(MODULE_SOURCES
     ${MODULE_DIR}/assets.cpp
+    ${MODULE_DIR}/checkpoints.cpp
 )
 
 set(MODULE_HEADERS
     ${INCLUDE_DIR}/assets.hpp
+    ${INCLUDE_DIR}/checkpoints.hpp
 )
 
 if(MSVC)

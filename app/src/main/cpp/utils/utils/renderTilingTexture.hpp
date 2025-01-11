@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL_image.h>
+#include <SDL.h>
 
 /**
  * Renders a tiling texture on the screen.
@@ -10,4 +10,9 @@
  * @param scale Scaling factor for the texture.
  * @param fullscreen If true, the texture will cover the entire screen without maintaining aspect ratio.
  */
-void renderTilingTexture(SDL_Texture* texture, int startY, double scale, bool fullscreen = false);
+void renderTilingTexture(
+    SDL_Texture* texture,
+    int startY,
+    double scale,
+    bool fullscreen = false
+);
