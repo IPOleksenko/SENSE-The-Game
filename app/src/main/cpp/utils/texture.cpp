@@ -1,11 +1,12 @@
 #include <utils/texture.hpp>
 #include <SDL_image.h>
+#include <algorithm>
 
 
 Texture::Texture(SDL_Texture* texture, SDL_Renderer* renderer) :
-    m_texture(texture, SDL_DestroyTexture),
-    m_renderer(renderer),
-    m_isInit(m_texture != nullptr)
+    m_sdlTexture(texture, SDL_DestroyTexture),
+    m_isInit(m_sdlTexture != nullptr),
+    m_sdlRenderer(renderer)
 {}
 
 bool Texture::isInit() const {
@@ -13,7 +14,7 @@ bool Texture::isInit() const {
 }
 
 SDL_Texture* Texture::getSdlTexture() const {
-    return m_texture.get();
+    return m_sdlTexture.get();
 }
 
 bool Texture::querySize(SDL_Point& size) const {
@@ -22,7 +23,7 @@ bool Texture::querySize(SDL_Point& size) const {
     }
 
     int err = SDL_QueryTexture(
-        m_texture.get(),
+        m_sdlTexture.get(),
         nullptr,
         nullptr,
         &size.x,
@@ -47,7 +48,7 @@ void Texture::render(const SDL_Rect* destRect, const SDL_Rect* srcRect) const {
 
     int err = 0;
 
-    err = SDL_RenderCopy(m_renderer, m_texture.get(), srcRect, destRect);
+    err = SDL_RenderCopy(m_sdlRenderer, m_sdlTexture.get(), srcRect, destRect);
 
     if (err != 0) {
         SDL_LogCritical(
@@ -113,6 +114,7 @@ RawTexture::RawTexture(SDL_RWops* data, SDL_Renderer* renderer) :
         );
     }
 }
+
 
 SurfaceTexture::SurfaceTexture(SDL_Surface* surface, SDL_Renderer* renderer) :
     Texture(SDL_CreateTextureFromSurface(renderer, surface), renderer)

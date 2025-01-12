@@ -95,6 +95,10 @@ void Text::render(const SDL_Point& areaSize) {
     int offsetY = 0;
 
     while (std::getline(stream, line)) {
+        if(line.empty()) {
+            continue;
+        }
+
         textures.emplace_back(
             TTF_RenderText_Blended(
                 m_sdlFont,

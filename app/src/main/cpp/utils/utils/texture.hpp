@@ -5,12 +5,9 @@
 #include <SDL_image.h>
 #include <memory>
 
-
 class Texture {
 public:
     explicit Texture(SDL_Texture* texture, SDL_Renderer* renderer);
-    Texture(const Texture&) = default;
-    Texture& operator=(const Texture&) = default;
     virtual ~Texture() = default;
 
     [[nodiscard]] bool isInit() const;
@@ -18,7 +15,7 @@ public:
     virtual bool querySize(SDL_Point& size) const;
     virtual void render(const SDL_Rect* destRect, const SDL_Rect* srcRect) const;
 
-    void tile(
+    virtual void tile(
         const SDL_Point& areaSize,
         const float& scale,
         const int& startY,
@@ -26,10 +23,9 @@ public:
     ) const;
 
 protected:
-
-    std::shared_ptr<SDL_Texture> m_texture;
+    std::shared_ptr<SDL_Texture> m_sdlTexture;
     bool m_isInit;
-    SDL_Renderer* m_renderer;
+    SDL_Renderer* m_sdlRenderer;
 };
 
 

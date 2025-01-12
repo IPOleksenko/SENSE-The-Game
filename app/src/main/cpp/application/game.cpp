@@ -9,7 +9,8 @@
 #include <objects/road.hpp>
 #include <objects/flora.hpp>
 #include <objects/end.hpp>
-#include <utils/waveform.hpp>
+#include <utils/music.hpp>
+#include <utils/sfx.hpp>
 #include <assets/checkpoints.hpp>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -66,7 +67,7 @@ Game::Game() :
     }
 
     if(SDL_SetHint(SDL_HINT_ORIENTATIONS, s_orientation.c_str()) == SDL_FALSE) {
-        SDL_LogWarn(
+        SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
             "SDL_SetHint", "can't set orientation"
         );
@@ -171,7 +172,7 @@ void Game::updateText(Text& text, const int& yPos) {
         case CheckPoint::S_STOP:
         case CheckPoint::T_STOP:
         case CheckPoint::FINAL_STOP: {
-            text.animationStop();
+            text.animationStart(false);
             break;
         }
         case CheckPoint::FINAL_START: {
@@ -193,8 +194,8 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     Scale scale(renderer.getSdlRenderer());
     End end(renderer.getSdlRenderer());
     Text text(renderer.getSdlRenderer(), 24, {0, 0});
-    Waveform soundtrack(SDL_Incbin(SOUND_WIND_WAV));
-    Waveform reload(SDL_Incbin(SOUND_RELOAD_WAV));
+    Music soundtrack(SDL_Incbin(SOUND_WIND_WAV));
+    Sfx reload(SDL_Incbin(SOUND_RELOAD_WAV));
 
     audioManager.play(soundtrack, AudioManager::TIMES_LOOP);
     audioManager.resume();
@@ -257,13 +258,19 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
         if(player.hasLost()) {
             player.reset();
             flora.reset();
-            audioManager.stop();
-            audioManager.play(reload);
             renderer.present();
-            SDL_Delay(300);
+
+            if(
+                const int channel = audioManager.play(
+                    reload, 1, AudioManager::CHANNEL_UNDEFINED
+                );
+                channel != AudioManager::CHANNEL_UNDEFINED
+            ) {
+                while (Mix_Playing(channel) == SDL_TRUE);                
+            }
+
             renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});
             renderer.clear();
-            audioManager.play(soundtrack);
         }
 
         background.render(window.getSize(), player.getPosY());

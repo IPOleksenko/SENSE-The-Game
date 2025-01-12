@@ -40,8 +40,10 @@ void Flora::render(const SDL_Point& areaSize, const int& posY) {
 
     while (posY + areaSize.y > m_nextGenY) {
         for (int i = 0; i < s_density; ++i) {
+            const Texture &tex = m_textures[texDist(gen)];
+
             m_floraView.push_back({
-                m_textures[texDist(gen)],
+                tex,
                 {posXDist(gen), m_nextGenY}
             });
         }

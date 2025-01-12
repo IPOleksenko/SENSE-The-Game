@@ -36,6 +36,5 @@ private:
     std::string m_label;
 
     static const int s_flags =
-        SDL_WINDOW_BORDERLESS |
-        SDL_WINDOW_ALLOW_HIGHDPI;
+        SDL_WINDOW_SHOWN;
 };

@@ -1,5 +1,11 @@
 include(FetchContent)
 
+cmake_policy(SET CMP0077 NEW)
+set(SDL2MIXER_OPUS OFF)
+set(SDL2MIXER_MOD OFF)
+set(SDL2MIXER_MIDI OFF)
+set(SDL2MIXER_WAVPACK OFF)
+
 FetchContent_Declare(
     SDL2
     GIT_REPOSITORY https://github.com/libsdl-org/SDL.git

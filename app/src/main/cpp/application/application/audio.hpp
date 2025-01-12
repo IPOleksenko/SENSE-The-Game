@@ -3,7 +3,8 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-class Waveform;
+class Music;
+class Sfx;
 
 
 class AudioManager {
@@ -13,7 +14,8 @@ public:
 
     [[nodiscard]] bool isInit() const;
 
-    void play(const Waveform& audio, const int& times = 1) const;
+    void play(const Music& audio, const int& times) const;
+    int play(const Sfx& audio, const int& times, const int& channel) const;    
     void stop() const;
     void resume() const;
     void pause() const;
@@ -24,6 +26,7 @@ public:
     AudioManager& operator=(AudioManager&&) = delete;
 
     static const int TIMES_LOOP;
+    static const int CHANNEL_UNDEFINED;
 
 private:
     bool m_isInit;

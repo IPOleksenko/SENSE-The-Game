@@ -11,7 +11,7 @@ public:
         SDL_Renderer* renderer,
         const int& fontSize,
         const SDL_Point& defaultPos,
-        const int& animationDuration = 0
+        const int& animationDuration = 2000
     );
     ~Text();
 
