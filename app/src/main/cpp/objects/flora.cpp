@@ -58,7 +58,7 @@ void Flora::render(const SDL_Point& areaSize, const int& posY) {
                 return true;
             }
 
-            if(view.pos.y < 0) {
+            if(view.pos.y + size.y < 0) {
                 return true;
             }
 

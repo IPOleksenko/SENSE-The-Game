@@ -1,6 +1,5 @@
 #include <utils/texture.hpp>
 #include <SDL_image.h>
-#include <algorithm>
 
 
 Texture::Texture(SDL_Texture* texture, SDL_Renderer* renderer) :

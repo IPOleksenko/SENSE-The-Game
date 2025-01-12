@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <string>
 
+class Icon;
 
 class Window {
 public:
@@ -20,6 +21,7 @@ public:
 
     void setFullscreenOff();
     void setFullscreenOn();
+    void setIcon(const Icon& icon);
 
     Window(const Window&) = delete;
     Window(Window&&) = delete;

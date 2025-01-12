@@ -7,12 +7,14 @@ set(MODULE_SOURCES
     ${MODULE_DIR}/texture.cpp
     ${MODULE_DIR}/music.cpp
     ${MODULE_DIR}/sfx.cpp
+    ${MODULE_DIR}/icon.cpp
 )
 
 set(MODULE_HEADERS
     ${INCLUDE_DIR}/texture.hpp
     ${INCLUDE_DIR}/music.hpp
     ${INCLUDE_DIR}/sfx.hpp
+    ${INCLUDE_DIR}/icon.hpp
 )
 
 add_library(

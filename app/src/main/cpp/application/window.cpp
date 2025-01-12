@@ -1,4 +1,5 @@
 #include <application/window.hpp>
+#include <utils/icon.hpp>
 
 
 Window::Window(
@@ -73,5 +74,15 @@ void Window::setFullscreen(const bool& fullscreen) {
             SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
             "SDL_SetWindowFullscreen", SDL_GetError()
         );
+    }
+}
+
+void Window::setIcon(const Icon& icon) {
+    if(!m_isInit) {
+        return;
+    }
+
+    if(icon.isInit()) {
+        SDL_SetWindowIcon(m_sdlWindow, icon.getSdlSurface());
     }
 }

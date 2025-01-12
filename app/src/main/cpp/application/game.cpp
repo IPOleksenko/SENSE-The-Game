@@ -11,6 +11,7 @@
 #include <objects/end.hpp>
 #include <utils/music.hpp>
 #include <utils/sfx.hpp>
+#include <utils/icon.hpp>
 #include <assets/checkpoints.hpp>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -97,6 +98,10 @@ void Game::run() const {
     if(!audioManager.isInit()) {
         return;
     }
+
+    window.setIcon(
+        Icon(SDL_Incbin(ICON_BMP))
+    );
 
     play(window, renderer, audioManager);
 }
