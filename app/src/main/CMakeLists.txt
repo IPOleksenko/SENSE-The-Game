@@ -37,6 +37,7 @@ else()
             ${PROJECT_NAME}
             SDL2
             SDL2_image
+            SDL2_mixer
             SDL2_ttf
 
         DESTINATION
