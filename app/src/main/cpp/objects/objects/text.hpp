@@ -20,6 +20,7 @@ public:
     void animationStop();
     void positionReset();
     void positionCenter();
+    void resize(const int& fontSize);
     void render(const SDL_Point& areaSize);
 
 private:

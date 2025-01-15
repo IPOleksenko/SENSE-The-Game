@@ -5,7 +5,9 @@
 End::End(SDL_Renderer *renderer) :
     m_texture(SDL_Incbin(SPRITE_COLOR_SCREEN_BLACK_PNG), renderer),
     m_alpha()
-{}
+{
+    SDL_SetTextureBlendMode(m_texture.getSdlTexture(), SDL_BLENDMODE_BLEND);
+}
 
 void End::render(const SDL_Point& areaSize) {
     if (!m_texture.isInit()) {
@@ -21,7 +23,7 @@ void End::render(const SDL_Point& areaSize) {
 
     // Calculate alpha channel based on elapsed time (3 seconds = 3000 milliseconds)
     if (elapsed_time < 3000) {
-        m_alpha = static_cast<int>((elapsed_time / 3000) * SDL_ALPHA_OPAQUE);
+        m_alpha = static_cast<int>((elapsed_time / 3000.0) * SDL_ALPHA_OPAQUE);
     }
     else {
         m_alpha = SDL_ALPHA_OPAQUE; // Fully opaque image

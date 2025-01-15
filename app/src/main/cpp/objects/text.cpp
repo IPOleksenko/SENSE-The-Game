@@ -63,6 +63,11 @@ void Text::positionCenter() {
     m_isCentered = true;
 }
 
+void Text::resize(const int& fontSize)
+{
+    m_sdlFont=(TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize));
+}
+
 void Text::render(const SDL_Point& areaSize) {
     if(m_text.empty()) {
         return;

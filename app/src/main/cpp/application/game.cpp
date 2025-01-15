@@ -150,7 +150,11 @@ void Game::updateText(Text& text, const int& yPos) {
         case CheckPoint::Q_START:
         case CheckPoint::R_START:
         case CheckPoint::S_START:
-        case CheckPoint::T_START: {
+        case CheckPoint::T_START: 
+        case CheckPoint::FINAL_START: {
+            if (static_cast<CheckPoint>(yPos) == CheckPoint::FINAL_START) {
+                text.resize(48);
+            }
             text.setText(getCheckpointText(static_cast<CheckPoint>(yPos)));
             text.positionCenter();
             text.animationStart(true);
@@ -178,12 +182,6 @@ void Game::updateText(Text& text, const int& yPos) {
         case CheckPoint::T_STOP:
         case CheckPoint::FINAL_STOP: {
             text.animationStart(false);
-            break;
-        }
-        case CheckPoint::FINAL_START: {
-            text.setText(getCheckpointText(static_cast<CheckPoint>(yPos)));
-            text.positionReset();
-            text.animationStart(true);
             break;
         }
     }
@@ -292,8 +290,10 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             player.getSpeedMax()
         );
 
-        if(player.getPosY() > static_cast<int>(CheckPoint::FINAL_STOP)) {
+        if(player.getPosY() >= static_cast<int>(CheckPoint::FINAL_START)) {
             end.render(window.getSize());
+            if (player.getPosY() >= static_cast<int>(CheckPoint::FINAL_STOP))
+                isRunning = false;
         }
 
         updateText(text, player.getPosY());

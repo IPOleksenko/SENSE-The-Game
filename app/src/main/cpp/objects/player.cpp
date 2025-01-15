@@ -111,6 +111,8 @@ void Player::render(const SDL_Point& windowSize) {
 }
 
 void Player::increaseSpeed(const Player::Move& move) {
+    if (m_posY >= FINAL_CHECKPOINT) { return; }
+
     if(m_lastMove != move && move != Move::Undefined) {
         m_lastMove = move;
         m_speed += m_speedScale;
