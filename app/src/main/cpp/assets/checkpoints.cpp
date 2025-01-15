@@ -11,9 +11,10 @@ std::string getCheckpointText(const CheckPoint& checkPoint) {
 Instructions:
     *Press A (or LEFT) and D (or RIGHT) alternately to move.
     *Pass the middle mark to start moving.
-    *Keep your balance—don't let the pointer hit the red zone, or you'll lose!
+    *Keep your balance - don't let the pointer hit the red zone, or you'll lose!
 
-Fullscreen: Press F to toggle fullscreen mode.)"
+Fullscreen: Press F to toggle fullscreen mode.
+Exit: Press ESC to exit the game.)"
         },
         {
             CheckPoint::A_START,
