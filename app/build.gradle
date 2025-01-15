@@ -7,7 +7,7 @@ android {
     ndkVersion '27.0.12077973'
 
     defaultConfig {
-        applicationId = 'com.anarchy.sense'
+        applicationId = 'com.ipoleksenko.sense'
         minSdkVersion 21
         targetSdkVersion 35
         externalNativeBuild {
@@ -32,7 +32,7 @@ android {
             path 'src/main/CMakeLists.txt'
         }
     }
-    namespace 'com.anarchy.sense'
+    namespace 'com.ipoleksenko.sense'
 }
 
 dependencies {
