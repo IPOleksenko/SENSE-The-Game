@@ -75,6 +75,7 @@ void Window::setFullscreen(const bool& fullscreen) {
             "SDL_SetWindowFullscreen", SDL_GetError()
         );
     }
+    m_isFullscreen = fullscreen;
 }
 
 void Window::setIcon(const Icon& icon) {

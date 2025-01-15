@@ -238,6 +238,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                             break;
                         }
                     }
+                    break;
                 }
                 case SDL_FINGERDOWN : {
                     const SDL_TouchFingerEvent &touchEvent = event.tfinger;
