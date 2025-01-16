@@ -85,9 +85,16 @@ void Game::run() const {
     }
 
 #if defined(__ANDROID__)
-    SDL_DisplayMode displayMode;
-    SDL_GetCurrentDisplayMode(0, &displayMode);
-    Window window(s_windowPos, {displayMode.w, displayMode.h}, s_name);
+    SDL_Rect displayBounds;
+    if (SDL_GetDisplayBounds(0, &displayBounds) != 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Failed to get display bounds: %s", SDL_GetError());
+        return;
+    }
+
+    SDL_Point adjustedSize = { displayBounds.w, displayBounds.h };
+
+    Window window(s_windowPos, adjustedSize, s_name);
+    window.setFullscreenOn();
 #elif (defined(_WIN32) || defined(_WIN64) || defined(__linux__) || defined(__unix__))
     Window window(s_windowPos, s_windowSize, s_name);
 #endif
@@ -194,9 +201,6 @@ void Game::updateText(Text& text, const int& yPos) {
 }
 
 void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) {
-#if defined(__ANDROID__)
-    window.setFullscreenOn();
-#endif
     loadStartScreen(window, renderer);
 
     Background background(renderer.getSdlRenderer());
@@ -218,7 +222,10 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     while (isRunning) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
-
+                case SDL_QUIT: {
+                    isRunning = false;
+                    break;
+                }
 #if defined(__ANDROID__)
                 case SDL_FINGERDOWN : {
                     const SDL_TouchFingerEvent &touchEvent = event.tfinger;
@@ -259,10 +266,6 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                             break;
                         }
                     }
-                    break;
-                }
-                case SDL_QUIT: {
-                    isRunning = false;
                     break;
                 }
 #endif
