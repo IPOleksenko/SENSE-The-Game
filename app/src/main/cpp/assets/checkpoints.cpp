@@ -7,7 +7,16 @@ std::string getCheckpointText(const CheckPoint& checkPoint) {
     static const std::map<CheckPoint, std::string> labels = {
         {
             CheckPoint::IDLE,
-            R"(
+#if defined(__ANDROID__)
+                    R"(
+Instructions:
+    *Tap the left and right side of the screen alternately to move.
+    *Pass the middle mark to start moving.
+    *Keep your balance - don't let the pointer hit the red zone, or you'll lose!)"
+
+#elif (defined(_WIN32) || defined(_WIN64) || defined(__linux__) || defined(__unix__))
+
+                    R"(
 Instructions:
     *Press A (or LEFT) and D (or RIGHT) alternately to move.
     *Pass the middle mark to start moving.
@@ -15,6 +24,7 @@ Instructions:
 
 Fullscreen: Press F to toggle fullscreen mode.
 Exit: Press ESC to exit the game.)"
+#endif
         },
         {
             CheckPoint::A_START,

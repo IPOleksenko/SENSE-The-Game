@@ -84,7 +84,13 @@ void Game::run() const {
         return;
     }
 
+#if defined(__ANDROID__)
+    SDL_DisplayMode displayMode;
+    SDL_GetCurrentDisplayMode(0, &displayMode);
+    Window window(s_windowPos, {displayMode.w, displayMode.h}, s_name);
+#elif (defined(_WIN32) || defined(_WIN64) || defined(__linux__) || defined(__unix__))
     Window window(s_windowPos, s_windowSize, s_name);
+#endif
     if(!window.isInit()) {
         return;
     }
@@ -188,6 +194,9 @@ void Game::updateText(Text& text, const int& yPos) {
 }
 
 void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) {
+#if defined(__ANDROID__)
+    window.setFullscreenOn();
+#endif
     loadStartScreen(window, renderer);
 
     Background background(renderer.getSdlRenderer());
@@ -209,6 +218,20 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     while (isRunning) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
+
+#if defined(__ANDROID__)
+                case SDL_FINGERDOWN : {
+                    const SDL_TouchFingerEvent &touchEvent = event.tfinger;
+
+                    if (touchEvent.x < 0.5f) {
+                        player.increaseSpeed(Player::Move::Left);
+                    } else {
+                        player.increaseSpeed(Player::Move::Right);
+                    }
+                    break;
+                }
+
+#elif (defined(_WIN32) || defined(_WIN64) || defined(__linux__) || defined(__unix__))
                 case SDL_KEYUP: {
                     const SDL_KeyboardEvent &keyboardEvent = event.key;
 
@@ -238,20 +261,11 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                     }
                     break;
                 }
-                case SDL_FINGERDOWN : {
-                    const SDL_TouchFingerEvent &touchEvent = event.tfinger;
-
-                    if (touchEvent.x < 0.5f) {
-                        player.increaseSpeed(Player::Move::Left);
-                    } else {
-                        player.increaseSpeed(Player::Move::Right);
-                    }
-                    break;
-                }
                 case SDL_QUIT: {
                     isRunning = false;
                     break;
                 }
+#endif
             }
         }
 
