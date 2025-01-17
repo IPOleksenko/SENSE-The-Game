@@ -95,7 +95,7 @@ void Game::run() const {
 
     Window window(s_windowPos, adjustedSize, s_name);
     window.setFullscreenOn();
-#elif (defined(_WIN32) || defined(_WIN64) || defined(__linux__) || defined(__unix__))
+#else
     Window window(s_windowPos, s_windowSize, s_name);
 #endif
     if(!window.isInit()) {
@@ -209,7 +209,12 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     Player player(renderer.getSdlRenderer());
     Scale scale(renderer.getSdlRenderer());
     End end(renderer.getSdlRenderer());
-    Text text(renderer.getSdlRenderer(), 24, {0, 0});
+#if defined(__ANDROID__)
+    const int fontSize = 48;
+#else
+    const int fontSize = 24;
+#endif
+    Text text(renderer.getSdlRenderer(), fontSize, {0, 0});
     Music soundtrack(SDL_Incbin(SOUND_WIND_WAV));
     Sfx reload(SDL_Incbin(SOUND_RELOAD_WAV));
 
@@ -238,7 +243,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                     break;
                 }
 
-#elif (defined(_WIN32) || defined(_WIN64) || defined(__linux__) || defined(__unix__))
+#else
                 case SDL_KEYUP: {
                     const SDL_KeyboardEvent &keyboardEvent = event.key;
 
@@ -287,7 +292,10 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                 );
                 channel != AudioManager::CHANNEL_UNDEFINED
             ) {
-                while (Mix_Playing(channel) == SDL_TRUE);                
+
+                while (Mix_Playing(channel) == SDL_TRUE) {
+                    SDL_Delay(16);
+                }
             }
 
             renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});

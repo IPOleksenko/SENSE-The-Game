@@ -8,15 +8,15 @@ std::string getCheckpointText(const CheckPoint& checkPoint) {
         {
             CheckPoint::IDLE,
 #if defined(__ANDROID__)
-                    R"(
+R"(
 Instructions:
     *Tap the left and right side of the screen alternately to move.
     *Pass the middle mark to start moving.
     *Keep your balance - don't let the pointer hit the red zone, or you'll lose!)"
 
-#elif (defined(_WIN32) || defined(_WIN64) || defined(__linux__) || defined(__unix__))
+#else
 
-                    R"(
+R"(
 Instructions:
     *Press A (or LEFT) and D (or RIGHT) alternately to move.
     *Pass the middle mark to start moving.
