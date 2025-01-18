@@ -27,6 +27,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            def fileName = variant.buildType.name == 'release' ?
+                    "SENSE-The-Game.apk" :
+                    "SENSE-The-Game-DEBUG-${variant.versionName}.apk"
+            output.outputFileName = fileName
+        }
+    }
     externalNativeBuild {
         cmake {
             path 'src/main/CMakeLists.txt'
