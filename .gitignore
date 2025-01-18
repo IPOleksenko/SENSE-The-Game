@@ -12,3 +12,5 @@ SENSE_THE_GAME.sh
 external/
 libsdl/
 local.properties
+debug/
+release/

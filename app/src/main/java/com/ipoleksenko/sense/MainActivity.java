@@ -3,12 +3,13 @@ package com.ipoleksenko.sense;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.view.Window;
 
 import org.libsdl.app.SDLActivity;
 
 public class MainActivity extends SDLActivity
 {
+    private int previousOrientation;
+
     @Override
     protected String[] getLibraries() {
         return new String[]{
@@ -25,7 +26,15 @@ public class MainActivity extends SDLActivity
             .detectLeakedClosableObjects()
             .build());
 
+        previousOrientation = getResources().getConfiguration().orientation;
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        setRequestedOrientation(previousOrientation);
+        super.onDestroy();
     }
 }
