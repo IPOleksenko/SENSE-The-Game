@@ -20,7 +20,7 @@
 
 
 const std::string Game::s_orientation = "Landscape";
-const std::string Game::s_name = "Sense The Game";
+const std::string Game::s_name = "SENSE The Game";
 const SDL_Point Game::s_windowSize = { 1280, 720 };
 const SDL_Point Game::s_windowPos = {
     static_cast<int>(SDL_WINDOWPOS_CENTERED),
