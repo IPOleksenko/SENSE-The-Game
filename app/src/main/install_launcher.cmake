@@ -4,7 +4,7 @@ file(
     WRITE
     ${SHELL_LAUNCHER_FILE}
     "#!/bin/bash\n"
-    "BIN_DIR=\$(dirname \"\$0\")\n"
+    "BIN_DIR=\$( cd -- \"\$( dirname -- \"${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\n"
     "echo \"Program directory: \$BIN_DIR\"\n"
     "export LD_LIBRARY_PATH=\$BIN_DIR\n"
     "\n"
@@ -18,6 +18,7 @@ file(
     "# Detect system architecture\n"
     "HOST_ARCH=\$(dpkg-architecture -q DEB_HOST_ARCH)\n"
     "GAME_BINARY=\"\$BIN_DIR/${PROJECT_NAME}\"\n"
+    "chmod +x \$GAME_BINARY\n"
     "\n"
     "# Check if game binary exists and is executable\n"
     "if [[ ! -x \"\$GAME_BINARY\" ]]; then\n"
