@@ -12,7 +12,7 @@ elseif(UNIX)
         WRITE
         ${SHELL_LAUNCHER_FILE}
         "#!/bin/bash\n"
-        "BIN_DIR=\$( cd -- \"\$( dirname -- \"${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\n"
+        "BIN_DIR=\$( cd -- \"\$( dirname -- \"\${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\n"
         "echo \"Program directory: \$BIN_DIR\"\n"
         "export LD_LIBRARY_PATH=\$BIN_DIR\n"
         "\n"
