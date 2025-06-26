@@ -39,6 +39,9 @@ void Flora::render(const SDL_Point& areaSize, const int& posY) {
     }
 
     while (posY + areaSize.y > m_nextGenY) {
+        if (m_nextGenY > kMaxFloraY) {
+            break;
+        }
         for (int i = 0; i < s_density; ++i) {
             const Texture &tex = m_textures[texDist(gen)];
 

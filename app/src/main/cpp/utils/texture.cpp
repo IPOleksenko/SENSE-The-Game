@@ -1,4 +1,4 @@
-#include <utils/texture.hpp>
+﻿#include <utils/texture.hpp>
 #include <SDL_image.h>
 
 
@@ -124,4 +124,5 @@ SurfaceTexture::SurfaceTexture(SDL_Surface* surface, SDL_Renderer* renderer) :
             "SDL_CreateTextureFromSurface", SDL_GetError()
         );
     }
+    SDL_FreeSurface(surface);
 }
