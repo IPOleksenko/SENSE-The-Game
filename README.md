@@ -1,10 +1,10 @@
 <img src="app/src/main/assets/icon.bmp" width="256" alt="logo">
 
-# 🎮 SENSE The Game
+# 🎮 SENSE: The Game
 
 ## 🧩 Description
 
-**"SENSE The Game"** is a unique philosophical game inspired by the myth of Sisyphus, where you are tasked not just with pushing a boulder, but also with seeking answers to life's most profound questions. This game explores the concept of the meaning of life through the lens of absurdity, repetitive actions, and endless cycles.
+**"SENSE: The Game"** is a unique philosophical game inspired by the myth of Sisyphus, where you are tasked not just with pushing a boulder, but also with seeking answers to life's most profound questions. This game explores the concept of the meaning of life through the lens of absurdity, repetitive actions, and endless cycles.
 
 ### 🗿 Story and Gameplay
 
