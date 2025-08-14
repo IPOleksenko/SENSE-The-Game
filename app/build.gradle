@@ -2,6 +2,19 @@ plugins {
     id 'com.android.application'
 }
 
+def getCommitCount() {
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', '--count', 'HEAD'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim().toInteger()
+    } catch (Exception e) {
+        return 1
+    }
+}
+
 android {
     compileSdk 34
     ndkVersion '27.0.12077973'
@@ -10,6 +23,10 @@ android {
         applicationId = 'com.ipoleksenko.sense'
         minSdkVersion 21
         targetSdkVersion 35
+
+        versionCode getCommitCount()
+        versionName new Date().format('yyyy.MM.dd-HH.mm.ss')
+
         externalNativeBuild {
             cmake {
                 arguments '-DANDROID_STL=c++_static'
