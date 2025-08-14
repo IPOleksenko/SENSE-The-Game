@@ -114,6 +114,15 @@ RawTexture::RawTexture(SDL_RWops* data, SDL_Renderer* renderer) :
     }
 }
 
+RawTexture::RawTexture(const char* path, SDL_Renderer* renderer) :
+    Texture(IMG_LoadTexture(renderer, path), renderer)
+{
+    if (!m_isInit) {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, 
+            "Failed to load texture from %s: %s", 
+            path, SDL_GetError());
+    }
+}
 
 SurfaceTexture::SurfaceTexture(SDL_Surface* surface, SDL_Renderer* renderer) :
     Texture(SDL_CreateTextureFromSurface(renderer, surface), renderer)

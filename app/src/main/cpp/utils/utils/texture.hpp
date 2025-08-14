@@ -32,6 +32,10 @@ protected:
 class RawTexture : public Texture {
 public:
     explicit RawTexture(SDL_RWops* data, SDL_Renderer* renderer);
+    explicit RawTexture(const char* path, SDL_Renderer* renderer);
+    RawTexture() : Texture(nullptr, nullptr) {}
+
+    SDL_Texture* get() const { return m_sdlTexture.get(); }
 };
 
 

@@ -3,18 +3,24 @@ set(MODULE_DIR ${SOURCE_DIR}/${MODULE_NAME})
 set(INCLUDE_DIR ${MODULE_DIR}/${MODULE_NAME})
 set(MODULE_TARGET ${PROJECT_NAME}_${MODULE_NAME})
 
+include_directories(${SOURCE_DIR})
+
 set(MODULE_SOURCES
     ${MODULE_DIR}/texture.cpp
     ${MODULE_DIR}/music.cpp
     ${MODULE_DIR}/sfx.cpp
     ${MODULE_DIR}/icon.cpp
+    ${MODULE_DIR}/modding.cpp
+    ${MODULE_DIR}/localization.cpp
 )
 
 set(MODULE_HEADERS
-    ${INCLUDE_DIR}/texture.hpp
-    ${INCLUDE_DIR}/music.hpp
-    ${INCLUDE_DIR}/sfx.hpp
-    ${INCLUDE_DIR}/icon.hpp
+    ${MODULE_DIR}/utils/texture.hpp
+    ${MODULE_DIR}/utils/music.hpp
+    ${MODULE_DIR}/utils/sfx.hpp
+    ${MODULE_DIR}/utils/icon.hpp
+    ${MODULE_DIR}/utils/modding.hpp
+    ${MODULE_DIR}/utils/localization.hpp
 )
 
 add_library(

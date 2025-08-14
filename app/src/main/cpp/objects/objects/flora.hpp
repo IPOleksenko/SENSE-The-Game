@@ -1,8 +1,10 @@
 #pragma once
 
-#include <utils/texture.hpp>
+#include "../../utils/utils/texture.hpp"
+#include "../../utils/utils/modding.hpp"
 #include <vector>
 #include <list>
+#include <string>
 
 
 class Flora {
@@ -15,6 +17,10 @@ public:
     void reset();
 
 private:
+    RawTexture loadTexture(SDL_Renderer* renderer, const std::string& name);
+    
+    void loadTextures(SDL_Renderer* renderer);
+
     std::vector<RawTexture> m_textures;
 
     struct TexView {

@@ -1,5 +1,7 @@
-#include <objects/text.hpp>
+#include "objects/text.hpp"
 #include "../utils/utils/texture.hpp"
+#include "../utils/utils/localization.hpp"
+#include "../utils/utils/modding.hpp"
 #include <SDL_ttf.h>
 #include <vector>
 #include <sstream>
@@ -11,9 +13,9 @@ Text::Text(
     const SDL_Point& pos,
     const int& animationDuration
 ) :
-    m_sdlFont(TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize)),
+    m_sdlFont(nullptr),
     m_sdlRenderer(renderer),
-    m_isInit(m_sdlFont != nullptr),
+    m_isInit(false),
     m_text(),
     m_pos(pos),
     m_alpha(SDL_ALPHA_OPAQUE),
@@ -23,11 +25,26 @@ Text::Text(
     m_animationStart(),
     m_animationDuration(animationDuration)
 {
+    std::string customFontPath = modding::loadCustomFontPath();
+    if (!customFontPath.empty()) {
+        m_sdlFont = TTF_OpenFont(customFontPath.c_str(), fontSize);
+        if (m_sdlFont) {
+            TTF_SetFontHinting(m_sdlFont, TTF_HINTING_LIGHT);
+            m_isInit = true;
+            return;
+        }
+    }
+
+    m_sdlFont = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
+    m_isInit = m_sdlFont != nullptr;
+    
     if (!m_isInit) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
             "TTF_OpenFontRW", SDL_GetError()
         );
+    } else {
+        TTF_SetFontHinting(m_sdlFont, TTF_HINTING_LIGHT);
     }
 }
 
@@ -41,6 +58,42 @@ Text::~Text() {
 
 void Text::setText(const std::string& text) {
     m_text = text;
+}
+
+void Text::setLocalizedText(const std::string& key) {
+    std::string localizedText = LocalizationManager::instance().getText(key);
+    if (!localizedText.empty()) {
+        m_text = localizedText;
+    }
+}
+
+void Text::loadCustomFont(const std::string& path) {
+    if (m_isInit) {
+        TTF_CloseFont(m_sdlFont);
+        m_sdlFont = nullptr;
+        m_isInit = false;
+    }
+
+    std::string fontPath = path;
+    if (fontPath.empty()) {
+        fontPath = modding::loadCustomFontPath();
+    }
+
+    int fontSize = m_sdlFont ? TTF_FontHeight(m_sdlFont) : 25;
+
+    if (!fontPath.empty() && modding::fileExists(fontPath)) {
+        m_sdlFont = TTF_OpenFont(fontPath.c_str(), fontSize);
+    } else {
+        m_sdlFont = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
+    }
+
+    m_isInit = m_sdlFont != nullptr;
+    if (!m_isInit) {
+        SDL_LogCritical(
+            SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
+            "TTF_OpenFont", SDL_GetError()
+        );
+    }
 }
 
 void Text::animationStart(const bool& fadeIn) {
@@ -105,7 +158,7 @@ void Text::render(const SDL_Point& areaSize) {
         }
 
         textures.emplace_back(
-            TTF_RenderText_Blended(
+            TTF_RenderUTF8_Blended(
                 m_sdlFont,
                 line.c_str(),
                 { 0xFF, 0xFF, 0xFF, m_alpha }

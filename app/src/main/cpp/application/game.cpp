@@ -17,6 +17,8 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <utils/utils/modding.hpp>
+#include <utils/utils/localization.hpp>
 
 
 const std::string Game::s_orientation = "Landscape";
@@ -31,6 +33,11 @@ const SDL_Point Game::s_windowPos = {
 Game::Game() :
     m_isInit(false)
 {
+    modding::createDefaultLocalizationFile();
+    modding::createDefaultFontFile();
+    modding::createFloraDirectory();
+    LocalizationManager::instance().init();
+
     m_isInit = (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0);
     if(!m_isInit) {
         SDL_LogCritical(
@@ -129,7 +136,6 @@ void Game::loadStartScreen(Window& window, Renderer& renderer) {
     text.render(window.getSize());
 
     renderer.present();
-    SDL_Delay(200);
 }
 
 void Game::updateText(Text& text, const int& yPos) {
@@ -209,11 +215,13 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     Player player(renderer.getSdlRenderer());
     Scale scale(renderer.getSdlRenderer());
     End end(renderer.getSdlRenderer());
+
 #if defined(__ANDROID__)
     const int fontSize = 48;
 #else
     const int fontSize = 24;
 #endif
+
     Text text(renderer.getSdlRenderer(), fontSize, {0, 0});
     Music soundtrack(SDL_Incbin(SOUND_WIND_WAV));
     Sfx reload(SDL_Incbin(SOUND_RELOAD_WAV));

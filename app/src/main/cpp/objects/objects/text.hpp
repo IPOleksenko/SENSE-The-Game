@@ -16,6 +16,8 @@ public:
     ~Text();
 
     void setText(const std::string& text);
+    void setLocalizedText(const std::string& key);
+    void loadCustomFont(const std::string& path = "");
     void animationStart(const bool& fadeIn);
     void animationStop();
     void positionReset();
