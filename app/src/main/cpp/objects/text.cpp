@@ -37,7 +37,7 @@ Text::Text(
 
     m_sdlFont = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
     m_isInit = m_sdlFont != nullptr;
-    
+
     if (!m_isInit) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
@@ -118,27 +118,40 @@ void Text::positionCenter() {
 
 void Text::resize(const int& fontSize)
 {
-    m_sdlFont=(TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize));
+    if (m_sdlFont) {
+        TTF_CloseFont(m_sdlFont);
+        m_sdlFont = nullptr;
+        m_isInit = false;
+    }
+
+    m_sdlFont = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
+    m_isInit = m_sdlFont != nullptr;
+
+    if (!m_isInit) {
+        SDL_LogCritical(
+                SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
+                "TTF_OpenFontRW", SDL_GetError()
+        );
+    }
 }
 
+
 void Text::render(const SDL_Point& areaSize) {
-    if(m_text.empty()) {
+    if (m_text.empty()) {
         return;
     }
 
     if (m_isAnimated) {
         const Uint32 currentTime = SDL_GetTicks();
         const float progress = SDL_min(
-            static_cast<float>(currentTime - m_animationStart) /
-            static_cast<float>(m_animationDuration), 1.0f
+                static_cast<float>(currentTime - m_animationStart) /
+                static_cast<float>(m_animationDuration), 1.0f
         );
 
         m_alpha = static_cast<Uint8>(
-            (m_fadeIn ? progress : 1.0f - progress) *
-            SDL_ALPHA_OPAQUE
+                (m_fadeIn ? progress : 1.0f - progress) * SDL_ALPHA_OPAQUE
         );
-    }
-    else {
+    } else {
         m_alpha = SDL_ALPHA_OPAQUE;
     }
 
@@ -148,52 +161,55 @@ void Text::render(const SDL_Point& areaSize) {
 
     std::istringstream stream(m_text);
     std::string line;
+    std::vector<SurfaceTexture> textures;
+    int totalHeight = 0;
 
-    std::vector<SurfaceTexture> textures = {};
-    int offsetY = 0;
+    const float scaleX = static_cast<float>(areaSize.x) / 1280.0f;
+    const float scaleY = static_cast<float>(areaSize.y) / 720.0f;
 
     while (std::getline(stream, line)) {
-        if(line.empty()) {
-            continue;
-        }
+        if (line.empty()) continue;
 
         textures.emplace_back(
-            TTF_RenderUTF8_Blended(
-                m_sdlFont,
-                line.c_str(),
-                { 0xFF, 0xFF, 0xFF, m_alpha }
-            ),
-            m_sdlRenderer
+                TTF_RenderUTF8_Blended(
+                        m_sdlFont,
+                        line.c_str(),
+                        { 0xFF, 0xFF, 0xFF, m_alpha }
+                ),
+                m_sdlRenderer
         );
 
-        SDL_Point textureSize = {};
-        if(textures.back().querySize(textureSize)) {
-            offsetY += textureSize.y;
+        SDL_Point textureSize{};
+        if (textures.back().querySize(textureSize)) {
+            totalHeight += static_cast<int>(textureSize.y * scaleY);
         }
     }
 
-    int posY = m_pos.y;
-    if(m_isCentered) {
-        posY = (areaSize.y - offsetY) / 2;
+    int posY;
+    if (m_isCentered) {
+        posY = (areaSize.y - totalHeight) / 2;
+    } else {
+        posY = static_cast<int>(m_pos.y * scaleY);
     }
 
-    for(const auto& tex: textures) {
-        SDL_Point textureSize = {};
-
-        if(tex.querySize(textureSize)) {
-            int posX = m_pos.x;
-            if(m_isCentered) {
-                posX = (areaSize.x - textureSize.x) / 2;
+    for (const auto& tex : textures) {
+        SDL_Point textureSize{};
+        if (tex.querySize(textureSize)) {
+            int posX;
+            if (m_isCentered) {
+                posX = (areaSize.x - static_cast<int>(textureSize.x * scaleX)) / 2;
+            } else {
+                posX = static_cast<int>(m_pos.x * scaleX);
             }
 
-            const SDL_Rect destRect = {
-                posX, posY,
-                textureSize.x, textureSize.y
+            SDL_Rect destRect = {
+                    posX, posY,
+                    static_cast<int>(textureSize.x * scaleX),
+                    static_cast<int>(textureSize.y * scaleY)
             };
 
             tex.render(&destRect, nullptr);
+            posY += destRect.h;
         }
-
-        posY += textureSize.y;
     }
 }

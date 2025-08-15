@@ -58,50 +58,32 @@ void Texture::render(const SDL_Rect* destRect, const SDL_Rect* srcRect) const {
 }
 
 void Texture::tile(
-    const SDL_Point& areaSize,
-    const float& scale,
-    const int& startY,
-    const bool& isFullscreen
+        const SDL_Point& areaSize,
+        const float& scale,
+        const int& startY,
+        const bool& isFullscreen
 ) const {
-    SDL_Point textureSize = {};
+    SDL_Point textureSize{};
+    if (!querySize(textureSize)) return;
 
-    if(!querySize(textureSize)) {
-        return;
-    }
+    float targetWidth = areaSize.x * scale;
+    float aspectRatio = static_cast<float>(textureSize.y) / textureSize.x;
 
-    const SDL_FPoint textureScale = {
-        static_cast<float>(areaSize.x) / static_cast<float>(textureSize.x),
-        static_cast<float>(areaSize.y) / static_cast<float>(textureSize.y)
-    };
+    int scaledW = (1, static_cast<int>(targetWidth));
+    int scaledH = (1,static_cast<int>(scaledW * aspectRatio));
 
-    const float uniformScale = SDL_min(textureScale.x, textureScale.y) * scale;
-
-    const SDL_Point scaledSize = {
-        static_cast<int>(static_cast<float>(textureSize.x) * uniformScale),
-        static_cast<int>(static_cast<float>(textureSize.y) * uniformScale)
-    };
-
-
-    SDL_Rect destRect = {};
-    for (int y = startY; y < areaSize.y; y += scaledSize.y) {
+    SDL_Rect destRect{};
+    for (int y = startY; y < areaSize.y; y += scaledH) {
         if (isFullscreen) {
-            // Stretch the texture to fill the screen
             destRect = { 0, y, areaSize.x, areaSize.y };
-        }
-        else {
-            // Center the texture horizontally and offset it vertically
-            destRect = {
-                (areaSize.x - scaledSize.x) / 2,    // Horizontal centering
-                y,                                  // Vertical offset
-                scaledSize.x,
-                scaledSize.y
-            };
+        } else {
+            destRect = { (areaSize.x - scaledW) / 2, y, scaledW, scaledH };
         }
 
-        // Render the texture
         render(&destRect, nullptr);
     }
 }
+
 
 RawTexture::RawTexture(SDL_RWops* data, SDL_Renderer* renderer) :
     Texture(IMG_LoadTexture_RW(renderer, data, SDL_TRUE), renderer)

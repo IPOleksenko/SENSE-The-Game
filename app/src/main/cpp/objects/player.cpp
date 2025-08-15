@@ -93,20 +93,28 @@ void Player::render(const SDL_Point& windowSize) {
     const int col = m_frameCurrent % m_framesPerRow;
 
     SDL_Rect srcRect = {
-        col * m_frameSize.x,    // Start of the frame on X
-        row * m_frameSize.y,    // Start of the frame on Y
-        m_frameSize.x,          // Frame width
-        m_frameSize.y           // Frame height
+            col * m_frameSize.x,
+            row * m_frameSize.y,
+            m_frameSize.x,
+            m_frameSize.y
     };
+
+    const float baseWidth  = 1280.0f;
+    const float baseHeight = 720.0f;
+
+    float scaleX = static_cast<float>(windowSize.x) / baseWidth;
+    float scaleY = static_cast<float>(windowSize.y) / baseHeight;
+
+    int scaledW = static_cast<int>(1, m_frameSize.x * scaleX);
+    int scaledH = static_cast<int>(1, m_frameSize.y * scaleY);
 
     SDL_Rect destRect = {
-        (windowSize.x - m_frameSize.x) / 2,        // Center on X
-        (windowSize.y - m_frameSize.y) / 2 - 10,   // Center on Y minus 10 pixels
-        m_frameSize.x,
-        m_frameSize.y
+            static_cast<int>((windowSize.x - scaledW) / 2),
+            static_cast<int>((windowSize.y - scaledH) / 2 - (10 * scaleY)),
+            scaledW,
+            scaledH
     };
 
-    // Rendering the current frame
     m_texture.render(&destRect, &srcRect);
 }
 

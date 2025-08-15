@@ -216,11 +216,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     Scale scale(renderer.getSdlRenderer());
     End end(renderer.getSdlRenderer());
 
-#if defined(__ANDROID__)
-    const int fontSize = 48;
-#else
     const int fontSize = 24;
-#endif
 
     Text text(renderer.getSdlRenderer(), fontSize, {0, 0});
     Music soundtrack(SDL_Incbin(SOUND_WIND_WAV));

@@ -6,6 +6,6 @@ Background::Background(SDL_Renderer *renderer) :
 {}
 
 void Background::render(const SDL_Point& areaSize, const int& posY) {
-    back.tile(areaSize, 1.0f, -posY, true);
-    front.tile(areaSize, 1.0f, -posY, true);
+    back.tile(areaSize, 1.0f, -posY, false);
+    front.tile(areaSize, 1.0f, -posY, false);
 }

@@ -7,7 +7,7 @@ Road::Road(SDL_Renderer *renderer) :
 void Road::render(const SDL_Point& areaSize, const int& posY) {
     m_texture.tile(
         areaSize,
-        0.2f,
+        0.12f,
         -posY,
         false
     );

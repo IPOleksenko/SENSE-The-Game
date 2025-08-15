@@ -65,17 +65,28 @@ void Flora::reset() {
 }
 
 void Flora::render(const SDL_Point& areaSize, const int& posY) {
-    if (m_textures.empty()) {
-        m_lastPosY = posY;
-        return;
-    }
-
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<int> posXDist(
-        static_cast<int>(static_cast<float>(areaSize.x) * (2.0f / 9.0f)),
-        static_cast<int>(static_cast<float>(areaSize.x) * (7.0f / 9.0f))
-    );
+
+    static SDL_Point prevArea{0, 0};
+    if (prevArea.x != areaSize.x || prevArea.y != areaSize.y) {
+        if (prevArea.x > 0 && prevArea.y > 0) {
+            const float fx = static_cast<float>(areaSize.x) / prevArea.x;
+            const float fy = static_cast<float>(areaSize.y) / prevArea.y;
+
+            for (auto &view : m_floraView) {
+                view.pos.x = static_cast<int>(view.pos.x * fx);
+                view.pos.y = static_cast<int>(view.pos.y * fy);
+            }
+            m_nextGenY = static_cast<int>(m_nextGenY * fy);
+            m_lastPosY = static_cast<int>(m_lastPosY * fy);
+        }
+        prevArea = areaSize;
+    }
+
+    int minX = std::max(0, static_cast<int>(areaSize.x * 0.215f));
+    int maxX = std::max(minX, static_cast<int>(areaSize.x * 0.765f));
+    std::uniform_int_distribution<int> posXDist(minX, maxX);
 
     static size_t lastTextureCount = 0;
     static std::uniform_int_distribution<size_t> texDist(0, 0);
@@ -84,50 +95,46 @@ void Flora::render(const SDL_Point& areaSize, const int& posY) {
         lastTextureCount = m_textures.size();
     }
 
-    for(auto & view: m_floraView) {
+    for (auto &view : m_floraView) {
         view.pos.y -= (posY - m_lastPosY);
     }
 
+    const int genStep = std::max(1, static_cast<int>(s_genDist * (static_cast<float>(areaSize.y) / 720.0f)));
+
     while (posY + areaSize.y > m_nextGenY) {
-        if (m_nextGenY > kMaxFloraY) {
-            break;
-        }
+        if (m_nextGenY > kMaxFloraY) break;
+
         for (int i = 0; i < s_density; ++i) {
             const Texture &tex = m_textures[texDist(gen)];
-
-            m_floraView.push_back({
-                tex,
-                {posXDist(gen), m_nextGenY}
-            });
+            m_floraView.push_back({ tex, { posXDist(gen), m_nextGenY } });
         }
 
-        m_nextGenY += s_genDist;
+        m_nextGenY += genStep;
     }
 
-    m_floraView.remove_if(
-        [&areaSize](const auto& view) {
-            SDL_Point size {};
-            if(!view.texture.querySize(size)) {
-                return true;
-            }
+    m_floraView.remove_if([&areaSize](const auto& view) {
+        SDL_Point size{};
+        if (!view.texture.querySize(size)) return true;
 
-            if(view.pos.y + size.y < 0) {
-                return true;
-            }
+        const float scale = std::max(0.01f, static_cast<float>(areaSize.x) / 1280.0f);
+        const int newH = std::max(1, static_cast<int>(size.y * scale));
 
-            return false;
-        }
-    );
+        return (view.pos.y + newH) < 0;
+    });
 
-    for(const auto & view: m_floraView) {
-        SDL_Point size {};
-        if(!view.texture.querySize(size)) {
-            continue;
-        }
+    for (const auto &view : m_floraView) {
+        SDL_Point texSize{};
+        if (!view.texture.querySize(texSize)) continue;
 
-        const SDL_Rect destRect {
-            view.pos.x, view.pos.y,
-            size.x, size.y
+        const float scale = std::max(0.01f, static_cast<float>(areaSize.x) / 1280.0f);
+        const int newW = std::max(1, static_cast<int>(texSize.x * scale));
+        const int newH = std::max(1, static_cast<int>(texSize.y * scale));
+
+        const SDL_Rect destRect{
+                view.pos.x,
+                view.pos.y,
+                newW,
+                newH
         };
 
         view.texture.render(&destRect, nullptr);
