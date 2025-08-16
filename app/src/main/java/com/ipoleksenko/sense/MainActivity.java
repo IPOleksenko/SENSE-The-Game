@@ -8,8 +8,6 @@ import org.libsdl.app.SDLActivity;
 
 public class MainActivity extends SDLActivity
 {
-    private int previousOrientation;
-
     @Override
     protected String[] getLibraries() {
         return new String[]{
@@ -26,15 +24,18 @@ public class MainActivity extends SDLActivity
             .detectLeakedClosableObjects()
             .build());
 
-        previousOrientation = getResources().getConfiguration().orientation;
+        if (android.os.Build.VERSION.SDK_INT >= 9) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onDestroy() {
-        setRequestedOrientation(previousOrientation);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         super.onDestroy();
     }
 }
