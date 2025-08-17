@@ -8,12 +8,12 @@ Scale::Scale(SDL_Renderer *renderer) :
     arrow(SDL_Incbin(SPRITE_SCALE_ARROW_PNG), renderer)
 {}
 
-int Scale::interpolate(
-    const int& start,
-    const int& end,
-    const double& t
+float Scale::rangeFract(
+    const float& start,
+    const float& end,
+    const float& fract
 ) {
-    return static_cast<int>(start + t * (end - start));
+    return static_cast<float>((start) + fract * (end - start));
 }
 
 void Scale::render(
@@ -34,8 +34,8 @@ void Scale::render(
         static_cast<int>(static_cast<float>(areaSize.y) * barScale.y),
     };
     const SDL_Point barPos {
-        (areaSize.x - barSize.x) / 2,
-        static_cast<int>(areaSize.y * 0.95 - barSize.y)
+        static_cast<int>((areaSize.x - barSize.x) / 2.0f),
+        static_cast<int>(areaSize.y * 0.95f - barSize.y)
     };
     const SDL_Rect barRect {
         barPos.x, barPos.y,
@@ -52,37 +52,34 @@ void Scale::render(
     };
     SDL_Point arrowPos {
         0,
-        static_cast<int>(areaSize.y * 0.98 - arrowSize.y)
+        static_cast<int>(areaSize.y * 0.98f - arrowSize.y)
     };
-
-    const int scaleStartX = barRect.x;              // Left edge of the scale
-    const int scaleEndX = barRect.x + barRect.w;    // Right edge of the scale
-    const int scaleWidth = scaleEndX - scaleStartX;
+    
+    const float scaleStartX = barRect.x;              // Left edge of the scale
+    const float scaleEndX = barRect.x + barRect.w;    // Right edge of the scale
+    const float scaleWidth = barRect.w;
 
     // Define key positions on the scale
-    const int minPos = scaleStartX + scaleWidth / 3;      // 1/3 of the scale
-    const int maxPos = scaleStartX + 2 * scaleWidth / 3;  // 2/3 of the scale
-    const int midPos = scaleStartX + scaleWidth / 2;      // Center of the scale
+    const float minPos = scaleWidth / 3.0f;         // 1/3 of the scale
+    const float maxPos = 2.0f * scaleWidth / 3.0f;  // 2/3 of the scale
+    const float midPos = scaleWidth / 2.0f;         // Center of the scale
 
     // Calculate arrow position based on playerSpeed
-    int arrowCenterX;
+    float arrowCenterX;
     if (playerSpeed <= playerSpeedMin) {
-        // Map [0, playerSpeedMin] to [scaleStartX, minPos]
-        float t = playerSpeed / playerSpeedMin;
-        arrowCenterX = interpolate(scaleStartX, minPos, t);
+        float fract = playerSpeed / playerSpeedMin;
+        arrowCenterX = rangeFract(0, minPos, fract);
     }
     else if (playerSpeed >= playerSpeedMax) {
-        // Map [playerSpeedMax, ...] to [maxPos, scaleEndX]
-        float t = (playerSpeed - playerSpeedMax) / playerSpeedMax;
-        arrowCenterX = interpolate(maxPos, scaleEndX, t);
+        float fract = (playerSpeed - playerSpeedMax) / playerSpeedMax;
+        arrowCenterX = rangeFract(maxPos, scaleWidth, fract);
     }
     else {
-        // Map [playerSpeedMin, playerSpeedMax] to [minPos, maxPos]
-        float t = (playerSpeed - playerSpeedMin) / (playerSpeedMax - playerSpeedMin);
-        arrowCenterX = interpolate(minPos, maxPos, t);
+        float fract = (playerSpeed - playerSpeedMin) / (playerSpeedMax - playerSpeedMin);
+        arrowCenterX = rangeFract(minPos, maxPos, fract);
     }
     // Center the arrow horizontally on the calculated position
-    arrowPos.x = arrowCenterX  - arrowSize.x / 2;
+    arrowPos.x = (arrowCenterX + scaleStartX) - (arrowSize.x / 2.0f);
 
     const SDL_Rect arrowRect {
         arrowPos.x, arrowPos.y,

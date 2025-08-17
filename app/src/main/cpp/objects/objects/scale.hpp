@@ -20,9 +20,9 @@ private:
     RawTexture bar;
     RawTexture arrow;
 
-    static int interpolate(
-        const int& start,
-        const int& end,
-        const double& t
+    static float rangeFract(
+        const float& start,
+        const float& end,
+        const float& t
     );
 };

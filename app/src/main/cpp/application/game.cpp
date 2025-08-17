@@ -29,7 +29,6 @@ const SDL_Point Game::s_windowPos = {
     static_cast<int>(SDL_WINDOWPOS_CENTERED)
 };
 
-
 Game::Game() :
     m_isInit(false)
 {
@@ -209,6 +208,8 @@ void Game::updateText(Text& text, const int& yPos) {
 void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) {
     loadStartScreen(window, renderer);
 
+    SDL_Event event = {};
+
     Background background(renderer.getSdlRenderer());
     Flora flora(renderer.getSdlRenderer());
     Road road(renderer.getSdlRenderer());
@@ -226,7 +227,8 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     audioManager.resume();
 
     bool isRunning = true;
-    SDL_Event event = {};
+    
+    while (SDL_PollEvent(&event)) {}
 
     while (isRunning) {
         while (SDL_PollEvent(&event)) {
@@ -283,41 +285,48 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
 
         renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});
         renderer.clear();
+
         player.move();
-
-        if(player.hasLost()) {
-            player.reset();
-            flora.reset();
-            renderer.present();
-
-            if(
-                const int channel = audioManager.play(
-                    reload, 1, AudioManager::CHANNEL_UNDEFINED
-                );
-                channel != AudioManager::CHANNEL_UNDEFINED
-            ) {
-
-                while (Mix_Playing(channel) == SDL_TRUE) {
-                    SDL_Delay(16);
-                }
-            }
-
-            renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});
-            renderer.clear();
-        }
 
         background.render(window.getSize(), player.getPosY());
         flora.render(window.getSize(), player.getPosY());
         road.render(window.getSize(), player.getPosY());
         player.updateAnimation();
         player.render(window.getSize());
-
         scale.render(
             window.getSize(),
             player.getSpeed(),
             player.getSpeedMin(),
             player.getSpeedMax()
         );
+
+
+        if(player.hasLost()) {
+            renderer.present();
+
+            SDL_Delay(200);
+            
+            renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});
+            SDL_Rect fillRect = {0, 0, window.getSize().x, window.getSize().y};
+            SDL_RenderFillRect(renderer.getSdlRenderer(), &fillRect);
+
+            renderer.present();
+
+            if(const int channel = audioManager.play(
+                reload, 1, AudioManager::CHANNEL_UNDEFINED
+            ); channel != AudioManager::CHANNEL_UNDEFINED) {
+                while (Mix_Playing(channel) == SDL_TRUE) {
+                    SDL_Delay(16);
+                }
+            }
+
+            player.reset();
+            flora.reset();
+
+            while (SDL_PollEvent(&event)) {}
+            continue;
+        }
+
 
         if(player.getPosY() >= static_cast<int>(CheckPoint::FINAL_START)) {
             end.render(window.getSize());
