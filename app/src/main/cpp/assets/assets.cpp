@@ -3,6 +3,7 @@
 
 INCBIN(FONT_FONT_TTF, "font/font.ttf");
 INCBIN(ICON_BMP, "icon.bmp");
+INCBIN(ICON_ICO, "icon.ico");
 INCBIN(SOUND_RELOAD_WAV, "sound/reload.wav");
 INCBIN(SOUND_WIND_WAV, "sound/wind.wav");
 INCBIN(SPRITE_BACKGROUND_BACK_PNG, "sprite/background/back.png");
