@@ -24,6 +24,10 @@ std::map<std::string, std::string> loadLocalization();
 bool createDefaultLocalizationFile();
 
 // Custom font
+extern int fontSize;
+extern int finalTextFontSize;
+
+bool loadCustomFontSize();
 std::string loadCustomFontPath();
 bool createDefaultFontFile();
 
@@ -39,6 +43,7 @@ bool createFloraDirectory();
 
 // Helper functions
 std::string extractQuotedValue(const std::string& line);
+std::string extractValue(const std::string& line);
 bool isCommentLine(const std::string& line);
 std::string joinPath(const std::string& base, const std::string& path);
 

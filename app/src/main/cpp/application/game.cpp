@@ -32,11 +32,6 @@ const SDL_Point Game::s_windowPos = {
 Game::Game() :
     m_isInit(false)
 {
-    modding::createDefaultLocalizationFile();
-    modding::createDefaultFontFile();
-    modding::createFloraDirectory();
-    LocalizationManager::instance().init();
-
     m_isInit = (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0);
     if(!m_isInit) {
         SDL_LogCritical(
@@ -171,7 +166,7 @@ void Game::updateText(Text& text, const int& yPos) {
         case CheckPoint::T_START: 
         case CheckPoint::FINAL_START: {
             if (static_cast<CheckPoint>(yPos) == CheckPoint::FINAL_START) {
-                text.resize(48);
+                text.resize(modding::finalTextFontSize);
             }
             text.setText(getCheckpointText(static_cast<CheckPoint>(yPos)));
             text.positionCenter();
@@ -208,6 +203,12 @@ void Game::updateText(Text& text, const int& yPos) {
 void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) {
     loadStartScreen(window, renderer);
 
+    modding::createDefaultLocalizationFile();
+    modding::createDefaultFontFile();
+    modding::createFloraDirectory();
+    modding::loadCustomFontSize();
+    LocalizationManager::instance().init();
+
     SDL_Event event = {};
 
     Background background(renderer.getSdlRenderer());
@@ -217,9 +218,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     Scale scale(renderer.getSdlRenderer());
     End end(renderer.getSdlRenderer());
 
-    const int fontSize = 24;
-
-    Text text(renderer.getSdlRenderer(), fontSize, {0, 0});
+    Text text(renderer.getSdlRenderer(), modding::fontSize, {0, 0});
     Music soundtrack(SDL_Incbin(SOUND_WIND_WAV));
     Sfx reload(SDL_Incbin(SOUND_RELOAD_WAV));
 

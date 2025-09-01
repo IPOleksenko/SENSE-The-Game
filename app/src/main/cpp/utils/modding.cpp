@@ -1,4 +1,4 @@
-#include "utils/modding.hpp"
+﻿#include "utils/modding.hpp"
 #include <SDL.h>
 #include <filesystem>
 #include <fstream>
@@ -168,6 +168,13 @@ std::string extractQuotedValue(const std::string& line) {
     return line.substr(start + 1, end - start - 1);
 }
 
+std::string extractValue(const std::string& line) {
+    std::string value = line;
+    value.erase(0, value.find_first_not_of(" \t"));
+    value.erase(value.find_last_not_of(" \t") + 1);
+    return value;
+}
+
 bool isCommentLine(const std::string& line) {
     return !line.empty() && line[0] == '#';
 }
@@ -225,6 +232,53 @@ bool createDefaultLocalizationFile() {
 }
 
 // Custom font
+int modding::fontSize = 24;
+int modding::finalTextFontSize = 48;
+
+bool loadCustomFontSize() {
+    std::string configPath = joinPath(getModdingDirectory(), "font.cfg");
+    auto lines = readTextFile(configPath);
+
+    for (const auto& line : lines) {
+        if (line.find("FONT_SIZE=") == 0) {
+            std::string sizeStr = extractValue(line.substr(10));
+            if (!sizeStr.empty() && std::all_of(sizeStr.begin(), sizeStr.end(), ::isdigit)) {
+                try {
+                    int size = std::stoi(sizeStr);
+                    if (size > 0) {
+                        fontSize = size;
+                        SDL_Log("Using custom FONT_SIZE: %d", fontSize);
+                    }
+                }
+                catch (...) {
+                    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                        "Failed to parse FONT_SIZE='%s' → using default %d",
+                        sizeStr.c_str(), fontSize);
+                }
+            }
+        }
+        else if (line.find("FONT_FINAL_TEXT_SIZE=") == 0) {
+            std::string sizeStr = extractValue(line.substr(21));
+            if (!sizeStr.empty() && std::all_of(sizeStr.begin(), sizeStr.end(), ::isdigit)) {
+                try {
+                    int size = std::stoi(sizeStr);
+                    if (size > 0) {
+                        finalTextFontSize = size;
+                        SDL_Log("Using custom FONT_FINAL_TEXT_SIZE: %d", finalTextFontSize);
+                    }
+                }
+                catch (...) {
+                    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                        "Failed to parse FONT_FINAL_TEXT_SIZE='%s' → using default %d",
+                        sizeStr.c_str(), finalTextFontSize);
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
 std::string loadCustomFontPath() {
     std::string configPath = joinPath(getModdingDirectory(), FONT_FILE);
     
@@ -266,10 +320,19 @@ bool createDefaultFontFile() {
     std::vector<std::string> lines = {
         "# SENSE: The Game Font File",
         "# Use FONT=\"./path/to/font.ttf\" or FONT=\"font.otf\" to use a custom font",
-        "# Leave FONT= empty to use the default font",
+        "# Leave FONT empty (FONT="" or FONT=) to use the default font",
         "# If the font is not found, the default font will be used",
+        "FONT=\"\"",
         "",
-        "FONT="
+        "# Leave FONT_SIZE= to use the default size",
+        "# If FONT_SIZE is not set, the default size is 24",
+        "# FONT_SIZE must contain only digits (e.g. FONT_SIZE=32)",
+        "FONT_SIZE=",
+        "",
+        "# Leave FONT_FINAL_TEXT_SIZE= to use the default size",
+        "# If FONT_FINAL_TEXT_SIZE is not set, the default size is 48",
+        "# FONT_FINAL_TEXT_SIZE must contain only digits (e.g. FONT_FINAL_TEXT_SIZE=56)",
+        "FONT_FINAL_TEXT_SIZE="
     };
 
     if (writeTextFile(path, lines)) {
