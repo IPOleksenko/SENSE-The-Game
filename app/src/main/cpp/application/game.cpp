@@ -124,7 +124,7 @@ void Game::loadStartScreen(Window& window, Renderer& renderer) {
     renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});
     renderer.clear();
 
-    Text text(renderer.getSdlRenderer(), 48, {0, 0});
+    Text text(renderer.getSdlRenderer(), modding::anotherFontSize, {0, 0});
     text.setText("Loading...");
     text.positionCenter();
     text.render(window.getSize());
@@ -166,7 +166,7 @@ void Game::updateText(Text& text, const int& yPos) {
         case CheckPoint::T_START: 
         case CheckPoint::FINAL_START: {
             if (static_cast<CheckPoint>(yPos) == CheckPoint::FINAL_START) {
-                text.resize(modding::finalTextFontSize);
+                text.resize(modding::anotherFontSize);
             }
             text.setText(getCheckpointText(static_cast<CheckPoint>(yPos)));
             text.positionCenter();
@@ -201,13 +201,13 @@ void Game::updateText(Text& text, const int& yPos) {
 }
 
 void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) {
-    loadStartScreen(window, renderer);
-
     modding::createDefaultLocalizationFile();
     modding::createDefaultFontFile();
     modding::createFloraDirectory();
     modding::loadCustomFontSize();
     LocalizationManager::instance().init();
+
+    loadStartScreen(window, renderer);
 
     SDL_Event event = {};
 

@@ -291,7 +291,7 @@ bool createDefaultLocalizationFile() {
 
 // Custom font
 int modding::fontSize = 24;
-int modding::finalTextFontSize = 48;
+int modding::anotherFontSize = 48;
 
 bool loadCustomFontSize() {
     std::string configPath = joinPath(getModdingDirectory(), "font.cfg");
@@ -321,14 +321,14 @@ bool loadCustomFontSize() {
                 try {
                     int size = std::stoi(sizeStr);
                     if (size > 0) {
-                        finalTextFontSize = size;
-                        SDL_Log("Using custom FONT_FINAL_TEXT_SIZE: %d", finalTextFontSize);
+                        anotherFontSize = size;
+                        SDL_Log("Using custom FONT_FINAL_TEXT_SIZE: %d", anotherFontSize);
                     }
                 }
                 catch (...) {
                     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
                         "Failed to parse FONT_FINAL_TEXT_SIZE='%s' → using default %d",
-                        sizeStr.c_str(), finalTextFontSize);
+                        sizeStr.c_str(), anotherFontSize);
                 }
             }
         }
