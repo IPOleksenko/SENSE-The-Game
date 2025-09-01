@@ -161,11 +161,24 @@ bool createDir(const std::string& path) {
 std::string extractQuotedValue(const std::string& line) {
     size_t start = line.find('"');
     if (start == std::string::npos) return "";
-    
-    size_t end = line.find('"', start + 1);
-    if (end == std::string::npos) return "";
-    
-    return line.substr(start + 1, end - start - 1);
+
+    std::string result;
+    for (size_t i = start + 1; i < line.size(); ++i) {
+        char c = line[i];
+        if (c == '"') {
+            size_t backslashes = 0;
+            size_t j = i;
+            while (j > start + 1 && line[j - 1] == '\\') {
+                ++backslashes;
+                --j;
+            }
+            if ((backslashes % 2) == 0) {
+                break;
+            }
+        }
+        result.push_back(c);
+    }
+    return result;
 }
 
 std::string extractValue(const std::string& line) {
@@ -183,11 +196,49 @@ std::string joinPath(const std::string& base, const std::string& path) {
     return (std::filesystem::path(base) / path).string();
 }
 
+std::string unescapeString(const std::string& input) {
+    std::string output;
+    output.reserve(input.size());
+
+    for (size_t i = 0; i < input.size(); ++i) {
+        if (input[i] == '\\' && i + 1 < input.size()) {
+            char next = input[i + 1];
+            switch (next) {
+            case 'n':
+                output.push_back('\n');
+                ++i;
+                break;
+            case 't':
+                output.append("    ");
+                ++i;
+                break;
+            case '\\':
+                output.push_back('\\');
+                ++i;
+                break;
+            case '"':
+                output.push_back('"');
+                ++i;
+                break;
+            default:
+                output.push_back('\\');
+                output.push_back(next);
+                ++i;
+                break;
+            }
+        }
+        else {
+            output.push_back(input[i]);
+        }
+    }
+    return output;
+}
+
 // Localization
 std::map<std::string, std::string> loadLocalization() {
     std::map<std::string, std::string> result;
     std::string path = joinPath(getModdingDirectory(), LOCALIZATION_FILE);
-    
+
     if (!fileExists(path)) {
         createDefaultLocalizationFile();
         return result;
@@ -199,9 +250,9 @@ std::map<std::string, std::string> loadLocalization() {
 
         std::string key = line.substr(0, pos);
         std::string value = extractQuotedValue(line.substr(pos + 1));
-        
+
         if (!value.empty()) {
-            result[key] = value;
+            result[key] = unescapeString(value);
         }
     }
 
@@ -218,7 +269,14 @@ bool createDefaultLocalizationFile() {
     lines.push_back("# SENSE: The Game Localization File");
     lines.push_back("# Use KEY=\"value\" format to override default text");
     lines.push_back("# Leave KEY= empty or \"\" to use default text");
+    lines.push_back("# Supported escape sequences:");
+    lines.push_back("#   \\n  - newline");
+    lines.push_back("#   \\t  - tab (4 spaces)");
+    lines.push_back("#   \\\"  - double quote");
+    lines.push_back("#   \\\\  - backslash");
+    lines.push_back("# Any unknown escape sequence after \\ will be written as-is");
     lines.push_back("");
+
 
     for (const auto& key : LOCALIZATION_KEYS) {
         lines.push_back(key + "=");

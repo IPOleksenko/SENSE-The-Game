@@ -46,5 +46,6 @@ std::string extractQuotedValue(const std::string& line);
 std::string extractValue(const std::string& line);
 bool isCommentLine(const std::string& line);
 std::string joinPath(const std::string& base, const std::string& path);
+std::string unescapeString(const std::string& input);
 
 } // namespace modding
