@@ -68,13 +68,15 @@ void Flora::render(const SDL_Point& areaSize, const int& posY) {
     static std::random_device rd;
     static std::mt19937 gen(rd());
 
-    static SDL_Point prevArea{0, 0};
+    // Update prevArea and scale/clamp positions when the screen size changes
+    static SDL_Point prevArea{ 0, 0 };
     if (prevArea.x != areaSize.x || prevArea.y != areaSize.y) {
         if (prevArea.x > 0 && prevArea.y > 0) {
             const float fx = static_cast<float>(areaSize.x) / prevArea.x;
             const float fy = static_cast<float>(areaSize.y) / prevArea.y;
 
-            for (auto &view : m_floraView) {
+            for (auto& view : m_floraView) {
+                // Scale position
                 view.pos.x = static_cast<int>(view.pos.x * fx);
                 view.pos.y = static_cast<int>(view.pos.y * fy);
             }
@@ -84,34 +86,57 @@ void Flora::render(const SDL_Point& areaSize, const int& posY) {
         prevArea = areaSize;
     }
 
-    int minX = std::max(0, static_cast<int>(areaSize.x * 0.215f));
-    int maxX = std::max(minX, static_cast<int>(areaSize.x * 0.765f));
-    std::uniform_int_distribution<int> posXDist(minX, maxX);
+    // Boundaries in percent
+    int minX = std::max(0, static_cast<int>(areaSize.x * 0.22f));
+    int maxX = std::max(minX, static_cast<int>(areaSize.x * 0.78f));
 
     static size_t lastTextureCount = 0;
     static std::uniform_int_distribution<size_t> texDist(0, 0);
     if (lastTextureCount != m_textures.size()) {
-        texDist = std::uniform_int_distribution<size_t>(0, m_textures.size() - 1);
+        if (!m_textures.empty()) {
+            texDist = std::uniform_int_distribution<size_t>(0, m_textures.size() - 1);
+        }
+        else {
+            texDist = std::uniform_int_distribution<size_t>(0, 0);
+        }
         lastTextureCount = m_textures.size();
     }
 
-    for (auto &view : m_floraView) {
+    // Shift all existing views when scrolling
+    for (auto& view : m_floraView) {
         view.pos.y -= (posY - m_lastPosY);
     }
 
     const int genStep = std::max(1, static_cast<int>(s_genDist * (static_cast<float>(areaSize.y) / 720.0f)));
 
+    // Generate new plants along Y
     while (posY + areaSize.y > m_nextGenY) {
         if (m_nextGenY > kMaxFloraY) break;
 
         for (int i = 0; i < s_density; ++i) {
-            const Texture &tex = m_textures[texDist(gen)];
-            m_floraView.push_back({ tex, { posXDist(gen), m_nextGenY } });
+            const Texture& tex = m_textures[texDist(gen)];
+
+            // Get texture size and scale it to correctly account for width when choosing X
+            SDL_Point texSize{};
+            if (!tex.querySize(texSize)) continue;
+
+            const float scale = std::max(0.01f, static_cast<float>(areaSize.x) / 1280.0f);
+            const int newW = std::max(1, static_cast<int>(texSize.x * scale));
+
+            // Calculate allowed X range considering sprite width
+            int genMinX = minX;
+            int genMaxX = std::max(genMinX, maxX - newW); // if newW > (maxX - minX) => genMaxX == genMinX
+
+            std::uniform_int_distribution<int> posXDist(genMinX, genMaxX);
+            int chosenX = posXDist(gen);
+
+            m_floraView.push_back({ tex, { chosenX, m_nextGenY } });
         }
 
         m_nextGenY += genStep;
     }
 
+    // Remove those that went above the upper boundary
     m_floraView.remove_if([&areaSize](const auto& view) {
         SDL_Point size{};
         if (!view.texture.querySize(size)) return true;
@@ -120,15 +145,20 @@ void Flora::render(const SDL_Point& areaSize, const int& posY) {
         const int newH = std::max(1, static_cast<int>(size.y * scale));
 
         return (view.pos.y + newH) < 0;
-    });
+        });
 
-    for (const auto &view : m_floraView) {
+    // Rendering
+    for (auto& view : m_floraView) {
         SDL_Point texSize{};
         if (!view.texture.querySize(texSize)) continue;
 
         const float scale = std::max(0.01f, static_cast<float>(areaSize.x) / 1280.0f);
         const int newW = std::max(1, static_cast<int>(texSize.x * scale));
         const int newH = std::max(1, static_cast<int>(texSize.y * scale));
+
+        // Right boundary for X position considering sprite width
+        int clampMaxX = std::max(minX, maxX - newW);
+        view.pos.x = std::clamp(view.pos.x, minX, clampMaxX);
 
         const SDL_Rect destRect{
                 view.pos.x,
