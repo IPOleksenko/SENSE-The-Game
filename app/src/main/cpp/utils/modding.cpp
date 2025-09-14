@@ -315,8 +315,8 @@ bool loadCustomFontSize() {
                 }
             }
         }
-        else if (line.find("FONT_FINAL_TEXT_SIZE=") == 0) {
-            std::string sizeStr = extractValue(line.substr(21));
+        else if (line.find("FONT_ANOTHER_TEXT_SIZE=") == 0) {
+            std::string sizeStr = extractValue(line.substr(23));
             if (!sizeStr.empty() && std::all_of(sizeStr.begin(), sizeStr.end(), ::isdigit)) {
                 try {
                     int size = std::stoi(sizeStr);
@@ -387,10 +387,10 @@ bool createDefaultFontFile() {
         "# FONT_SIZE must contain only digits (e.g. FONT_SIZE=32)",
         "FONT_SIZE=",
         "",
-        "# Leave FONT_FINAL_TEXT_SIZE= to use the default size",
-        "# If FONT_FINAL_TEXT_SIZE is not set, the default size is 48",
-        "# FONT_FINAL_TEXT_SIZE must contain only digits (e.g. FONT_FINAL_TEXT_SIZE=56)",
-        "FONT_FINAL_TEXT_SIZE="
+        "# Leave FONT_ANOTHER_TEXT_SIZE= to use the default size",
+        "# If FONT_ANOTHER_TEXT_SIZE is not set, the default size is 48",
+        "# FONT_ANOTHER_TEXT_SIZE must contain only digits (e.g. FONT_ANOTHER_TEXT_SIZE=56)",
+        "FONT_ANOTHER_TEXT_SIZE="
     };
 
     if (writeTextFile(path, lines)) {
