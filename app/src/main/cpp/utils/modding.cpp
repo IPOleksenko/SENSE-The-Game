@@ -290,8 +290,8 @@ bool createDefaultLocalizationFile() {
 }
 
 // Custom font
-int modding::fontSize = 24;
-int modding::anotherFontSize = 48;
+int fontSize = 24;
+int anotherFontSize = 48;
 
 bool loadCustomFontSize() {
     std::string configPath = joinPath(getModdingDirectory(), "font.cfg");
