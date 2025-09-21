@@ -4,6 +4,9 @@
 
 #define SECTION_LEN 500
 enum class CheckPoint : int {
+    LOADING_TEXT = -1,
+    ENDLESS_MODE_TEXT = -2,
+
     IDLE        = 0,
     BEGIN       = 1,
 

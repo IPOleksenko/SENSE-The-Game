@@ -37,6 +37,10 @@ Player::Move Player::getLastMove() const {
     return m_lastMove;
 }
 
+bool Player::getIsMove() const{
+    return m_isMoving;
+}
+
 bool Player::hasLost() const {
     return m_hasLost;
 }

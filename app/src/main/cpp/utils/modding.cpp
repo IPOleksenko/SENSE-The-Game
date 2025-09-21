@@ -54,7 +54,9 @@ const std::vector<std::string> LOCALIZATION_KEYS = {
     "R_START",
     "S_START",
     "T_START",
-    "FINAL_START"
+    "FINAL_START",
+    "LOADING_TEXT",
+    "ENDLESS_MODE"
 };
 
 std::string getModdingDirectory() {

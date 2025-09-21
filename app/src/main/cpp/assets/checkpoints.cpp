@@ -12,6 +12,8 @@ std::string getCheckpointText(const CheckPoint& checkPoint) {
     }
 
     static const std::map<CheckPoint, std::pair<std::string, std::string>> labels = {
+            {CheckPoint::LOADING_TEXT, {"LOADING_TEXT", "Loading..."}},
+            {CheckPoint::ENDLESS_MODE_TEXT, {"ENDLESS_MODE", "ENDLESS MODE"}},
         {
             CheckPoint::IDLE,
             {"IDLE",
@@ -20,7 +22,8 @@ R"(
 Instructions:
     *Tap the left and right side of the screen alternately to move.
     *Pass the middle mark to start moving.
-    *Keep your balance - don't let the pointer hit the red zone, or you'll lose!)"
+    *Keep your balance - don't let the pointer hit the red zone, or you'll lose!
+    *Hold two fingers on the screen for 2 seconds to toggle Endless Mode.)"
 
 #else
 
@@ -29,6 +32,7 @@ Instructions:
     *Press A (or LEFT) and D (or RIGHT) alternately to move.
     *Pass the middle mark to start moving.
     *Keep your balance - don't let the pointer hit the red zone, or you'll lose!
+    *Press SPACE to toggle Endless Mode.
 
 Fullscreen: Press F to toggle fullscreen mode.
 Exit: Press ESC to exit the game.)"
@@ -55,7 +59,7 @@ Exit: Press ESC to exit the game.)"
         {CheckPoint::R_START, {"R_START", "The stars shine, but not to show you the way."}},
         {CheckPoint::S_START, {"S_START", "Eternity is a word that both frightens and frees."}},
         {CheckPoint::T_START, {"T_START", "In this chaos, you seek meaning, but chaos demands no explanation."}},
-        {CheckPoint::FINAL_START, {"FINAL_START", "THE UNIVERSE DOESN'T MAKE SENSE."}}
+        {CheckPoint::FINAL_START, {"FINAL_START", "THE UNIVERSE DOESN'T MAKE SENSE."}},
     };
 
     const auto it = labels.find(checkPoint);

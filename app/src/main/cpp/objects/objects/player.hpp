@@ -20,6 +20,7 @@ public:
     [[nodiscard]] float getSpeedMin() const;
     [[nodiscard]] float getSpeedMax() const;
     [[nodiscard]] Move getLastMove() const;
+    [[nodiscard]] bool getIsMove() const;
     [[nodiscard]] bool hasLost() const;
 
     void move();
@@ -42,7 +43,7 @@ private:
     float m_speedDecrease = 0.5f;
     const float m_speedMin = m_speedDecrease + 50.0f;
     const float m_speedMax = 150.0f;
-    const float m_speedNormal = (m_speedMin + m_speedMax) / 2;
+    const float m_speedNormal = (m_speedMin + m_speedMax) / 2.0f;
 
     // Animation parameters
     SDL_Point m_frameSize = {};

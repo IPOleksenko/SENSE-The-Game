@@ -54,7 +54,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 if(MSVC)
-    set(APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/app/src/main/assets/icon.ico")
+    set(APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.ico")
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/resources.rc.in
         ${CMAKE_CURRENT_BINARY_DIR}/resources.rc
