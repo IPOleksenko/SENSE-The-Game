@@ -24,7 +24,8 @@ Text::Text(
     m_fadeIn(),
     m_isCentered(),
     m_animationStart(),
-    m_animationDuration(animationDuration)
+    m_animationDuration(animationDuration),
+    m_color{ 255, 255, 255, 255 }
 {
     if(forceDefaultFont) {
         m_sdlFont = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
@@ -68,6 +69,10 @@ Text::~Text() {
 
 void Text::setText(const std::string& text) {
     m_text = text;
+}
+
+void Text::setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+    m_color = { r, g, b, a };
 }
 
 void Text::setLocalizedText(const std::string& key) {
@@ -116,6 +121,10 @@ void Text::animationStop() {
     m_isAnimated = false;
     m_alpha = SDL_ALPHA_OPAQUE;
     m_animationStart = 0;
+}
+
+int Text::getAnimationDuration() const {
+    return m_animationDuration;
 }
 
 void Text::positionReset() {
@@ -180,13 +189,16 @@ void Text::render(const SDL_Point& areaSize) {
     while (std::getline(stream, line)) {
         if (line.empty()) continue;
 
+        SDL_Color drawColor = m_color;
+        drawColor.a = m_alpha;
+
         textures.emplace_back(
-                TTF_RenderUTF8_Blended(
-                        m_sdlFont,
-                        line.c_str(),
-                        { 0xFF, 0xFF, 0xFF, m_alpha }
-                ),
-                m_sdlRenderer
+            TTF_RenderUTF8_Blended(
+                m_sdlFont,
+                line.c_str(),
+                drawColor
+            ),
+            m_sdlRenderer
         );
 
         SDL_Point textureSize{};
@@ -194,6 +206,7 @@ void Text::render(const SDL_Point& areaSize) {
             totalHeight += static_cast<int>(textureSize.y * scaleY);
         }
     }
+
 
     int posY;
     if (m_isCentered) {

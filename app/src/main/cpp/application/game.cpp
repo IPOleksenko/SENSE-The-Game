@@ -20,7 +20,6 @@
 #include <utils/utils/modding.hpp>
 #include <utils/utils/localization.hpp>
 
-
 const std::string Game::s_orientation = "Landscape";
 const std::string Game::s_name = "SENSE: The Game";
 const SDL_Point Game::s_windowSize = { 1280, 720 };
@@ -30,22 +29,22 @@ const SDL_Point Game::s_windowPos = {
 };
 
 Game::Game() :
-        m_isInit(false)
+    m_isInit(false)
 {
     m_isInit = (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0);
-    if(!m_isInit) {
+    if (!m_isInit) {
         SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
-                "SDL_Init", SDL_GetError()
+            SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
+            "SDL_Init", SDL_GetError()
         );
         return;
     }
 
     m_isInit = (IMG_Init(IMG_INIT_PNG) != 0);
-    if(!m_isInit) {
+    if (!m_isInit) {
         SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
-                "IMG_Init", SDL_GetError()
+            SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
+            "IMG_Init", SDL_GetError()
         );
         return;
     }
@@ -53,25 +52,25 @@ Game::Game() :
     m_isInit = (Mix_Init(MIX_INIT_MP3) != 0);
     if (!m_isInit) {
         SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
-                "Mix_Init", SDL_GetError()
+            SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
+            "Mix_Init", SDL_GetError()
         );
         return;
     }
 
     m_isInit = (TTF_Init() == 0);
-    if(!m_isInit) {
+    if (!m_isInit) {
         SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
-                "TTF_Init", SDL_GetError()
+            SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
+            "TTF_Init", SDL_GetError()
         );
         return;
     }
 
-    if(SDL_SetHint(SDL_HINT_ORIENTATIONS, s_orientation.c_str()) == SDL_FALSE) {
+    if (SDL_SetHint(SDL_HINT_ORIENTATIONS, s_orientation.c_str()) == SDL_FALSE) {
         SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
-                "SDL_SetHint", "can't set orientation"
+            SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
+            "SDL_SetHint", "can't set orientation"
         );
     }
 }
@@ -81,7 +80,7 @@ bool Game::isInit() const {
 }
 
 void Game::run() const {
-    if(!isInit()) {
+    if (!isInit()) {
         return;
     }
 
@@ -99,22 +98,22 @@ void Game::run() const {
 #else
     Window window(s_windowPos, s_windowSize, s_name);
 #endif
-    if(!window.isInit()) {
+    if (!window.isInit()) {
         return;
     }
 
     Renderer renderer(window);
-    if(!renderer.isInit()) {
+    if (!renderer.isInit()) {
         return;
     }
 
     AudioManager audioManager;
-    if(!audioManager.isInit()) {
+    if (!audioManager.isInit()) {
         return;
     }
 
     window.setIcon(
-            Icon(SDL_Incbin(ICON_BMP))
+        Icon(SDL_Incbin(ICON_BMP))
     );
 
     loadStartScreen(window, renderer);
@@ -122,11 +121,11 @@ void Game::run() const {
 }
 
 void Game::loadStartScreen(Window& window, Renderer& renderer) {
-    renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});
+    renderer.setDrawColor({ 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE });
     renderer.clear();
 
-    Text textLoadScreen(renderer.getSdlRenderer(), modding::anotherFontSize, {0, 0});
-    Text textAuthor(renderer.getSdlRenderer(), 16, {0, 0}, true);
+    Text textLoadScreen(renderer.getSdlRenderer(), modding::anotherFontSize, { 0, 0 });
+    Text textAuthor(renderer.getSdlRenderer(), 16, { 0, 0 }, true);
 
     textLoadScreen.setText(getCheckpointText(CheckPoint::LOADING_TEXT));
     textLoadScreen.positionCenter();
@@ -140,69 +139,71 @@ void Game::loadStartScreen(Window& window, Renderer& renderer) {
 
 void Game::updateText(Text& text, const int& yPos) {
     switch (static_cast<CheckPoint>(yPos)) {
-        case CheckPoint::IDLE: {
-            text.setText(getCheckpointText(CheckPoint::IDLE));
-            text.positionReset();
-            text.animationStop();
-            break;
+    case CheckPoint::IDLE: {
+        text.setText(getCheckpointText(CheckPoint::IDLE));
+        text.positionReset();
+        text.animationStop();
+        text.setColor(255, 255, 255, 255);
+        break;
+    }
+    case CheckPoint::BEGIN: {
+        text.animationStart(false);
+        break;
+    }
+    case CheckPoint::A_START:
+    case CheckPoint::B_START:
+    case CheckPoint::C_START:
+    case CheckPoint::D_START:
+    case CheckPoint::E_START:
+    case CheckPoint::F_START:
+    case CheckPoint::G_START:
+    case CheckPoint::H_START:
+    case CheckPoint::I_START:
+    case CheckPoint::J_START:
+    case CheckPoint::K_START:
+    case CheckPoint::L_START:
+    case CheckPoint::M_START:
+    case CheckPoint::N_START:
+    case CheckPoint::O_START:
+    case CheckPoint::P_START:
+    case CheckPoint::Q_START:
+    case CheckPoint::R_START:
+    case CheckPoint::S_START:
+    case CheckPoint::T_START:
+    case CheckPoint::FINAL_START: {
+        if (static_cast<CheckPoint>(yPos) == CheckPoint::FINAL_START) {
+            text.resize(modding::anotherFontSize);
         }
-        case CheckPoint::BEGIN: {
-            text.animationStart(false);
-            break;
-        }
-        case CheckPoint::A_START:
-        case CheckPoint::B_START:
-        case CheckPoint::C_START:
-        case CheckPoint::D_START:
-        case CheckPoint::E_START:
-        case CheckPoint::F_START:
-        case CheckPoint::G_START:
-        case CheckPoint::H_START:
-        case CheckPoint::I_START:
-        case CheckPoint::J_START:
-        case CheckPoint::K_START:
-        case CheckPoint::L_START:
-        case CheckPoint::M_START:
-        case CheckPoint::N_START:
-        case CheckPoint::O_START:
-        case CheckPoint::P_START:
-        case CheckPoint::Q_START:
-        case CheckPoint::R_START:
-        case CheckPoint::S_START:
-        case CheckPoint::T_START:
-        case CheckPoint::FINAL_START: {
-            if (static_cast<CheckPoint>(yPos) == CheckPoint::FINAL_START) {
-                text.resize(modding::anotherFontSize);
-            }
-            text.setText(getCheckpointText(static_cast<CheckPoint>(yPos)));
-            text.positionCenter();
-            text.animationStart(true);
-            break;
-        }
-        case CheckPoint::A_STOP:
-        case CheckPoint::B_STOP:
-        case CheckPoint::C_STOP:
-        case CheckPoint::D_STOP:
-        case CheckPoint::E_STOP:
-        case CheckPoint::F_STOP:
-        case CheckPoint::G_STOP:
-        case CheckPoint::H_STOP:
-        case CheckPoint::I_STOP:
-        case CheckPoint::J_STOP:
-        case CheckPoint::K_STOP:
-        case CheckPoint::L_STOP:
-        case CheckPoint::M_STOP:
-        case CheckPoint::N_STOP:
-        case CheckPoint::O_STOP:
-        case CheckPoint::P_STOP:
-        case CheckPoint::Q_STOP:
-        case CheckPoint::R_STOP:
-        case CheckPoint::S_STOP:
-        case CheckPoint::T_STOP:
-        case CheckPoint::FINAL_STOP: {
-            text.animationStart(false);
-            break;
-        }
+        text.setColor(255, 255, 255, 255);
+        text.setText(getCheckpointText(static_cast<CheckPoint>(yPos)));
+        text.positionCenter();
+        text.animationStart(true);
+        break;
+    }
+    case CheckPoint::A_STOP:
+    case CheckPoint::B_STOP:
+    case CheckPoint::C_STOP:
+    case CheckPoint::D_STOP:
+    case CheckPoint::E_STOP:
+    case CheckPoint::F_STOP:
+    case CheckPoint::G_STOP:
+    case CheckPoint::H_STOP:
+    case CheckPoint::I_STOP:
+    case CheckPoint::J_STOP:
+    case CheckPoint::K_STOP:
+    case CheckPoint::L_STOP:
+    case CheckPoint::M_STOP:
+    case CheckPoint::N_STOP:
+    case CheckPoint::O_STOP:
+    case CheckPoint::P_STOP:
+    case CheckPoint::Q_STOP:
+    case CheckPoint::R_STOP:
+    case CheckPoint::S_STOP:
+    case CheckPoint::T_STOP:
+    case CheckPoint::FINAL_STOP: {
+        text.animationStart(false);
+        break;
+    }
     }
 }
 
@@ -222,8 +223,8 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     Scale scale(renderer.getSdlRenderer());
     End end(renderer.getSdlRenderer());
 
-    Text text(renderer.getSdlRenderer(), modding::fontSize, {0, 0});
-    Text endlessModeText(renderer.getSdlRenderer(), modding::fontSize, {0, 0});
+    Text text(renderer.getSdlRenderer(), modding::fontSize, { 0, 0 });
+    Text endlessModeText(renderer.getSdlRenderer(), modding::fontSize, { 0, 0 });
     endlessModeText.positionCenter();
 
     Music soundtrack(SDL_Incbin(SOUND_WIND_WAV));
@@ -235,6 +236,18 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     bool isRunning = true;
     bool endlessMode = false;
 
+    bool dimActive = true;
+    bool dimFading = false;
+    Uint32 dimFadeStart = 0;
+    const Uint8 dimInitialAlpha = 120;
+
+    Uint32 dimFadeDuration = 800;
+    int textAnimDur = text.getAnimationDuration();
+    if (textAnimDur > 0) {
+        dimFadeDuration = static_cast<Uint32>(textAnimDur);
+    }
+    bool prevPlayerIsMove = false;
+
     int fingerCount = 0;
     Uint32 twoFingerStartTime = 0;
 
@@ -243,105 +256,108 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     while (isRunning) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
-                case SDL_QUIT: {
+            case SDL_QUIT: {
+                isRunning = false;
+                break;
+            }
+            case SDL_FINGERDOWN: {
+                const SDL_TouchFingerEvent& touchEvent = event.tfinger;
+                fingerCount++;
+
+                if (touchEvent.x < 0.5f) {
+                    player.increaseSpeed(Player::Move::Left);
+                }
+                else {
+                    player.increaseSpeed(Player::Move::Right);
+                }
+
+                if (fingerCount == 2) {
+                    twoFingerStartTime = SDL_GetTicks();
+                }
+                break;
+            }
+
+            case SDL_FINGERUP: {
+                if (fingerCount > 0) fingerCount--;
+                if (fingerCount < 2) {
+                    twoFingerStartTime = 0;
+                }
+                break;
+            }
+            case SDL_KEYUP: {
+                const SDL_KeyboardEvent& keyboardEvent = event.key;
+
+                switch (keyboardEvent.keysym.sym) {
+#if !defined(__ANDROID__)
+                case SDLK_ESCAPE: {
                     isRunning = false;
                     break;
                 }
-#if defined(__ANDROID__)
-                case SDL_FINGERDOWN : {
-                    const SDL_TouchFingerEvent &touchEvent = event.tfinger;
-                    fingerCount++;
-
-                    if (touchEvent.x < 0.5f) {
-                        player.increaseSpeed(Player::Move::Left);
-                    } else {
-                        player.increaseSpeed(Player::Move::Right);
+                case SDLK_f: {
+                    if (window.isFullscreen()) {
+                        window.setFullscreenOff();
                     }
-
-                    if (fingerCount == 2) {
-                        twoFingerStartTime = SDL_GetTicks();
-                    }
-                    break;
-                }
-
-                case SDL_FINGERUP: {
-                    if (fingerCount > 0) fingerCount--;
-                    if (fingerCount < 2) {
-                        twoFingerStartTime = 0;
-                    }
-                    break;
-                }
-#else
-                    case SDL_KEYUP: {
-                    const SDL_KeyboardEvent &keyboardEvent = event.key;
-
-                    switch (keyboardEvent.keysym.sym) {
-                        case SDLK_ESCAPE: {
-                            isRunning = false;
-                            break;
-                        }
-                        case SDLK_f: {
-                            if(window.isFullscreen()) {
-                                window.setFullscreenOff();
-                            } else {
-                                window.setFullscreenOn();
-                            }
-                            break;
-                        }
-                        case SDLK_LEFT:
-                        case SDLK_a: {
-                            player.increaseSpeed(Player::Move::Left);
-                            break;
-                        }
-                        case SDLK_RIGHT:
-                        case SDLK_d: {
-                            player.increaseSpeed(Player::Move::Right);
-                            break;
-                        }
-                        case SDLK_SPACE: {
-                            if (!player.getIsMove())
-                                endlessMode = !endlessMode;
-                            break;
-                        }
+                    else {
+                        window.setFullscreenOn();
                     }
                     break;
                 }
 #endif
+                case SDLK_LEFT:
+                case SDLK_a: {
+                    player.increaseSpeed(Player::Move::Left);
+                    break;
+                }
+                case SDLK_RIGHT:
+                case SDLK_d: {
+                    player.increaseSpeed(Player::Move::Right);
+                    break;
+                }
+                case SDLK_SPACE: {
+                    if (!player.getIsMove())
+                        endlessMode = !endlessMode;
+                    break;
+                }
+                }
+                break;
+            }
             }
         }
 
-        renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});
+        renderer.setDrawColor({ 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE });
         renderer.clear();
 
         player.move();
+
+        bool curPlayerIsMove = player.getIsMove();
+        if (dimActive && !dimFading && !prevPlayerIsMove && curPlayerIsMove) {
+            dimFading = true;
+            dimFadeStart = SDL_GetTicks();
+        }
+        prevPlayerIsMove = curPlayerIsMove;
 
         background.render(window.getSize(), player.getPosY());
         flora.render(window.getSize(), player.getPosY());
         road.render(window.getSize(), player.getPosY());
         player.updateAnimation();
         player.render(window.getSize());
-        scale.render(
-                window.getSize(),
-                player.getSpeed(),
-                player.getSpeedMin(),
-                player.getSpeedMax()
-        );
 
 
-        if(player.hasLost()) {
+
+        if (player.hasLost()) {
             renderer.present();
 
             SDL_Delay(200);
 
-            renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});
-            SDL_Rect fillRect = {0, 0, window.getSize().x, window.getSize().y};
+            renderer.setDrawColor({ 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE });
+            SDL_Rect fillRect = { 0, 0, window.getSize().x, window.getSize().y };
             SDL_RenderFillRect(renderer.getSdlRenderer(), &fillRect);
 
             renderer.present();
 
-            if(const int channel = audioManager.play(
-                        reload, 1, AudioManager::CHANNEL_UNDEFINED
-                ); channel != AudioManager::CHANNEL_UNDEFINED) {
+            if (const int channel = audioManager.play(
+                reload, 1, AudioManager::CHANNEL_UNDEFINED
+            ); channel != AudioManager::CHANNEL_UNDEFINED) {
                 while (Mix_Playing(channel) == SDL_TRUE) {
                     SDL_Delay(16);
                 }
@@ -350,6 +366,13 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             player.reset();
             flora.reset();
             endlessModeText.animationStop();
+
+            dimActive = true;
+            dimFading = false;
+            prevPlayerIsMove = false;
+
+            fingerCount = 0;
+            twoFingerStartTime = 0;
 
             while (SDL_PollEvent(&event)) {}
             continue;
@@ -363,12 +386,6 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             }
         }
 
-        updateText(text, player.getPosY());
-        if (!endlessMode
-            || player.getPosY() < static_cast<int>(CheckPoint::A_START)) {
-            text.render(window.getSize());
-        }
-
         if (!player.getIsMove()) {
             if (fingerCount == 2 && twoFingerStartTime > 0) {
                 Uint32 heldTime = SDL_GetTicks() - twoFingerStartTime;
@@ -379,7 +396,6 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             }
         }
 
-
         if (endlessMode) {
             endlessModeText.setText(getCheckpointText(CheckPoint::ENDLESS_MODE_TEXT));
             endlessModeText.render(window.getSize());
@@ -388,6 +404,45 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                 endlessModeText.animationStart(false);
         }
 
+        if (dimActive) {
+            SDL_Renderer* sdlR = renderer.getSdlRenderer();
+            SDL_SetRenderDrawBlendMode(sdlR, SDL_BLENDMODE_BLEND);
+
+            Uint8 alpha = dimInitialAlpha;
+
+            if (dimFading) {
+                Uint32 elapsed = SDL_GetTicks() - dimFadeStart;
+                if (elapsed >= dimFadeDuration) {
+                    dimActive = false;
+                    dimFading = false;
+                    alpha = 0;
+                }
+                else {
+                    float t = static_cast<float>(elapsed) / static_cast<float>(dimFadeDuration);
+                    float inv = 1.0f - t;
+                    alpha = static_cast<Uint8>(inv * static_cast<float>(dimInitialAlpha));
+                }
+            }
+
+            if (alpha > 0) {
+                SDL_SetRenderDrawColor(sdlR, 0, 0, 0, alpha);
+                SDL_Rect fullRect = { 0, 0, window.getSize().x, window.getSize().y };
+                SDL_RenderFillRect(sdlR, &fullRect);
+            }
+        }
+
+        updateText(text, player.getPosY());
+        if (!endlessMode
+            || player.getPosY() < static_cast<int>(CheckPoint::A_START)) {
+            text.render(window.getSize());
+        }
+
+        scale.render(
+            window.getSize(),
+            player.getSpeed(),
+            player.getSpeedMin(),
+            player.getSpeedMax()
+        );
 
         renderer.present();
         SDL_Delay(16);

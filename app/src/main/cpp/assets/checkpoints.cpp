@@ -14,31 +14,29 @@ std::string getCheckpointText(const CheckPoint& checkPoint) {
     static const std::map<CheckPoint, std::pair<std::string, std::string>> labels = {
             {CheckPoint::LOADING_TEXT, {"LOADING_TEXT", "Loading..."}},
             {CheckPoint::ENDLESS_MODE_TEXT, {"ENDLESS_MODE", "ENDLESS MODE"}},
-        {
-            CheckPoint::IDLE,
-            {"IDLE",
-#if defined(__ANDROID__)
+        { CheckPoint::IDLE, {"IDLE", std::string(
 R"(
 Instructions:
-    *Tap the left and right side of the screen alternately to move.
-    *Pass the middle mark to start moving.
-    *Keep your balance - don't let the pointer hit the red zone, or you'll lose!
-    *Hold two fingers on the screen for 2 seconds to toggle Endless Mode.)"
 
-#else
-
+Keyboard:
+    * Press A (or LEFT) and D (or RIGHT) alternately to move.
+    * Press SPACE to toggle Endless Mode.)"
+#if !defined(__ANDROID__)
 R"(
-Instructions:
-    *Press A (or LEFT) and D (or RIGHT) alternately to move.
-    *Pass the middle mark to start moving.
-    *Keep your balance - don't let the pointer hit the red zone, or you'll lose!
-    *Press SPACE to toggle Endless Mode.
-
-Fullscreen: Press F to toggle fullscreen mode.
-Exit: Press ESC to exit the game.)"
+    * Fullscreen: Press F to toggle fullscreen mode.
+    * Exit: Press ESC to exit the game.)"
 #endif
-            }
-        },
+R"(
+Touchscreen:
+    * Tap the left and right side of the screen alternately to move.
+    * Hold two fingers on the screen for 2 seconds to toggle Endless Mode.
+)"
+R"(\
+* Pass the middle mark to start moving.
+* Keep your balance – don't let the pointer hit the red zone, or you'll lose!
+)"
+    )}
+},
         {CheckPoint::A_START, {"A_START", "You opened your eyes, but did you see anything new?"}},
         {CheckPoint::B_START, {"B_START", "Every day is like the one before, yet you search for differences"}},
         {CheckPoint::C_START, {"C_START", "People chase dreams, but who said dreams hold value?"}},

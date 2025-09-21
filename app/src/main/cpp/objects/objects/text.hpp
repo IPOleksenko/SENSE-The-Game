@@ -17,10 +17,12 @@ public:
     ~Text();
 
     void setText(const std::string& text);
+    void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
     void setLocalizedText(const std::string& key);
     void loadCustomFont(const std::string& path = "");
     void animationStart(const bool& fadeIn);
     void animationStop();
+    int getAnimationDuration() const;
     void positionReset();
     void positionCenter();
     void resize(const int& fontSize);
@@ -37,6 +39,7 @@ private:
     bool m_isAnimated;
     bool m_fadeIn;
     bool m_isCentered;
+    SDL_Color m_color;
     Uint32 m_animationStart;
     const Uint32 m_animationDuration;
 };
