@@ -25,6 +25,7 @@ public:
     int getAnimationDuration() const;
     void positionReset();
     void positionCenter();
+    void positionTopRight();
     void resize(const int& fontSize);
     void render(const SDL_Point& areaSize);
 
@@ -39,6 +40,7 @@ private:
     bool m_isAnimated;
     bool m_fadeIn;
     bool m_isCentered;
+    bool m_alignTopRight;
     SDL_Color m_color;
     Uint32 m_animationStart;
     const Uint32 m_animationDuration;

@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <string>
+#include <vector>
 
 class Window;
 class Renderer;
@@ -27,6 +28,7 @@ private:
     static void updateText(Text& text, const int& yPos);
 
     bool m_isInit;
+    static std::vector<SDL_GameController*> controllers;
 
     static const std::string s_orientation;
     static const std::string s_name;

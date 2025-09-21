@@ -28,10 +28,12 @@ const SDL_Point Game::s_windowPos = {
         static_cast<int>(SDL_WINDOWPOS_CENTERED)
 };
 
+std::vector<SDL_GameController*> Game::controllers;
+
 Game::Game() :
     m_isInit(false)
 {
-    m_isInit = (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == 0);
+    m_isInit = (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) == 0);
     if (!m_isInit) {
         SDL_LogCritical(
             SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
@@ -174,7 +176,6 @@ void Game::updateText(Text& text, const int& yPos) {
         if (static_cast<CheckPoint>(yPos) == CheckPoint::FINAL_START) {
             text.resize(modding::anotherFontSize);
         }
-        text.setColor(255, 255, 255, 255);
         text.setText(getCheckpointText(static_cast<CheckPoint>(yPos)));
         text.positionCenter();
         text.animationStart(true);
@@ -225,7 +226,8 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
 
     Text text(renderer.getSdlRenderer(), modding::fontSize, { 0, 0 });
     Text endlessModeText(renderer.getSdlRenderer(), modding::fontSize, { 0, 0 });
-    endlessModeText.positionCenter();
+    endlessModeText.positionTopRight();
+    endlessModeText.setColor(200, 200, 200, 255);
 
     Music soundtrack(SDL_Incbin(SOUND_WIND_WAV));
     Sfx reload(SDL_Incbin(SOUND_RELOAD_WAV));
@@ -288,11 +290,11 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                 const SDL_KeyboardEvent& keyboardEvent = event.key;
 
                 switch (keyboardEvent.keysym.sym) {
-#if !defined(__ANDROID__)
                 case SDLK_ESCAPE: {
                     isRunning = false;
                     break;
                 }
+#if !defined(__ANDROID__)
                 case SDLK_f: {
                     if (window.isFullscreen()) {
                         window.setFullscreenOff();
@@ -321,8 +323,72 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                 }
                 break;
             }
+            case SDL_CONTROLLERDEVICEADDED: {
+                int joystick_index = event.cdevice.which;
+                if (SDL_IsGameController(joystick_index)) {
+                    SDL_GameController* controller = SDL_GameControllerOpen(joystick_index);
+                    if (controller) {
+                        controllers.push_back(controller);
+                        SDL_Log("Controller %d connected: %s", joystick_index, SDL_GameControllerName(controller));
+                    }
+                }
+                break;
+            }
+
+            case SDL_CONTROLLERDEVICEREMOVED: {
+                SDL_JoystickID joyId = event.cdevice.which;
+                for (auto it = controllers.begin(); it != controllers.end(); ++it) {
+                    if (SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(*it)) == joyId) {
+                        SDL_GameControllerClose(*it);
+                        controllers.erase(it);
+                        SDL_Log("Controller %d disconnected", joyId);
+                        break;
+                    }
+                }
+                break;
+            }
+            case SDL_CONTROLLERBUTTONDOWN: {
+                const SDL_ControllerButtonEvent& cbutton = event.cbutton;
+
+                switch (cbutton.button) {
+                case SDL_CONTROLLER_BUTTON_START: {
+                    isRunning = false;
+                    break;
+                }
+#if !defined(__ANDROID__)
+                case SDL_CONTROLLER_BUTTON_Y: {
+                    if (window.isFullscreen()) {
+                        window.setFullscreenOff();
+                    }
+                    else {
+                        window.setFullscreenOn();
+                    }
+                    break;
+                }
+#endif
+                case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+                case SDL_CONTROLLER_BUTTON_X: {
+                    player.increaseSpeed(Player::Move::Left);
+                    break;
+                }
+
+                case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+                case SDL_CONTROLLER_BUTTON_B: {
+                    player.increaseSpeed(Player::Move::Right);
+                    break;
+                }
+
+                case SDL_CONTROLLER_BUTTON_A: {
+                    if (!player.getIsMove())
+                        endlessMode = !endlessMode;
+                    break;
+                }
+                }
+                break;
+            }
             }
         }
+    
 
         renderer.setDrawColor({ 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE });
         renderer.clear();
@@ -396,13 +462,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             }
         }
 
-        if (endlessMode) {
-            endlessModeText.setText(getCheckpointText(CheckPoint::ENDLESS_MODE_TEXT));
-            endlessModeText.render(window.getSize());
-            if (player.getIsMove()
-                && static_cast<CheckPoint>(player.getPosY()) == CheckPoint::BEGIN)
-                endlessModeText.animationStart(false);
-        }
+
 
         if (dimActive) {
             SDL_Renderer* sdlR = renderer.getSdlRenderer();
@@ -437,6 +497,14 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             text.render(window.getSize());
         }
 
+        if (endlessMode) {
+            endlessModeText.setText(getCheckpointText(CheckPoint::ENDLESS_MODE_TEXT));
+            endlessModeText.render(window.getSize());
+            if (player.getIsMove()
+                && static_cast<CheckPoint>(player.getPosY()) == CheckPoint::BEGIN)
+                endlessModeText.animationStart(false);
+        }
+
         scale.render(
             window.getSize(),
             player.getSpeed(),
@@ -452,6 +520,10 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
 }
 
 Game::~Game() {
+    for (auto controller : controllers) {
+        SDL_GameControllerClose(controller);
+    }
+    controllers.clear();
     TTF_Quit();
     Mix_Quit();
     IMG_Quit();

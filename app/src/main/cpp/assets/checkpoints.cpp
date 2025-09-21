@@ -17,23 +17,36 @@ std::string getCheckpointText(const CheckPoint& checkPoint) {
         { CheckPoint::IDLE, {"IDLE", std::string(
 R"(
 Instructions:
-
+\
 Keyboard:
-    * Press A (or LEFT) and D (or RIGHT) alternately to move.
-    * Press SPACE to toggle Endless Mode.)"
+    * Press A (or Arrow Left) and D (or Arrow Right) alternately to move.
+    * Press SPACE to toggle Endless Mode (only before moving).
+    * Press ESC to exit the game.
+)"
 #if !defined(__ANDROID__)
 R"(
-    * Fullscreen: Press F to toggle fullscreen mode.
-    * Exit: Press ESC to exit the game.)"
+    * Press F to toggle fullscreen mode.
+)"
 #endif
+R"(\
+Gamepad:
+    * Use DPAD LEFT / DPAD RIGHT (or X / B buttons) alternately to move.
+    * Press A to toggle Endless Mode (only before moving).
+    * Press START to exit the game.
+)"
+#if !defined(__ANDROID__)
 R"(
+    * Press Y to toggle fullscreen mode.
+)"
+#endif
+R"(\
 Touchscreen:
     * Tap the left and right side of the screen alternately to move.
-    * Hold two fingers on the screen for 2 seconds to toggle Endless Mode.
+    * Hold two fingers on the screen for 2 seconds to toggle Endless Mode (only before moving).
 )"
 R"(\
 * Pass the middle mark to start moving.
-* Keep your balance – don't let the pointer hit the red zone, or you'll lose!
+* After crossing the center of the scale, keep your balance – don’t let the pointer hit the red zone, or you’ll lose!
 )"
     )}
 },

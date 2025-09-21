@@ -23,6 +23,7 @@ Text::Text(
     m_isAnimated(),
     m_fadeIn(),
     m_isCentered(),
+    m_alignTopRight(),
     m_animationStart(),
     m_animationDuration(animationDuration),
     m_color{ 255, 255, 255, 255 }
@@ -129,10 +130,17 @@ int Text::getAnimationDuration() const {
 
 void Text::positionReset() {
     m_isCentered = false;
+    m_alignTopRight = false;
 }
 
 void Text::positionCenter() {
     m_isCentered = true;
+    m_alignTopRight = false;
+}
+
+void Text::positionTopRight() {
+    m_isCentered = false;
+    m_alignTopRight = true;
 }
 
 void Text::resize(const int& fontSize)
@@ -221,7 +229,12 @@ void Text::render(const SDL_Point& areaSize) {
             int posX;
             if (m_isCentered) {
                 posX = (areaSize.x - static_cast<int>(textureSize.x * scaleX)) / 2;
-            } else {
+
+            }
+            else if (m_alignTopRight) {
+                posX = areaSize.x - static_cast<int>(textureSize.x * scaleX);
+            }
+            else {
                 posX = static_cast<int>(m_pos.x * scaleX);
             }
 
