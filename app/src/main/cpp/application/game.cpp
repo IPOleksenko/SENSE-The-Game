@@ -117,6 +117,7 @@ void Game::run() const {
         Icon(SDL_Incbin(ICON_BMP))
     );
 
+    loadStartScreen(window, renderer);
     play(window, renderer, audioManager);
 }
 
@@ -124,10 +125,15 @@ void Game::loadStartScreen(Window& window, Renderer& renderer) {
     renderer.setDrawColor({0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE});
     renderer.clear();
 
-    Text text(renderer.getSdlRenderer(), modding::anotherFontSize, {0, 0});
-    text.setText("Loading...");
-    text.positionCenter();
-    text.render(window.getSize());
+    Text textLoadScreen(renderer.getSdlRenderer(), modding::anotherFontSize, {0, 0});
+    Text textAuthor(renderer.getSdlRenderer(), 16, {0, 0}, true);
+
+    textLoadScreen.setText("Loading...");
+    textLoadScreen.positionCenter();
+    textLoadScreen.render(window.getSize());
+
+    textAuthor.setText("by IPOleksenko");
+    textAuthor.render(window.getSize());
 
     renderer.present();
 }
@@ -207,8 +213,6 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
     modding::loadCustomFontSize();
     LocalizationManager::instance().init();
 
-    loadStartScreen(window, renderer);
-
     SDL_Event event = {};
 
     Background background(renderer.getSdlRenderer());
@@ -247,7 +251,6 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                     }
                     break;
                 }
-
 #else
                 case SDL_KEYUP: {
                     const SDL_KeyboardEvent &keyboardEvent = event.key;

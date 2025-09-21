@@ -11,6 +11,7 @@ Text::Text(
     SDL_Renderer* renderer,
     const int& fontSize,
     const SDL_Point& pos,
+    bool forceDefaultFont,
     const int& animationDuration
 ) :
     m_sdlFont(nullptr),
@@ -25,6 +26,15 @@ Text::Text(
     m_animationStart(),
     m_animationDuration(animationDuration)
 {
+    if(forceDefaultFont) {
+        m_sdlFont = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
+        m_isInit = m_sdlFont != nullptr;
+        if(!m_isInit) {
+            SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s", "TTF_OpenFontRW", SDL_GetError());
+        }
+        return;
+    }
+
     std::string customFontPath = modding::loadCustomFontPath();
     if (!customFontPath.empty()) {
         m_sdlFont = TTF_OpenFont(customFontPath.c_str(), fontSize);
