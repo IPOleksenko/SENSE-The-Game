@@ -146,6 +146,7 @@ void Game::updateText(Text& text, const int& yPos) {
         text.positionReset();
         text.animationStop();
         text.setColor(255, 255, 255, 255);
+        text.resize(modding::fontSize);
         break;
     }
     case CheckPoint::BEGIN: {
@@ -267,10 +268,10 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                 fingerCount++;
 
                 if (touchEvent.x < 0.5f) {
-                    player.increaseSpeed(Player::Move::Left);
+                    player.increaseSpeed(Player::Move::Left, endlessMode);
                 }
                 else {
-                    player.increaseSpeed(Player::Move::Right);
+                    player.increaseSpeed(Player::Move::Right, endlessMode);
                 }
 
                 if (fingerCount == 2) {
@@ -286,42 +287,43 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                 }
                 break;
             }
-            case SDL_KEYUP: {
-                const SDL_KeyboardEvent& keyboardEvent = event.key;
-
-                switch (keyboardEvent.keysym.sym) {
-                case SDLK_ESCAPE: {
-                    isRunning = false;
-                    break;
-                }
+            case SDL_KEYDOWN: {
+                const SDL_KeyboardEvent &keyboardEvent = event.key;
+                if (keyboardEvent.repeat == 0) {
+                    switch (keyboardEvent.keysym.sym) {
+                        case SDLK_ESCAPE: {
+                            isRunning = false;
+                            break;
+                        }
 #if !defined(__ANDROID__)
-                case SDLK_f: {
-                    if (window.isFullscreen()) {
-                        window.setFullscreenOff();
-                    }
-                    else {
-                        window.setFullscreenOn();
-                    }
-                    break;
-                }
+                            case SDLK_f: {
+                                if (window.isFullscreen()) {
+                                    window.setFullscreenOff();
+                                }
+                                else {
+                                    window.setFullscreenOn();
+                                }
+                                break;
+                            }
 #endif
-                case SDLK_LEFT:
-                case SDLK_a: {
-                    player.increaseSpeed(Player::Move::Left);
+                        case SDLK_LEFT:
+                        case SDLK_a: {
+                            player.increaseSpeed(Player::Move::Left, endlessMode);
+                            break;
+                        }
+                        case SDLK_RIGHT:
+                        case SDLK_d: {
+                            player.increaseSpeed(Player::Move::Right, endlessMode);
+                            break;
+                        }
+                        case SDLK_SPACE: {
+                            if (!player.getIsMove())
+                                endlessMode = !endlessMode;
+                            break;
+                        }
+                    }
                     break;
                 }
-                case SDLK_RIGHT:
-                case SDLK_d: {
-                    player.increaseSpeed(Player::Move::Right);
-                    break;
-                }
-                case SDLK_SPACE: {
-                    if (!player.getIsMove())
-                        endlessMode = !endlessMode;
-                    break;
-                }
-                }
-                break;
             }
             case SDL_CONTROLLERDEVICEADDED: {
                 int joystick_index = event.cdevice.which;
@@ -368,13 +370,13 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
 #endif
                 case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
                 case SDL_CONTROLLER_BUTTON_X: {
-                    player.increaseSpeed(Player::Move::Left);
+                    player.increaseSpeed(Player::Move::Left, endlessMode);
                     break;
                 }
 
                 case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
                 case SDL_CONTROLLER_BUTTON_B: {
-                    player.increaseSpeed(Player::Move::Right);
+                    player.increaseSpeed(Player::Move::Right, endlessMode);
                     break;
                 }
 
@@ -393,7 +395,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
         renderer.setDrawColor({ 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE });
         renderer.clear();
 
-        player.move();
+        player.move(endlessMode);
 
         bool curPlayerIsMove = player.getIsMove();
         if (dimActive && !dimFading && !prevPlayerIsMove && curPlayerIsMove) {
@@ -406,11 +408,19 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
         flora.render(window.getSize(), player.getPosY());
         road.render(window.getSize(), player.getPosY());
         player.updateAnimation();
-        player.render(window.getSize());
+        player.render(window.getSize(), endlessMode);
 
 
 
         if (player.hasLost()) {
+            scale.render(
+                window.getSize(),
+                player.getSpeed(),
+                player.getSpeedMin(),
+                player.getSpeedMax(),
+                player.getPosY(),
+                endlessMode
+            );
             renderer.present();
 
             SDL_Delay(200);
@@ -430,6 +440,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             }
 
             player.reset();
+            scale.reset();
             flora.reset();
             endlessModeText.animationStop();
 
@@ -443,12 +454,14 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             while (SDL_PollEvent(&event)) {}
             continue;
         }
-
+        
         if (!endlessMode) {
             if (player.getPosY() >= static_cast<int>(CheckPoint::FINAL_START)) {
-                end.render(window.getSize());
-                if (player.getPosY() >= static_cast<int>(CheckPoint::FINAL_STOP))
-                    isRunning = false;
+                if (player.isFinalAnimationFinished()) {
+                    end.render(window.getSize());
+                    if (player.getPosY() >= static_cast<int>(CheckPoint::FINAL_STOP))
+                        isRunning = false;
+                }
             }
         }
 
@@ -509,7 +522,9 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             window.getSize(),
             player.getSpeed(),
             player.getSpeedMin(),
-            player.getSpeedMax()
+            player.getSpeedMax(),
+            player.getPosY(),
+            endlessMode
         );
 
         renderer.present();

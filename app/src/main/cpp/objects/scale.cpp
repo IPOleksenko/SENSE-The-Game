@@ -3,6 +3,8 @@
 #include <assets/assets.hpp>
 #include <SDL_image.h>
 
+#define FINAL_CHECKPOINT 25000
+
 Scale::Scale(SDL_Renderer *renderer) :
     bar(SDL_Incbin(SPRITE_SCALE_SCALE_PNG), renderer),
     arrow(SDL_Incbin(SPRITE_SCALE_ARROW_PNG), renderer)
@@ -20,10 +22,28 @@ void Scale::render(
     const SDL_Point& areaSize,
     const float& playerSpeed,
     const float& playerSpeedMin,
-    const float& playerSpeedMax
+    const float& playerSpeedMax,
+    const int& distance,
+    const bool endlessMode
 ) {
-    if (!bar.isInit() && !arrow.isInit()) {
+    if (!bar.isInit() || !arrow.isInit()) {
         return;
+    }
+
+    if (!endlessMode) {
+        if (distance >= FINAL_CHECKPOINT) {
+            m_fadingOut = true;
+        }
+        if (m_fadingOut && m_alpha > 0) {
+            m_alpha = (m_alpha > 5) ? m_alpha - 5 : 0;
+
+            bar.setAlpha(m_alpha);
+            arrow.setAlpha(m_alpha);
+        }
+
+        if (m_alpha == 0) {
+            return;
+        }
     }
 
     const SDL_FPoint barScale {
@@ -87,4 +107,9 @@ void Scale::render(
     };
     // Render the arrow
     arrow.render(&arrowRect, nullptr);
+}
+
+void Scale::reset() {
+    m_alpha = 255;
+    m_fadingOut = false;
 }

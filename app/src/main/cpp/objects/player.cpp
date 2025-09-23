@@ -1,8 +1,7 @@
 #include <objects/player.hpp>
-#include <iostream>
 #include <iomanip>
 
-#define FINAL_CHECKPOINT  25000
+#define FINAL_CHECKPOINT 25000
 
 Player::Player(SDL_Renderer *renderer)
     : m_texture(SDL_Incbin(SPRITE_PLAYER_PLAYER_PNG), renderer)
@@ -45,16 +44,17 @@ bool Player::hasLost() const {
     return m_hasLost;
 }
 
-void Player::move() {
+void Player::move(bool endlessMode) {
     if (m_speed >= m_speedNormal) {
         m_isMoving = true;
     }
 
     if (m_isMoving) {
-        m_posY += 1;
+        if (((m_posY >= FINAL_CHECKPOINT) == m_isFinalAnimationFinished) || endlessMode)
+            m_posY += 1;
 
         // Adjust speed scale and decrease based on progress
-        float progress = static_cast<float>(m_posY) / 25000;
+        float progress = static_cast<float>(m_posY) / FINAL_CHECKPOINT;
         m_speedScale = 5.0f + 10 * progress; // Increase scale more aggressively
         m_speedDecrease = 0.5f + progress; // Increase decrease rate more aggressively
 
@@ -90,9 +90,10 @@ void Player::reset() {
 
     m_isMoving = false;
     m_hasLost = false;
+    m_isFinalAnimationFinished == false;
 }
 
-void Player::render(const SDL_Point& windowSize) {
+void Player::render(const SDL_Point& windowSize, bool endlessMode) {
     const int row = m_frameCurrent / m_framesPerRow;
     const int col = m_frameCurrent % m_framesPerRow;
 
@@ -119,11 +120,30 @@ void Player::render(const SDL_Point& windowSize) {
             scaledH
     };
 
-    m_texture.render(&destRect, &srcRect);
+    if (m_posY < FINAL_CHECKPOINT || endlessMode) {
+        m_texture.render(&destRect, &srcRect);
+    }
+    else {
+        static int exitOffset = 0;
+        exitOffset += 1;
+        destRect.y += exitOffset;
+
+        if (destRect.y < windowSize.y) {
+            m_texture.render(&destRect, &srcRect);
+        }
+        else {
+            m_isFinalAnimationFinished = true;
+        }
+    }
+
 }
 
-void Player::increaseSpeed(const Player::Move& move) {
-    if (m_posY >= FINAL_CHECKPOINT) { return; }
+bool Player::isFinalAnimationFinished() const {
+    return m_isFinalAnimationFinished;
+}
+
+void Player::increaseSpeed(const Player::Move& move, bool endlessMode) {
+    if (m_posY >= FINAL_CHECKPOINT && !endlessMode) { return; }
 
     if(m_lastMove != move && move != Move::Undefined) {
         m_lastMove = move;

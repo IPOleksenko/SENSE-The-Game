@@ -36,6 +36,7 @@ public:
     RawTexture() : Texture(nullptr, nullptr) {}
 
     SDL_Texture* get() const { return m_sdlTexture.get(); }
+    void setAlpha(Uint8 alpha);
 };
 
 

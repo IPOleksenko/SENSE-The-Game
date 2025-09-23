@@ -22,11 +22,12 @@ public:
     [[nodiscard]] Move getLastMove() const;
     [[nodiscard]] bool getIsMove() const;
     [[nodiscard]] bool hasLost() const;
+    [[nodiscard]] bool isFinalAnimationFinished() const;
 
-    void move();
+    void move(bool endlessMode);
     void reset();
-    void render(const SDL_Point& windowSize);
-    void increaseSpeed(const Player::Move& move);
+    void render(const SDL_Point& windowSize, bool endlessMode);
+    void increaseSpeed(const Player::Move& move, bool endlessMode);
     void updateAnimation();
 
 private:
@@ -52,4 +53,6 @@ private:
     const int m_framesTotal = 120;    // Total number of frames in the animation
     const int m_framesPerRow = 20;    // Number of frames per row
     const int m_animationSpeed = 100; // Animation speed in milliseconds
+
+    bool m_isFinalAnimationFinished = false;
 };

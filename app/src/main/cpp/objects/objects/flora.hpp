@@ -9,7 +9,6 @@
 
 class Flora {
 public:
-    static constexpr int kMaxFloraY = 30000;
     explicit Flora(SDL_Renderer* renderer);
     ~Flora() = default;
 

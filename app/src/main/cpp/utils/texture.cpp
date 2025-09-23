@@ -106,6 +106,12 @@ RawTexture::RawTexture(const char* path, SDL_Renderer* renderer) :
     }
 }
 
+void RawTexture::setAlpha(Uint8 alpha) {
+    if (m_sdlTexture) {
+        SDL_SetTextureAlphaMod(m_sdlTexture.get(), alpha);
+    }
+}
+
 SurfaceTexture::SurfaceTexture(SDL_Surface* surface, SDL_Renderer* renderer) :
     Texture(SDL_CreateTextureFromSurface(renderer, surface), renderer)
 {
