@@ -432,7 +432,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             renderer.present();
 
             if (const int channel = audioManager.play(
-                reload, 1, AudioManager::CHANNEL_UNDEFINED
+                reload, 0, AudioManager::CHANNEL_UNDEFINED
             ); channel != AudioManager::CHANNEL_UNDEFINED) {
                 while (Mix_Playing(channel) == SDL_TRUE) {
                     SDL_Delay(16);
