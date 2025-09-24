@@ -7,7 +7,7 @@
 #include <objects/background.hpp>
 #include <objects/scale.hpp>
 #include <objects/road.hpp>
-#include <objects/flora.hpp>
+#include <objects/decor.hpp>
 #include <objects/end.hpp>
 #include <utils/music.hpp>
 #include <utils/sfx.hpp>
@@ -212,14 +212,14 @@ void Game::updateText(Text& text, const int& yPos) {
 void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) {
     modding::createDefaultLocalizationFile();
     modding::createDefaultFontFile();
-    modding::createFloraDirectory();
+    modding::createDecorDirectory();
     modding::loadCustomFontSize();
     LocalizationManager::instance().init();
 
     SDL_Event event = {};
 
     Background background(renderer.getSdlRenderer());
-    Flora flora(renderer.getSdlRenderer());
+    Decor decor(renderer.getSdlRenderer());
     Road road(renderer.getSdlRenderer());
     Player player(renderer.getSdlRenderer());
     Scale scale(renderer.getSdlRenderer());
@@ -405,7 +405,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
         prevPlayerIsMove = curPlayerIsMove;
 
         background.render(window.getSize(), player.getPosY());
-        flora.render(window.getSize(), player.getPosY());
+        decor.render(window.getSize(), player.getPosY());
         road.render(window.getSize(), player.getPosY());
         player.updateAnimation();
         player.render(window.getSize(), endlessMode);
@@ -441,7 +441,7 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
 
             player.reset();
             scale.reset();
-            flora.reset();
+            decor.reset();
             endlessModeText.animationStop();
 
             dimActive = true;

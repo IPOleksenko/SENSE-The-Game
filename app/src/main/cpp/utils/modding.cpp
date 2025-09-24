@@ -16,11 +16,11 @@ namespace modding {
 // Constants
 const char* LOCALIZATION_FILE = "localization.cfg";
 const char* FONT_FILE = "font.cfg";
-const char* FLORA_CFG = "flora.cfg";
-const char* FLORA_DIR = "flora";
+const char* DECOR_CFG = "decor.cfg";
+const char* DECOR_DIR = "decor";
 
-// Standard flora textures
-const std::vector<std::string> STANDARD_FLORA = {
+// Standard decor textures
+const std::vector<std::string> STANDARD_DECOR = {
     "grass",
     "flower1",
     "flower2",
@@ -402,11 +402,11 @@ bool createDefaultFontFile() {
     return false;
 }
 
-// Flora assets
-std::vector<FloraAsset> loadFloraAssets() {
-    std::vector<FloraAsset> assets;
-    std::string floraPath = joinPath(getModdingDirectory(), FLORA_DIR);
-    std::string configPath = joinPath(getModdingDirectory(), "flora");
+// Decor assets
+std::vector<DecorAsset> loadDecorAssets() {
+    std::vector<DecorAsset> assets;
+    std::string decorPath = joinPath(getModdingDirectory(), DECOR_DIR);
+    std::string configPath = joinPath(getModdingDirectory(), "decor");
 
     // Read configuration
     std::map<std::string, bool> config;
@@ -422,24 +422,24 @@ std::vector<FloraAsset> loadFloraAssets() {
     }
 
     // Load standard assets
-    for (const auto& name : STANDARD_FLORA) {
-        FloraAsset asset;
+    for (const auto& name : STANDARD_DECOR) {
+        DecorAsset asset;
         asset.name = name;
         asset.enabled = config.count(name) ? config[name] : true;  // Use config value or true by default
-        asset.isCustom = fileExists(joinPath(floraPath, name + ".png"));
+        asset.isCustom = fileExists(joinPath(decorPath, name + ".png"));
         assets.push_back(asset);
     }
 
     // Search for custom assets
     try {
-        for (const auto& entry : std::filesystem::directory_iterator(floraPath)) {
+        for (const auto& entry : std::filesystem::directory_iterator(decorPath)) {
             if (entry.path().extension() != ".png") continue;
             
             std::string name = entry.path().stem().string();
             if (std::find_if(assets.begin(), assets.end(),
-                [&name](const FloraAsset& a) { return a.name == name; }) == assets.end()) {
+                [&name](const DecorAsset& a) { return a.name == name; }) == assets.end()) {
                 // New asset
-                FloraAsset asset;
+                DecorAsset asset;
                 asset.name = name;
                 asset.enabled = true;
                 asset.isCustom = true;
@@ -447,22 +447,22 @@ std::vector<FloraAsset> loadFloraAssets() {
             }
         }
     } catch (const std::exception& e) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error scanning flora directory: %s", e.what());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error scanning decor directory: %s", e.what());
     }
 
     return assets;
 }
 
-bool createFloraDirectory() {
-    const std::string dirPath = joinPath(getModdingDirectory(), FLORA_DIR);
-    const std::string configPath = joinPath(getModdingDirectory(), FLORA_CFG);
+bool createDecorDirectory() {
+    const std::string dirPath = joinPath(getModdingDirectory(), DECOR_DIR);
+    const std::string configPath = joinPath(getModdingDirectory(), DECOR_CFG);
 
     bool success = true;
 
     // Create directory if it doesn't exist
     if (!dirExists(dirPath)) {
         if (createDir(dirPath)) {
-            SDL_Log("Created flora directory: %s", dirPath.c_str());
+            SDL_Log("Created decor directory: %s", dirPath.c_str());
         } else {
             success = false;
         }
@@ -471,21 +471,21 @@ bool createFloraDirectory() {
     // Create config file if it doesn't exist
     if (!fileExists(configPath)) {
         std::vector<std::string> lines = {
-            "# SENSE: The Game Flora Configuration",
-            "# Use NAME=true/false to enable/disable flora assets",
+            "# SENSE: The Game Decor Configuration",
+            "# Use NAME=true/false to enable/disable decor assets",
             "# If no value is set, the texture will not be displayed",
-            "# Put custom .png files in the flora directory to override standard assets",
+            "# Put custom .png files in the decor directory to override standard assets",
             "# You can also override a standard .png by giving it the same name",
             "",
-            "# Standard flora assets:"
+            "# Standard decor assets:"
         };
 
-        for (const auto& name : STANDARD_FLORA) {
+        for (const auto& name : STANDARD_DECOR) {
             lines.push_back(name + "=true");
         }
 
         if (writeTextFile(configPath, lines)) {
-            SDL_Log("Created flora config file: %s", configPath.c_str());
+            SDL_Log("Created decor config file: %s", configPath.c_str());
         } else {
             success = false;
         }

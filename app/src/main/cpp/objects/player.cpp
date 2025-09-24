@@ -90,7 +90,7 @@ void Player::reset() {
 
     m_isMoving = false;
     m_hasLost = false;
-    m_isFinalAnimationFinished == false;
+    m_isFinalAnimationFinished = false;
 }
 
 void Player::render(const SDL_Point& windowSize, bool endlessMode) {

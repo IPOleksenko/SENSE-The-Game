@@ -31,15 +31,15 @@ bool loadCustomFontSize();
 std::string loadCustomFontPath();
 bool createDefaultFontFile();
 
-// Flora assets
-struct FloraAsset {
+// Decor assets
+struct DecorAsset {
     std::string name;        // File name without extension
     bool enabled = true;     // TRUE = load, FALSE = do not load
-    bool isCustom = false;   // TRUE = loaded from flora folder, FALSE = standard
+    bool isCustom = false;   // TRUE = loaded from decor folder, FALSE = standard
 };
 
-std::vector<FloraAsset> loadFloraAssets();
-bool createFloraDirectory();
+std::vector<DecorAsset> loadDecorAssets();
+bool createDecorDirectory();
 
 // Helper functions
 std::string extractQuotedValue(const std::string& line);

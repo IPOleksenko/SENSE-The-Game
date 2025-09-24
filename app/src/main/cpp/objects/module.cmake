@@ -7,7 +7,7 @@ set(MODULE_SOURCES
     ${MODULE_DIR}/player.cpp
     ${MODULE_DIR}/road.cpp
     ${MODULE_DIR}/scale.cpp
-    ${MODULE_DIR}/flora.cpp
+    ${MODULE_DIR}/decor.cpp
     ${MODULE_DIR}/background.cpp
     ${MODULE_DIR}/text.cpp
     ${MODULE_DIR}/end.cpp
@@ -17,7 +17,7 @@ set(MODULE_HEADERS
     ${INCLUDE_DIR}/player.hpp
     ${INCLUDE_DIR}/road.hpp
     ${INCLUDE_DIR}/scale.hpp
-    ${INCLUDE_DIR}/flora.hpp
+    ${INCLUDE_DIR}/decor.hpp
     ${INCLUDE_DIR}/background.hpp
     ${INCLUDE_DIR}/text.hpp
     ${INCLUDE_DIR}/end.hpp
