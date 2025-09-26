@@ -14,39 +14,39 @@ std::string getCheckpointText(const CheckPoint& checkPoint) {
     static const std::map<CheckPoint, std::pair<std::string, std::string>> labels = {
             {CheckPoint::LOADING_TEXT, {"LOADING_TEXT", "Loading..."}},
             {CheckPoint::ENDLESS_MODE_TEXT, {"ENDLESS_MODE", "ENDLESS MODE"}},
-        { CheckPoint::IDLE, {"IDLE", std::string(
+            { CheckPoint::IDLE, {"IDLE", std::string(
 R"(
 Instructions:
 \
 Keyboard:
-    * Press A (or Arrow Left) and D (or Arrow Right) alternately to move.
-    * Press SPACE to toggle Endless Mode (only before moving).
-    * Press ESC to exit the game.
+    * Press A (or the Left Arrow key) and D (or the Right Arrow key) alternately to move.
+    * Press the Spacebar to enable or disable Endless Mode (only before you start moving).
+    * Press the Escape key to exit the game.
 )"
 #if !defined(__ANDROID__)
 R"(
-    * Press F to toggle fullscreen mode.
+    * Press F to switch between windowed and fullscreen mode.
 )"
 #endif
 R"(\
 Gamepad:
-    * Use DPAD LEFT / DPAD RIGHT (or X / B buttons) alternately to move.
-    * Press A to toggle Endless Mode (only before moving).
-    * Press START to exit the game.
+    * Press Left or Right on the Directional Pad (or the X / B buttons) alternately to move.
+    * Press the A button to enable or disable Endless Mode (only before you start moving).
+    * Press the Start button to exit the game.
 )"
 #if !defined(__ANDROID__)
 R"(
-    * Press Y to toggle fullscreen mode.
+    * Press the Y button to switch between windowed and fullscreen mode.
 )"
 #endif
 R"(\
 Touchscreen:
-    * Tap the left and right side of the screen alternately to move.
-    * Hold two fingers on the screen for 2 seconds to toggle Endless Mode (only before moving).
+    * Tap the left and right sides of the screen alternately to move.
+    * Hold two fingers on the screen for two seconds to enable or disable Endless Mode (only before you start moving).
 )"
 R"(\
-* Pass the middle mark to start moving.
-* After crossing the center of the scale, keep your balance – don’t let the pointer hit the red zone, or you’ll lose!
+* Cross the center mark to begin moving.
+* After crossing the center, maintain your balance — do not allow the pointer to touch the red zone, or you will lose.
 )"
     )}
 },
@@ -64,7 +64,7 @@ R"(\
         {CheckPoint::L_START, {"L_START", "Your heart beats, but who cares?"}},
         {CheckPoint::M_START, {"M_START", "Everything you build will one day turn to dust."}},
         {CheckPoint::N_START, {"N_START", "You search for truth, but in this world, there is no law of truth."}},
-        {CheckPoint::O_START, {"O_START", "Who created this world if even they had no plan?"}},
+        {CheckPoint::O_START, {"O_START", "You search for gods, but there are none."}},
         {CheckPoint::P_START, {"P_START", "Joy and pain alternate, but both eventually fade."}},
         {CheckPoint::Q_START, {"Q_START", "You want to be needed, but by whom?"}},
         {CheckPoint::R_START, {"R_START", "The stars shine, but not to show you the way."}},
