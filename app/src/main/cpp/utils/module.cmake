@@ -15,12 +15,12 @@ set(MODULE_SOURCES
 )
 
 set(MODULE_HEADERS
-    ${MODULE_DIR}/utils/texture.hpp
-    ${MODULE_DIR}/utils/music.hpp
-    ${MODULE_DIR}/utils/sfx.hpp
-    ${MODULE_DIR}/utils/icon.hpp
-    ${MODULE_DIR}/utils/modding.hpp
-    ${MODULE_DIR}/utils/localization.hpp
+    ${INCLUDE_DIR}/texture.hpp
+    ${INCLUDE_DIR}/music.hpp
+    ${INCLUDE_DIR}/sfx.hpp
+    ${INCLUDE_DIR}/icon.hpp
+    ${INCLUDE_DIR}/modding.hpp
+    ${INCLUDE_DIR}/localization.hpp
 )
 
 add_library(

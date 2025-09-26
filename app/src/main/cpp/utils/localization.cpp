@@ -1,5 +1,5 @@
-#include "utils/localization.hpp"
-#include "utils/modding.hpp"
+#include <utils/localization.hpp>
+#include <utils/modding.hpp>
 #include <fstream>
 
 void LocalizationManager::init() {

@@ -110,8 +110,8 @@ void Player::render(const SDL_Point& windowSize, bool endlessMode) {
     float scaleX = static_cast<float>(windowSize.x) / baseWidth;
     float scaleY = static_cast<float>(windowSize.y) / baseHeight;
 
-    int scaledW = static_cast<int>(1, m_frameSize.x * scaleX);
-    int scaledH = static_cast<int>(1, m_frameSize.y * scaleY);
+    int scaledW = static_cast<int>(m_frameSize.x * scaleX);
+    int scaledH = static_cast<int>(m_frameSize.y * scaleY);
 
     SDL_Rect destRect = {
             static_cast<int>((windowSize.x - scaledW) / 2),

@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <string>
 #include <vector>
+#include <inttypes.h>
 
 class Window;
 class Renderer;

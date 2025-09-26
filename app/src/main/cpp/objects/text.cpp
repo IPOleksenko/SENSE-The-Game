@@ -1,7 +1,7 @@
-#include "objects/text.hpp"
-#include "../utils/utils/texture.hpp"
-#include "../utils/utils/localization.hpp"
-#include "../utils/utils/modding.hpp"
+#include <objects/text.hpp>
+#include <utils/texture.hpp>
+#include <utils/localization.hpp>
+#include <utils/modding.hpp>
 #include <SDL_ttf.h>
 #include <vector>
 #include <sstream>
@@ -22,8 +22,7 @@ Text::Text(
     m_alpha(SDL_ALPHA_OPAQUE),
     m_isAnimated(),
     m_fadeIn(),
-    m_isCentered(),
-    m_alignTopRight(),
+    m_positionMode(),
     m_animationStart(),
     m_animationDuration(animationDuration),
     m_color{ 255, 255, 255, 255 }
@@ -129,18 +128,19 @@ int Text::getAnimationDuration() const {
 }
 
 void Text::positionReset() {
-    m_isCentered = false;
-    m_alignTopRight = false;
+    m_positionMode = PositionMode::Default;
 }
 
 void Text::positionCenter() {
-    m_isCentered = true;
-    m_alignTopRight = false;
+    m_positionMode = PositionMode::Center;
 }
 
 void Text::positionTopRight() {
-    m_isCentered = false;
-    m_alignTopRight = true;
+    m_positionMode = PositionMode::TopRight;
+}
+
+void Text::positionTopCenter() {
+    m_positionMode = PositionMode::TopCenter;
 }
 
 void Text::resize(const int& fontSize)
@@ -215,33 +215,40 @@ void Text::render(const SDL_Point& areaSize) {
         }
     }
 
-
     int posY;
-    if (m_isCentered) {
+    switch (m_positionMode) {
+    case PositionMode::Center:
         posY = (areaSize.y - totalHeight) / 2;
-    } else {
+        break;
+    case PositionMode::TopCenter:
+        posY = 0;
+        break;
+    default:
         posY = static_cast<int>(m_pos.y * scaleY);
+        break;
     }
 
     for (const auto& tex : textures) {
         SDL_Point textureSize{};
         if (tex.querySize(textureSize)) {
             int posX;
-            if (m_isCentered) {
+            switch (m_positionMode) {
+            case PositionMode::Center:
+            case PositionMode::TopCenter:
                 posX = (areaSize.x - static_cast<int>(textureSize.x * scaleX)) / 2;
-
-            }
-            else if (m_alignTopRight) {
+                break;
+            case PositionMode::TopRight:
                 posX = areaSize.x - static_cast<int>(textureSize.x * scaleX);
-            }
-            else {
+                break;
+            default:
                 posX = static_cast<int>(m_pos.x * scaleX);
+                break;
             }
 
             SDL_Rect destRect = {
-                    posX, posY,
-                    static_cast<int>(textureSize.x * scaleX),
-                    static_cast<int>(textureSize.y * scaleY)
+                posX, posY,
+                static_cast<int>(textureSize.x * scaleX),
+                static_cast<int>(textureSize.y * scaleY)
             };
 
             tex.render(&destRect, nullptr);

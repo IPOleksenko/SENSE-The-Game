@@ -206,6 +206,8 @@ void Game::updateText(Text& text, const int& yPos) {
         text.animationStart(false);
         break;
     }
+    default:
+        break;
     }
 }
 
@@ -227,8 +229,11 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
 
     Text text(renderer.getSdlRenderer(), modding::fontSize, { 0, 0 });
     Text endlessModeText(renderer.getSdlRenderer(), modding::fontSize, { 0, 0 });
+    Text timerText(renderer.getSdlRenderer(), modding::fontSize, { 0, 0 });
     endlessModeText.positionTopRight();
     endlessModeText.setColor(200, 200, 200, 255);
+    timerText.positionTopCenter();
+    timerText.setColor(255, 255, 0, 255);
 
     Music soundtrack(SDL_Incbin(SOUND_WIND_WAV));
     Sfx reload(SDL_Incbin(SOUND_RELOAD_WAV));
@@ -253,6 +258,10 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
 
     int fingerCount = 0;
     Uint32 twoFingerStartTime = 0;
+
+    static Uint64 timerStartTime = 0;
+    int elapsedTime = 0;
+    char timerBuffer[64];
 
     while (SDL_PollEvent(&event)) {}
 
@@ -410,9 +419,40 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
         player.updateAnimation();
         player.render(window.getSize(), endlessMode);
 
+        if (endlessMode) {
+            if (!player.getIsMove()) {
+                timerStartTime = SDL_GetPerformanceCounter();
+            }
 
+            Uint64 now = SDL_GetPerformanceCounter();
+            Uint64 freq = SDL_GetPerformanceFrequency();
+            Uint64 ticks = now - timerStartTime;
+
+            Uint64 totalSeconds = ticks / freq;
+            Uint64 hours = totalSeconds / 3600;
+            Uint64 minutes = (totalSeconds / 60) % 60;
+            Uint64 secs = totalSeconds % 60;
+
+            Uint64 fracTicks = ticks % freq;
+            Uint64 frac = (fracTicks * 100000) / freq;
+
+            snprintf(timerBuffer, sizeof(timerBuffer),
+                "%02" PRIu64 ":%02" PRIu64 ":%02" PRIu64 ".%05" PRIu64,
+                hours, minutes, secs, frac);
+
+            timerText.setText(timerBuffer);
+            timerText.render(window.getSize());
+        }
+        else {
+            timerStartTime = 0;
+        }
 
         if (player.hasLost()) {
+            updateText(text, player.getPosY());
+            if (!endlessMode
+                || player.getPosY() < static_cast<int>(CheckPoint::A_START)) {
+                text.render(window.getSize());
+            }
             scale.render(
                 window.getSize(),
                 player.getSpeed(),
@@ -424,6 +464,20 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
             renderer.present();
 
             SDL_Delay(200);
+
+            player.reset();
+            scale.reset();
+            decor.reset();
+            endlessModeText.animationStop();
+
+            dimActive = true;
+            dimFading = false;
+            prevPlayerIsMove = false;
+
+            fingerCount = 0;
+            twoFingerStartTime = 0;
+
+            timerBuffer[0] = '\0';
 
             renderer.setDrawColor({ 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE });
             SDL_Rect fillRect = { 0, 0, window.getSize().x, window.getSize().y };
@@ -438,18 +492,6 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                     SDL_Delay(16);
                 }
             }
-
-            player.reset();
-            scale.reset();
-            decor.reset();
-            endlessModeText.animationStop();
-
-            dimActive = true;
-            dimFading = false;
-            prevPlayerIsMove = false;
-
-            fingerCount = 0;
-            twoFingerStartTime = 0;
 
             while (SDL_PollEvent(&event)) {}
             continue;
@@ -474,8 +516,6 @@ void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) 
                 }
             }
         }
-
-
 
         if (dimActive) {
             SDL_Renderer* sdlR = renderer.getSdlRenderer();

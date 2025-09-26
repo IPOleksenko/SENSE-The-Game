@@ -69,17 +69,12 @@ void Texture::tile(
     float targetWidth = areaSize.x * scale;
     float aspectRatio = static_cast<float>(textureSize.y) / textureSize.x;
 
-    int scaledW = (1, static_cast<int>(targetWidth));
-    int scaledH = (1,static_cast<int>(scaledW * aspectRatio));
+    int scaledW = (static_cast<int>(targetWidth));
+    int scaledH = (static_cast<int>(scaledW * aspectRatio));
 
     SDL_Rect destRect{};
     for (int y = startY; y < areaSize.y; y += scaledH) {
-        if (isFullscreen) {
-            destRect = { 0, y, areaSize.x, areaSize.y };
-        } else {
-            destRect = { (areaSize.x - scaledW) / 2, y, scaledW, scaledH };
-        }
-
+        destRect = { (areaSize.x - scaledW) / 2, y, scaledW, scaledH };
         render(&destRect, nullptr);
     }
 }

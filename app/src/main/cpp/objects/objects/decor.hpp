@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../utils/utils/texture.hpp"
-#include "../../utils/utils/modding.hpp"
+#include <utils/texture.hpp>
+#include <utils/modding.hpp>
 #include <vector>
 #include <list>
 #include <string>

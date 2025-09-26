@@ -26,10 +26,19 @@ public:
     void positionReset();
     void positionCenter();
     void positionTopRight();
+    void positionTopCenter();
     void resize(const int& fontSize);
     void render(const SDL_Point& areaSize);
 
 private:
+    enum class PositionMode {
+        Default,
+        Center,
+        TopRight,
+        TopCenter
+    };
+    PositionMode m_positionMode = PositionMode::Default;
+
     TTF_Font* m_sdlFont;
     SDL_Renderer* m_sdlRenderer;
     bool m_isInit;
@@ -39,8 +48,6 @@ private:
     Uint8 m_alpha;
     bool m_isAnimated;
     bool m_fadeIn;
-    bool m_isCentered;
-    bool m_alignTopRight;
     SDL_Color m_color;
     Uint32 m_animationStart;
     const Uint32 m_animationDuration;

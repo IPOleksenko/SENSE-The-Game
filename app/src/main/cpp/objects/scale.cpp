@@ -1,5 +1,5 @@
 #include <objects/scale.hpp>
-#include "../utils/utils/texture.hpp"
+#include <utils/texture.hpp>
 #include <assets/assets.hpp>
 #include <SDL_image.h>
 
