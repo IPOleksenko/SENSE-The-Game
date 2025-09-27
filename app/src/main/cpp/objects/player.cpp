@@ -74,7 +74,7 @@ void Player::move(bool endlessMode) {
         m_speedDecrease
     );
 
-    if (m_speed >= m_speedDecrease && m_posY <= FINAL_CHECKPOINT) {
+    if (m_speed >= m_speedDecrease && (m_posY < FINAL_CHECKPOINT || endlessMode)) {
         m_speed -= m_speedDecrease;
     }
 }
