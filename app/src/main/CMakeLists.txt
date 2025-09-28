@@ -42,8 +42,8 @@ else()
             SDL2_mixer
             SDL2_ttf
 
-        DESTINATION
-            ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}
     )
 endif()
 
