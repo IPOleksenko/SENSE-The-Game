@@ -3,22 +3,16 @@ set(MODULE_DIR ${SOURCE_DIR}/${MODULE_NAME})
 set(INCLUDE_DIR ${MODULE_DIR}/${MODULE_NAME})
 set(MODULE_TARGET ${PROJECT_NAME}_${MODULE_NAME})
 
-set(UTILS_MODULE_NAME utils)
-set(UTILS_MODULE_DIR ${SOURCE_DIR}/${UTILS_MODULE_NAME})
-set(UTILS_INCLUDE_DIR ${UTILS_MODULE_DIR}/${UTILS_MODULE_NAME})
-
 include(${MODULE_DIR}/autogen.cmake)
 
 set(MODULE_SOURCES
     ${MODULE_DIR}/assets.cpp
     ${MODULE_DIR}/checkpoints.cpp
-    ${UTILS_MODULE_DIR}/localization.cpp
 )
 
 set(MODULE_HEADERS
     ${INCLUDE_DIR}/assets.hpp
     ${INCLUDE_DIR}/checkpoints.hpp
-    ${UTILS_INCLUDE_DIR}/localization.hpp
 )
 
 if(MSVC)
@@ -45,6 +39,7 @@ target_include_directories(
 target_link_libraries(
     ${MODULE_TARGET} PUBLIC
         incbin
+        ${PROJECT_NAME}_utils
 )
 
 if(MSVC)
