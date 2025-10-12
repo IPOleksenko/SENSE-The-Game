@@ -271,6 +271,7 @@ bool createDefaultLocalizationFile() {
     lines.push_back("# SENSE: The Game Localization File");
     lines.push_back("# Use KEY=\"value\" format to override default text");
     lines.push_back("# Leave KEY= empty or \"\" to use default text");
+    lines.push_back("# If KEY= is not found, default settings are applied");
     lines.push_back("# Supported escape sequences:");
     lines.push_back("#   \\n  - newline");
     lines.push_back("#   \\t  - tab (4 spaces)");
@@ -296,7 +297,7 @@ int fontSize = 24;
 int anotherFontSize = 48;
 
 bool loadCustomFontSize() {
-    std::string configPath = joinPath(getModdingDirectory(), "font.cfg");
+    std::string configPath = joinPath(getModdingDirectory(), FONT_FILE);
     auto lines = readTextFile(configPath);
 
     for (const auto& line : lines) {
@@ -382,16 +383,19 @@ bool createDefaultFontFile() {
         "# Use FONT=\"./path/to/font.ttf\" or FONT=\"font.otf\" to use a custom font",
         "# Leave FONT empty (FONT="" or FONT=) to use the default font",
         "# If the font is not found, the default font will be used",
+        "# If FONT= is not found, default settings are applied",
         "FONT=\"\"",
         "",
         "# Leave FONT_SIZE= to use the default size",
         "# If FONT_SIZE is not set, the default size is 24",
         "# FONT_SIZE must contain only digits (e.g. FONT_SIZE=32)",
+        "# If FONT_SIZE= is not found, default settings are applied",
         "FONT_SIZE=",
         "",
         "# Leave FONT_ANOTHER_TEXT_SIZE= to use the default size",
         "# If FONT_ANOTHER_TEXT_SIZE is not set, the default size is 48",
         "# FONT_ANOTHER_TEXT_SIZE must contain only digits (e.g. FONT_ANOTHER_TEXT_SIZE=56)",
+        "# If FONT_ANOTHER_TEXT_SIZE= is not found, default settings are applied",
         "FONT_ANOTHER_TEXT_SIZE="
     };
 
@@ -406,7 +410,7 @@ bool createDefaultFontFile() {
 std::vector<DecorAsset> loadDecorAssets() {
     std::vector<DecorAsset> assets;
     std::string decorPath = joinPath(getModdingDirectory(), DECOR_DIR);
-    std::string configPath = joinPath(getModdingDirectory(), "decor");
+    std::string configPath = joinPath(getModdingDirectory(), DECOR_CFG);
 
     // Read configuration
     std::map<std::string, bool> config;
@@ -476,6 +480,7 @@ bool createDecorDirectory() {
             "# If no value is set, the texture will not be displayed",
             "# Put custom .png files in the decor directory to override standard assets",
             "# You can also override a standard .png by giving it the same name",
+            "# If NAME= is not found, default settings are applied",
             "",
             "# Standard decor assets:"
         };
