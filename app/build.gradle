@@ -11,9 +11,12 @@ def getCommitCount() {
         }
         return stdout.toString().trim().toInteger()
     } catch (Exception e) {
+        println "Error: ${e.message}"
+        e.printStackTrace()
         return 1
     }
 }
+def commitCount = getCommitCount()
 
 android {
     compileSdk 34
@@ -24,8 +27,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 35
 
-        versionCode getCommitCount()
-        versionName new Date().format('yyyy.MM.dd-HH.mm.ss')
+        versionCode commitCount
+        versionName commitCount.toString()
 
         externalNativeBuild {
             cmake {

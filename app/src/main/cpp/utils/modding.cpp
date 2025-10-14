@@ -62,6 +62,7 @@ const std::vector<std::string> LOCALIZATION_KEYS = {
 std::string getModdingDirectory() {
 #ifdef __ANDROID__
     static std::string dir;
+
     if (dir.empty()) {
         JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
         jobject activity = (jobject)SDL_AndroidGetActivity();
@@ -72,18 +73,37 @@ std::string getModdingDirectory() {
         }
 
         jclass activityClass = env->GetObjectClass(activity);
-        jmethodID midGetPackageName = env->GetMethodID(activityClass, "getPackageName", "()Ljava/lang/String;");
-        jstring packageName = (jstring)env->CallObjectMethod(activity, midGetPackageName);
+        jmethodID midGetExternalMediaDirs = env->GetMethodID(
+                activityClass, "getExternalMediaDirs", "()[Ljava/io/File;"
+        );
 
-        const char* packageNameCStr = env->GetStringUTFChars(packageName, nullptr);
-        std::string pkg(packageNameCStr);
-        env->ReleaseStringUTFChars(packageName, packageNameCStr);
+        jobjectArray mediaDirs = (jobjectArray)env->CallObjectMethod(activity, midGetExternalMediaDirs);
+        if (!mediaDirs) {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "getExternalMediaDirs() returned null");
+            dir = ".";
+        } else {
+            jobject firstDir = env->GetObjectArrayElement(mediaDirs, 0);
+            if (firstDir) {
+                jclass fileClass = env->FindClass("java/io/File");
+                jmethodID midGetAbsolutePath = env->GetMethodID(fileClass, "getAbsolutePath", "()Ljava/lang/String;");
+                jstring pathStr = (jstring)env->CallObjectMethod(firstDir, midGetAbsolutePath);
 
-        env->DeleteLocalRef(packageName);
+                const char* pathCStr = env->GetStringUTFChars(pathStr, nullptr);
+                dir = pathCStr;
+                env->ReleaseStringUTFChars(pathStr, pathCStr);
+
+                env->DeleteLocalRef(pathStr);
+                env->DeleteLocalRef(fileClass);
+                env->DeleteLocalRef(firstDir);
+            } else {
+                dir = ".";
+            }
+            env->DeleteLocalRef(mediaDirs);
+        }
+
         env->DeleteLocalRef(activityClass);
         env->DeleteLocalRef(activity);
 
-        dir = "/storage/emulated/0/Android/media/" + pkg;
         try {
             std::filesystem::create_directories(dir);
             SDL_Log("Modding directory: %s", dir.c_str());
@@ -91,6 +111,7 @@ std::string getModdingDirectory() {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create modding dir: %s", e.what());
         }
     }
+
     return dir;
 #else
     return std::filesystem::current_path().string();
