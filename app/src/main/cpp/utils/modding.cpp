@@ -3,9 +3,6 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
-#include <fstream>
-#include <sstream>
-#include <filesystem>
 #include <algorithm>
 #ifdef __ANDROID__
 #include <jni.h>
@@ -291,15 +288,15 @@ bool createDefaultLocalizationFile() {
     std::vector<std::string> lines;
     lines.push_back("# SENSE: The Game Localization File");
     lines.push_back("");
-    lines.push_back("# Use KEY=\"value\" format to override default text");
-    lines.push_back("# Leave KEY= empty or \"\" to use default text");
-    lines.push_back("# If KEY= is not found, default settings are applied");
+    lines.push_back("# Use KEY=\"value\" format to override default text.");
+    lines.push_back("# Leave KEY= empty or \"\" to use default text.");
+    lines.push_back("# If KEY= is not found, default settings are applied.");
     lines.push_back("# Supported escape sequences:");
     lines.push_back("#   \\n  - newline");
     lines.push_back("#   \\t  - tab (4 spaces)");
     lines.push_back("#   \\\"  - double quote");
     lines.push_back("#   \\\\  - backslash");
-    lines.push_back("# Any unknown escape sequence after \\ will be written as-is");
+    lines.push_back("# Any unknown escape sequence after \\ will be written as-is.");
     lines.push_back("");
 
 
@@ -404,27 +401,27 @@ bool createDefaultFontFile() {
     std::vector<std::string> lines = {
         "# SENSE: The Game Font File",
         "",
-        "# Use FONT=\"./path/to/font.ttf\" or FONT=\"font.otf\" to use a custom font",
-        "# Only fonts compatible with SDL2_ttf's TTF_OpenFont function are supported",
-        "# Leave FONT empty (FONT=\"\" or FONT=) to use the default font",
-        "# If the font is not found, the default font will be used",
-        "# If FONT= is not found, default settings are applied",
+        "# Use FONT=\"./path/to/font.ttf\" or FONT=\"font.otf\" to use a custom font.",
+        "# Only fonts compatible with SDL2_ttf's TTF_OpenFont function are supported.",
+        "# Leave FONT empty (FONT=\"\" or FONT=) to use the default font.",
+        "# If the font is not found, the default font will be used.",
+        "# If FONT= is not found, default settings are applied.",
         "",
         "FONT=\"\"",
         "",
         "",
-        "# Leave FONT_SIZE= to use the default size",
-        "# If FONT_SIZE is not set, the default size is 24",
-        "# FONT_SIZE must contain only digits and be between 1 and 128 (e.g., FONT_SIZE=32); otherwise the default value will be used",
-        "# If FONT_SIZE= is not found, default settings are applied",
+        "# Leave FONT_SIZE= to use the default size.",
+        "# If FONT_SIZE is not set, the default size is 24.",
+        "# FONT_SIZE must contain only digits and be between 1 and 128 (e.g., FONT_SIZE=32); otherwise the default value will be used.",
+        "# If FONT_SIZE= is not found, default settings are applied.",
         "",
         "FONT_SIZE=",
         "",
         "",
-        "# Leave OTHER_TEXT_FONT_SIZE= to use the default size",
-        "# If OTHER_TEXT_FONT_SIZE is not set, the default size is 48",
-        "# OTHER_TEXT_FONT_SIZE must contain only digits and be between 1 and 128 (e.g., OTHER_TEXT_FONT_SIZE=32); otherwise the default value will be used",
-        "# If OTHER_TEXT_FONT_SIZE= is not found, default settings are applied",
+        "# Leave OTHER_TEXT_FONT_SIZE= to use the default size.",
+        "# If OTHER_TEXT_FONT_SIZE is not set, the default size is 48.",
+        "# OTHER_TEXT_FONT_SIZE must contain only digits and be between 1 and 128 (e.g., OTHER_TEXT_FONT_SIZE=32); otherwise the default value will be used.",
+        "# If OTHER_TEXT_FONT_SIZE= is not found, default settings are applied.",
         "",
         "OTHER_TEXT_FONT_SIZE="
     };
@@ -507,11 +504,12 @@ bool createDecorDirectory() {
         std::vector<std::string> lines = {
             "# SENSE: The Game Decor Configuration",
             "",
-            "# Use NAME=true/false to enable/disable decor assets",
-            "# If no value is set, the texture will not be displayed",
-            "# Put custom .png files in the decor directory to override standard assets",
-            "# You can also override a standard .png by giving it the same name",
-            "# If NAME= is not found, default settings are applied",
+            "# Use NAME=true/false to enable/disable decor assets.",
+            "# If no value is set, the texture will not be displayed.",
+            "# Add a custom .png image to the decor folder and give it a name different from the standard assets so it appears in the game.",
+            "# Custom assets have the same functionality as standard ones.",
+            "# You can also override a standard .png by giving it the same name.",
+            "# If NAME= is not found, default settings are applied.",
             "",
             "# Standard decor assets:"
         };
