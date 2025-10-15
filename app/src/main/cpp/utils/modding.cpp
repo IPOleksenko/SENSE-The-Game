@@ -183,6 +183,8 @@ std::string extractQuotedValue(const std::string& line) {
     if (start == std::string::npos) return "";
 
     std::string result;
+    bool closed = false;
+
     for (size_t i = start + 1; i < line.size(); ++i) {
         char c = line[i];
         if (c == '"') {
@@ -192,12 +194,21 @@ std::string extractQuotedValue(const std::string& line) {
                 ++backslashes;
                 --j;
             }
+
             if ((backslashes % 2) == 0) {
+                closed = true;
                 break;
             }
         }
         result.push_back(c);
     }
+
+    if (!closed) {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                    "Unclosed quote in line: %s", line.c_str());
+        return "";
+    }
+
     return result;
 }
 
@@ -289,7 +300,7 @@ bool createDefaultLocalizationFile() {
     lines.push_back("# SENSE: The Game Localization File");
     lines.push_back("");
     lines.push_back("# Use KEY=\"value\" format to override default text.");
-    lines.push_back("# Leave KEY= empty or \"\" to use default text.");
+    lines.push_back("# Leave KEY empty (KEY=\"\" or KEY=) to use the default text.");
     lines.push_back("# If KEY= is not found, default settings are applied.");
     lines.push_back("# Supported escape sequences:");
     lines.push_back("#   \\n  - newline");
