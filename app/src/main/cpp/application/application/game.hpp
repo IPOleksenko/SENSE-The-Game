@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <inttypes.h>
+#include <functional>
 
 class Window;
 class Renderer;

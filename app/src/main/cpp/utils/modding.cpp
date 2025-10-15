@@ -290,6 +290,7 @@ bool createDefaultLocalizationFile() {
 
     std::vector<std::string> lines;
     lines.push_back("# SENSE: The Game Localization File");
+    lines.push_back("");
     lines.push_back("# Use KEY=\"value\" format to override default text");
     lines.push_back("# Leave KEY= empty or \"\" to use default text");
     lines.push_back("# If KEY= is not found, default settings are applied");
@@ -315,7 +316,7 @@ bool createDefaultLocalizationFile() {
 
 // Custom font
 int fontSize = 24;
-int anotherFontSize = 48;
+int otherTextFontSize = 48;
 
 bool loadCustomFontSize() {
     std::string configPath = joinPath(getModdingDirectory(), FONT_FILE);
@@ -327,7 +328,7 @@ bool loadCustomFontSize() {
             if (!sizeStr.empty() && std::all_of(sizeStr.begin(), sizeStr.end(), ::isdigit)) {
                 try {
                     int size = std::stoi(sizeStr);
-                    if (size > 0) {
+                    if (size > 0 && size <= 128) {
                         fontSize = size;
                         SDL_Log("Using custom FONT_SIZE: %d", fontSize);
                     }
@@ -339,20 +340,20 @@ bool loadCustomFontSize() {
                 }
             }
         }
-        else if (line.find("FONT_ANOTHER_TEXT_SIZE=") == 0) {
-            std::string sizeStr = extractValue(line.substr(23));
+        else if (line.find("OTHER_TEXT_FONT_SIZE=") == 0) {
+            std::string sizeStr = extractValue(line.substr(21));
             if (!sizeStr.empty() && std::all_of(sizeStr.begin(), sizeStr.end(), ::isdigit)) {
                 try {
                     int size = std::stoi(sizeStr);
-                    if (size > 0) {
-                        anotherFontSize = size;
-                        SDL_Log("Using custom FONT_FINAL_TEXT_SIZE: %d", anotherFontSize);
+                    if (size > 0 && size <= 128) {
+                        otherTextFontSize = size;
+                        SDL_Log("Using custom OTHER_TEXT_FONT_SIZE: %d", otherTextFontSize);
                     }
                 }
                 catch (...) {
                     SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
-                        "Failed to parse FONT_FINAL_TEXT_SIZE='%s' → using default %d",
-                        sizeStr.c_str(), anotherFontSize);
+                        "Failed to parse OTHER_TEXT_FONT_SIZE='%s' → using default %d",
+                        sizeStr.c_str(), otherTextFontSize);
                 }
             }
         }
@@ -378,14 +379,15 @@ std::string loadCustomFontPath() {
                 if (fontPath[0] == '.' || !std::filesystem::path(fontPath).is_absolute()) {
                     fontPath = joinPath(getModdingDirectory(), fontPath);
                 }
-                
-                if (fileExists(fontPath)) {
-                    SDL_Log("Loading custom font: %s", fontPath.c_str());
-                    return fontPath;
-                } else {
-                    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, 
-                        "Custom font file not found: %s", fontPath.c_str());
-                }
+
+            }
+            if (fileExists(fontPath)) {
+                SDL_Log("Loading custom font: %s", fontPath.c_str());
+                return fontPath;
+            }
+            else if(!fontPath.empty()) {
+                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                    "Custom font file not found: %s", fontPath.c_str());
             }
         }
     }
@@ -401,23 +403,30 @@ bool createDefaultFontFile() {
 
     std::vector<std::string> lines = {
         "# SENSE: The Game Font File",
+        "",
         "# Use FONT=\"./path/to/font.ttf\" or FONT=\"font.otf\" to use a custom font",
-        "# Leave FONT empty (FONT="" or FONT=) to use the default font",
+        "# Only fonts compatible with SDL2_ttf's TTF_OpenFont function are supported",
+        "# Leave FONT empty (FONT=\"\" or FONT=) to use the default font",
         "# If the font is not found, the default font will be used",
         "# If FONT= is not found, default settings are applied",
+        "",
         "FONT=\"\"",
+        "",
         "",
         "# Leave FONT_SIZE= to use the default size",
         "# If FONT_SIZE is not set, the default size is 24",
-        "# FONT_SIZE must contain only digits (e.g. FONT_SIZE=32)",
+        "# FONT_SIZE must contain only digits and be between 1 and 128 (e.g., FONT_SIZE=32); otherwise the default value will be used",
         "# If FONT_SIZE= is not found, default settings are applied",
+        "",
         "FONT_SIZE=",
         "",
-        "# Leave FONT_ANOTHER_TEXT_SIZE= to use the default size",
-        "# If FONT_ANOTHER_TEXT_SIZE is not set, the default size is 48",
-        "# FONT_ANOTHER_TEXT_SIZE must contain only digits (e.g. FONT_ANOTHER_TEXT_SIZE=56)",
-        "# If FONT_ANOTHER_TEXT_SIZE= is not found, default settings are applied",
-        "FONT_ANOTHER_TEXT_SIZE="
+        "",
+        "# Leave OTHER_TEXT_FONT_SIZE= to use the default size",
+        "# If OTHER_TEXT_FONT_SIZE is not set, the default size is 48",
+        "# OTHER_TEXT_FONT_SIZE must contain only digits and be between 1 and 128 (e.g., OTHER_TEXT_FONT_SIZE=32); otherwise the default value will be used",
+        "# If OTHER_TEXT_FONT_SIZE= is not found, default settings are applied",
+        "",
+        "OTHER_TEXT_FONT_SIZE="
     };
 
     if (writeTextFile(path, lines)) {
@@ -497,6 +506,7 @@ bool createDecorDirectory() {
     if (!fileExists(configPath)) {
         std::vector<std::string> lines = {
             "# SENSE: The Game Decor Configuration",
+            "",
             "# Use NAME=true/false to enable/disable decor assets",
             "# If no value is set, the texture will not be displayed",
             "# Put custom .png files in the decor directory to override standard assets",

@@ -33,10 +33,13 @@ Text::Text(
         if(!m_isInit) {
             SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s", "TTF_OpenFontRW", SDL_GetError());
         }
+        else {
+            TTF_SetFontHinting(m_sdlFont, TTF_HINTING_LIGHT);
+        }
         return;
     }
 
-    std::string customFontPath = modding::loadCustomFontPath();
+    customFontPath = modding::loadCustomFontPath();
     if (!customFontPath.empty()) {
         m_sdlFont = TTF_OpenFont(customFontPath.c_str(), fontSize);
         if (m_sdlFont) {
@@ -151,14 +154,23 @@ void Text::resize(const int& fontSize)
         m_isInit = false;
     }
 
-    m_sdlFont = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
+    if (!customFontPath.empty() && modding::fileExists(customFontPath)) {
+        m_sdlFont = TTF_OpenFont(customFontPath.c_str(), fontSize);
+    }
+    else {
+        m_sdlFont = TTF_OpenFontRW(SDL_Incbin(FONT_FONT_TTF), SDL_TRUE, fontSize);
+    }
+
     m_isInit = m_sdlFont != nullptr;
 
     if (!m_isInit) {
         SDL_LogCritical(
-                SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
-                "TTF_OpenFontRW", SDL_GetError()
+            SDL_LOG_CATEGORY_SYSTEM, "%s failed: %s",
+            "TTF_OpenFont", SDL_GetError()
         );
+    }
+    else {
+        TTF_SetFontHinting(m_sdlFont, TTF_HINTING_LIGHT);
     }
 }
 

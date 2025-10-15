@@ -109,6 +109,15 @@ void Game::run() const {
         return;
     }
 
+    for (auto& task : std::vector<std::function<void()>>{
+    []() { modding::createDefaultLocalizationFile(); },
+    []() { modding::loadCustomFontSize(); },
+    []() { modding::createDefaultFontFile(); },
+    []() { modding::createDecorDirectory(); }
+        }) {
+        loadStartScreen(window, renderer); task();
+    }
+
     AudioManager audioManager;
     if (!audioManager.isInit()) {
         return;
@@ -118,7 +127,6 @@ void Game::run() const {
         Icon(SDL_Incbin(ICON_BMP))
     );
 
-    loadStartScreen(window, renderer);
     play(window, renderer, audioManager);
 }
 
@@ -126,7 +134,7 @@ void Game::loadStartScreen(Window& window, Renderer& renderer) {
     renderer.setDrawColor({ 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE });
     renderer.clear();
 
-    Text textLoadScreen(renderer.getSdlRenderer(), modding::anotherFontSize, { 0, 0 });
+    Text textLoadScreen(renderer.getSdlRenderer(), modding::otherTextFontSize, { 0, 0 });
     Text textAuthor(renderer.getSdlRenderer(), 16, { 0, 0 }, true);
 
     textLoadScreen.setText(getCheckpointText(CheckPoint::LOADING_TEXT));
@@ -175,7 +183,7 @@ void Game::updateText(Text& text, const int& yPos) {
     case CheckPoint::T_START:
     case CheckPoint::FINAL_START: {
         if (static_cast<CheckPoint>(yPos) == CheckPoint::FINAL_START) {
-            text.resize(modding::anotherFontSize);
+            text.resize(modding::otherTextFontSize);
         }
         text.setText(getCheckpointText(static_cast<CheckPoint>(yPos)));
         text.positionCenter();
@@ -212,10 +220,7 @@ void Game::updateText(Text& text, const int& yPos) {
 }
 
 void Game::play(Window& window, Renderer& renderer, AudioManager& audioManager) {
-    modding::createDefaultLocalizationFile();
-    modding::createDefaultFontFile();
-    modding::createDecorDirectory();
-    modding::loadCustomFontSize();
+
     LocalizationManager::instance().init();
 
     SDL_Event event = {};

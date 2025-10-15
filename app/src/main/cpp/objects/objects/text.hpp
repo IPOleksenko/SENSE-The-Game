@@ -40,6 +40,7 @@ private:
     PositionMode m_positionMode = PositionMode::Default;
 
     TTF_Font* m_sdlFont;
+    std::string customFontPath;
     SDL_Renderer* m_sdlRenderer;
     bool m_isInit;
 

@@ -25,7 +25,7 @@ bool createDefaultLocalizationFile();
 
 // Custom font
 extern int fontSize;
-extern int anotherFontSize;
+extern int otherTextFontSize;
 
 bool loadCustomFontSize();
 std::string loadCustomFontPath();
