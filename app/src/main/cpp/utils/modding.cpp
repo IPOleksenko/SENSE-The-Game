@@ -508,7 +508,7 @@ bool createDecorDirectory() {
             "# If no value is set, the texture will not be displayed.",
             "# Add a custom .png image to the decor folder and give it a name different from the standard assets so it appears in the game.",
             "# Custom assets have the same functionality as standard ones.",
-            "# You can also override a standard .png by giving it the same name.",
+            "# You can replace any standard .png by adding a file with the same name to the decor folder.",
             "# If NAME= is not found, default settings are applied.",
             "",
             "# Standard decor assets:"
